@@ -5,8 +5,9 @@
 TradeLink je statický web nasazený na Cloudflare Pages, napojený na Supabase (účty + databáze)
 a na registr ARES (ověřování firem). Průchod homepage → lobby → recepce → obor → podobor je
 funkční, účty a ověřování firem fungují a jsou otestované. Profily lidí i firem se dají
-vyplnit a zveřejnit. **Inzeráty a poptávky zatím nejsou** — po výběru podoboru se pořád
-zobrazí „zatím připravujeme", takže na sebe uživatelé ještě nevidí.
+vyplnit a zveřejnit, inzeráty a poptávky se dají zadávat a spravovat. **Chybí poslední
+článek: výpis** — po výběru podoboru se pořád zobrazí „zatím připravujeme", takže na sebe
+uživatelé ještě nevidí. Výpis staví kamarád nad pohledem `public.verejne_inzeraty`.
 
 **Živě:** https://tradelink-landing.pages.dev
 **Repo:** https://github.com/uvaceka-cmyk/tradelink-landing (veřejné, větev `main`)
