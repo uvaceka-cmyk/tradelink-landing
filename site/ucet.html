@@ -34,6 +34,8 @@
       <h1 id="account-name">Můj účet</h1>
       <p class="auth__lead" id="account-lead">Načítám…</p>
 
+      <div id="dalsi-kroky" hidden></div>
+
       <dl class="detail" id="detail" hidden></dl>
 
       <p class="form__status" id="status" hidden></p>
@@ -109,6 +111,78 @@
         if (firma) rows.push(['Ověření v ARES', p.ares_overeno_at ? 'ověřeno' : 'chybí']);
         if (p.full_name) rows.push([firma ? 'Kontaktní osoba' : 'Jméno', p.full_name]);
         rows.push(['Profil', p.zverejnen ? 'zveřejněný' : 'skrytý']);
+
+
+        /* ---------- co dál ----------
+           Po registraci člověk neví, co má dělat. Tohle mu to řekne
+           podle toho, co má a nemá hotové. */
+        var kroky = [];
+
+        kroky.push({
+          hotovo: Boolean(p.popis && p.obor),
+          nazev: 'Vyplňte profil',
+          popis: firma
+            ? 'Napište, čemu se firma věnuje a v jakém oboru. Bez toho vás nikdo nenajde.'
+            : 'Napište, co umíte a co hledáte. Bez toho vás nikdo nenajde.',
+          odkaz: 'profil.html', tlacitko: 'Vyplnit profil'
+        });
+
+        kroky.push({
+          hotovo: Boolean(p.zverejnen),
+          nazev: 'Zveřejněte profil',
+          popis: 'Dokud je profil skrytý, vidíte ho jen vy.',
+          odkaz: 'profil.html', tlacitko: 'Zveřejnit'
+        });
+
+        var inz = await supabase.from('inzeraty').select('id,zverejnen');
+        var pocetZverejnenych = (inz.data || []).filter(function (i) { return i.zverejnen; }).length;
+
+        kroky.push({
+          hotovo: pocetZverejnenych > 0,
+          nazev: firma ? 'Zadejte nabídku práce' : 'Zadejte poptávku',
+          popis: firma
+            ? 'Koho hledáte? Nabídka se ukáže lidem ve zvoleném oboru.'
+            : 'Co potřebujete udělat? Poptávku uvidí firmy a živnostníci v oboru.',
+          odkaz: 'moje-inzeraty.html', tlacitko: 'Zadat'
+        });
+
+        var zbyva = kroky.filter(function (k) { return !k.hotovo; });
+        var box = document.getElementById('dalsi-kroky');
+
+        if (!zbyva.length) {
+          box.innerHTML = '<div class="kroky kroky--hotovo">' +
+            '<h2>Máte hotovo</h2>' +
+            '<p>Profil je zveřejněný a inzerát běží. Odpovědi najdete v ' +
+            '<a href="moje-inzeraty.html">Mých inzerátech</a>.</p></div>';
+        } else {
+          box.innerHTML = '<div class="kroky">' +
+            '<h2>Co dál</h2>' +
+            '<p class="kroky__uvod">Zbývají ' + zbyva.length + ' ' +
+              (zbyva.length === 1 ? 'krok' : (zbyva.length < 5 ? 'kroky' : 'kroků')) +
+              ', než vás ostatní najdou.</p>' +
+            kroky.map(function (k, i) {
+              return '<div class="krok' + (k.hotovo ? ' je-hotovy' : '') + '">' +
+                '<span class="krok__znak">' + (k.hotovo ? '✓' : (i + 1)) + '</span>' +
+                '<span class="krok__telo">' +
+                  '<strong>' + k.nazev + '</strong>' +
+                  '<span>' + k.popis + '</span>' +
+                  (k.hotovo ? '' : '<a class="btn btn--ghost krok__tlacitko" href="' + k.odkaz + '">' + k.tlacitko + '</a>') +
+                '</span></div>';
+            }).join('') +
+          '</div>';
+        }
+        box.hidden = false;
+
+        /* nepřečtené odpovědi ať nezapadnou */
+        var odp = await supabase.rpc('pocty_odpovedi');
+        var nove = (odp.data || []).reduce(function (s, x) { return s + Number(x.neprectenych || 0); }, 0);
+        if (nove > 0) {
+          box.insertAdjacentHTML('afterbegin',
+            '<a class="upozorneni" href="moje-inzeraty.html">' +
+              '<strong>' + nove + ' ' + (nove === 1 ? 'nová odpověď' : (nove < 5 ? 'nové odpovědi' : 'nových odpovědí')) + '</strong>' +
+              ' na vaše inzeráty — podívejte se na ně.' +
+            '</a>');
+        }
 
         var detail = document.getElementById('detail');
         detail.innerHTML = rows.map(function (r) {

@@ -599,3 +599,36 @@ p{margin:0}
   border-left:2px solid var(--line-2);padding-left:16px;
 }
 .overovani-recenzi strong{color:var(--fg-dim)}
+
+/* =========================================================
+   PRŮVODCE DALŠÍMI KROKY
+   ========================================================= */
+.kroky{
+  border:1px solid var(--line-2);border-radius:16px;padding:24px;margin-bottom:30px;
+  background:linear-gradient(180deg,#8fc0e80f,#ffffff03);
+}
+.kroky h2{font-size:var(--step-1);margin-bottom:6px}
+.kroky__uvod{color:var(--muted);font-size:.9rem;margin-bottom:20px}
+.kroky--hotovo{background:linear-gradient(180deg,#9fd7b814,#ffffff03);border-color:#9fd7b833}
+.kroky--hotovo p{color:var(--fg-dim);font-size:.94rem}
+
+.krok{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line)}
+.krok:first-of-type{border-top:0;padding-top:0}
+.krok__znak{
+  flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  font-size:.78rem;border:1px solid var(--line-2);color:var(--muted);margin-top:2px;
+}
+.krok__telo{display:flex;flex-direction:column;gap:4px;min-width:0}
+.krok__telo strong{font-size:.98rem}
+.krok__telo span{color:var(--muted);font-size:.88rem;line-height:1.6}
+.krok__tlacitko{align-self:flex-start;margin-top:10px;min-height:42px;padding:0 18px;font-size:.9rem}
+.krok.je-hotovy .krok__znak{border-color:#9fd7b855;background:#9fd7b814;color:#a8ddc0}
+.krok.je-hotovy .krok__telo strong{color:var(--muted);font-weight:400}
+
+.upozorneni{
+  display:block;text-decoration:none;color:var(--fg);
+  border:1px solid var(--accent-dim);background:var(--accent-bg);border-radius:14px;
+  padding:16px 20px;margin-bottom:20px;font-size:.94rem;line-height:1.6;
+}
+.upozorneni:hover{background:#8fc0e824}
+.upozorneni strong{color:var(--accent)}
