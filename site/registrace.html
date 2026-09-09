@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Založení účtu na TradeLinku.">
+  <meta name="robots" content="noindex">
+  <title>Registrace — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="./#cena">Cena</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="auth shell">
+    <div class="auth__card">
+      <p class="auth__kicker" id="role-tag">Registrace</p>
+      <h1>Založit účet</h1>
+      <p class="auth__lead" id="account-lead">Vyplňte údaje a potvrďte e-mail, který vám přijde.</p>
+
+      <form class="form" id="form" novalidate>
+        <div class="field" id="field-company" hidden>
+          <label for="company">Název firmy</label>
+          <input type="text" id="company" name="company" autocomplete="organization">
+        </div>
+
+        <div class="field" id="field-ico" hidden>
+          <label for="ico">IČO <span class="field__hint">nepovinné</span></label>
+          <input type="text" id="ico" name="ico" inputmode="numeric" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label for="name" id="name-label">Jméno a příjmení</label>
+          <input type="text" id="name" name="name" autocomplete="name" required>
+        </div>
+
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Heslo</label>
+          <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
+          <p class="field__hint">Alespoň 8 znaků.</p>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="consent" required>
+          <span>Souhlasím se zpracováním osobních údajů pro provoz TradeLinku.</span>
+        </label>
+
+        <p class="form__status" id="status" hidden></p>
+
+        <button class="btn" type="submit">Založit účet</button>
+      </form>
+
+      <p class="auth__alt">
+        Už tu účet máte? <a href="prihlaseni.html">Přihlaste se</a>.
+      </p>
+      <p class="auth__billing" id="billing"></p>
+    </div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span>Lidé. Obory. Příležitosti.</span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, ROLES, roleFromUrl, status, busy, requireConfig, czechError, paintNav } from './auth.js';
+
+    var role = roleFromUrl();
+    var meta = ROLES[role];
+    var isCompany = meta.account === 'firma';
+
+    document.getElementById('role-tag').textContent = meta.accountLabel;
+    document.getElementById('billing').textContent = meta.billing;
+    document.getElementById('account-lead').textContent =
+      meta.title + ' — vyplňte údaje a potvrďte e-mail, který vám přijde.';
+
+    if (isCompany) {
+      document.getElementById('field-company').hidden = false;
+      document.getElementById('field-ico').hidden = false;
+      document.getElementById('company').required = true;
+      document.getElementById('name-label').textContent = 'Kontaktní osoba';
+    }
+
+    paintNav();
+
+    var form = document.getElementById('form');
+    var statusEl = document.getElementById('status');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      status(statusEl, '');
+
+      if (!document.getElementById('consent').checked) {
+        return status(statusEl, 'Bez souhlasu se zpracováním údajů účet založit nelze.', 'error');
+      }
+      if (document.getElementById('password').value.length < 8) {
+        return status(statusEl, 'Heslo musí mít alespoň 8 znaků.', 'error');
+      }
+      if (!requireConfig(statusEl)) return;
+
+      busy(form, true, 'Zakládám účet…');
+
+      var { error } = await supabase.auth.signUp({
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value,
+        options: {
+          emailRedirectTo: window.location.origin + '/prihlaseni.html',
+          data: {
+            role: role,
+            account_type: meta.account,
+            full_name: document.getElementById('name').value.trim(),
+            company_name: isCompany ? document.getElementById('company').value.trim() : null,
+            ico: isCompany ? document.getElementById('ico').value.trim() || null : null
+          }
+        }
+      });
+
+      busy(form, false);
+
+      if (error) return status(statusEl, czechError(error), 'error');
+
+      form.hidden = true;
+      status(statusEl,
+        'Hotovo. Poslali jsme vám potvrzovací e-mail — otevřete odkaz v něm a účet bude aktivní.',
+        'ok');
+    });
+  </script>
+</body>
+</html>

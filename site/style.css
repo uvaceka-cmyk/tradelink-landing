@@ -420,3 +420,62 @@ p{margin:0}
   }
   .btn:hover,.choice:hover,.tile:hover{transform:none}
 }
+
+/* =========================================================
+   ÚČTY — registrace, přihlášení, obnova hesla
+   ========================================================= */
+.auth{padding-block:44px 72px;display:grid;justify-items:center}
+.auth__card{
+  width:100%;max-width:460px;
+  border:1px solid var(--line);border-radius:18px;padding:30px 24px;
+  background:linear-gradient(180deg,#ffffff08,#ffffff03);
+}
+.auth__card--wide{max-width:620px}
+.auth__kicker{
+  font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:14px;
+}
+.auth h1{font-size:var(--step-3);margin-bottom:12px}
+.auth__lead{color:var(--fg-dim);font-size:.96rem;margin-bottom:28px}
+.auth__alt{margin-top:18px;color:var(--muted);font-size:.88rem;text-align:center}
+.auth__alt a{color:var(--accent)}
+.auth__billing{
+  margin-top:22px;padding-top:18px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:.82rem;text-align:center;
+}
+
+.form{display:flex;flex-direction:column;gap:18px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{font-size:.85rem;color:var(--fg-dim);font-weight:500}
+.field__hint{font-size:.78rem;color:var(--muted);font-weight:400}
+.field input{
+  font:inherit;font-size:1rem;color:var(--fg);
+  background:#ffffff08;border:1px solid var(--line-2);border-radius:11px;
+  padding:13px 14px;min-height:50px;width:100%;
+  transition:border-color .2s var(--ease),background .2s var(--ease);
+}
+.field input:hover{border-color:var(--metal)}
+.field input:focus{outline:none;border-color:var(--accent);background:#ffffff0d}
+.field input:disabled{opacity:.55}
+
+.check{display:flex;gap:11px;align-items:flex-start;color:var(--muted);font-size:.86rem;line-height:1.5;cursor:pointer}
+.check input{width:19px;height:19px;margin-top:2px;flex:none;accent-color:var(--accent)}
+
+.form__status{
+  border-radius:11px;padding:13px 15px;font-size:.88rem;line-height:1.55;margin:0;
+  border:1px solid var(--line-2);color:var(--fg-dim);
+}
+.form__status--error{border-color:#e2909033;background:#e2909012;color:#f0b4b4}
+.form__status--ok{border-color:#9fd7b833;background:#9fd7b810;color:#a8ddc0}
+
+.detail{margin:0 0 26px;display:flex;flex-direction:column;gap:1px}
+.detail__row{
+  display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;
+  padding:13px 0;border-bottom:1px solid var(--line);
+}
+.detail dt{color:var(--muted);font-size:.85rem;margin:0}
+.detail dd{margin:0;font-size:.92rem;text-align:right}
+
+@media (min-width:600px){
+  .auth__card{padding:38px 34px}
+}

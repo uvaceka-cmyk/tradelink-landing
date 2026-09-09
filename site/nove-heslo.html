@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Nastavení nového hesla k účtu TradeLink.">
+  <meta name="robots" content="noindex">
+  <title>Nové heslo — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="auth shell">
+    <div class="auth__card">
+      <p class="auth__kicker">Nové heslo</p>
+      <h1>Nastavte si heslo</h1>
+      <p class="auth__lead" id="lead">Ověřuji odkaz z e-mailu…</p>
+
+      <form class="form" id="form" novalidate hidden>
+        <div class="field">
+          <label for="password">Nové heslo</label>
+          <input type="password" id="password" autocomplete="new-password" minlength="8" required>
+          <p class="field__hint">Alespoň 8 znaků.</p>
+        </div>
+
+        <div class="field">
+          <label for="password2">Nové heslo znovu</label>
+          <input type="password" id="password2" autocomplete="new-password" minlength="8" required>
+        </div>
+
+        <p class="form__status" id="status" hidden></p>
+
+        <button class="btn" type="submit">Uložit heslo</button>
+      </form>
+
+      <p class="form__status" id="gate" hidden></p>
+      <p class="auth__alt"><a href="prihlaseni.html">Zpět na přihlášení</a></p>
+    </div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span>Lidé. Obory. Příležitosti.</span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, status, busy, requireConfig, czechError, configured } from './auth.js';
+
+    var form = document.getElementById('form');
+    var statusEl = document.getElementById('status');
+    var lead = document.getElementById('lead');
+    var gate = document.getElementById('gate');
+
+    /* Supabase po kliknutí na odkaz z e-mailu vytvoří dočasnou relaci
+       a vystřelí událost PASSWORD_RECOVERY. Teprve pak smíme heslo měnit. */
+    if (!configured) {
+      lead.textContent = '';
+      status(gate, 'Účty zatím nejsou připojené k databázi. Doplň údaje v supabase-config.js.', 'error');
+    } else {
+      var ready = false;
+
+      supabase.auth.onAuthStateChange(function (event) {
+        if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
+          ready = true;
+          lead.textContent = 'Zadejte nové heslo ke svému účtu.';
+          form.hidden = false;
+          gate.hidden = true;
+        }
+      });
+
+      /* Odkaz už mohl být zpracovaný dřív, než jsme se stihli napojit. */
+      supabase.auth.getSession().then(function (res) {
+        if (res.data.session) {
+          ready = true;
+          lead.textContent = 'Zadejte nové heslo ke svému účtu.';
+          form.hidden = false;
+          return;
+        }
+        setTimeout(function () {
+          if (ready) return;
+          lead.textContent = '';
+          status(gate,
+            'Odkaz je neplatný nebo mu vypršela platnost. Vyžádejte si nový na stránce obnovy hesla.',
+            'error');
+        }, 1500);
+      });
+    }
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      status(statusEl, '');
+
+      var pwd = document.getElementById('password').value;
+      if (pwd.length < 8) return status(statusEl, 'Heslo musí mít alespoň 8 znaků.', 'error');
+      if (pwd !== document.getElementById('password2').value) {
+        return status(statusEl, 'Hesla se neshodují.', 'error');
+      }
+      if (!requireConfig(statusEl)) return;
+
+      busy(form, true, 'Ukládám…');
+      var { error } = await supabase.auth.updateUser({ password: pwd });
+      busy(form, false);
+
+      if (error) return status(statusEl, czechError(error), 'error');
+
+      form.hidden = true;
+      lead.textContent = '';
+      status(statusEl, 'Heslo je změněné. Za chvíli vás přesměrujeme do účtu.', 'ok');
+      setTimeout(function () { window.location.assign('ucet.html'); }, 2000);
+    });
+  </script>
+</body>
+</html>

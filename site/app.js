@@ -225,6 +225,7 @@
           '<p class="result__meta">' + industry.name + ' → ' + state.sub + '<br>' + role.billing + '</p>' +
         '</div>' +
         '<div class="actions" style="margin-top:26px">' +
+          '<a class="btn" href="registrace.html?role=' + state.role + '">Založit účet</a>' +
           '<button class="btn btn--ghost" type="button" data-back="sub">Zpět na podobory</button>' +
           '<a class="btn btn--ghost" href="recepce.html">Zpět na recepci</a>' +
         '</div>';

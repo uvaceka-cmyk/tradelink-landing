@@ -23,6 +23,7 @@
       <a href="#vyhody">Výhody</a>
       <a href="#cena">Cena</a>
       <a class="is-cta" href="lobby.html">Vstoupit do lobby</a>
+      <a id="nav-account" href="prihlaseni.html">Přihlásit se</a>
     </nav>
   </header>
 
@@ -185,6 +186,8 @@
     <small>© 2026 TradeLink</small>
   </footer>
 
+  <script src="supabase-config.js"></script>
   <script src="app.js" defer></script>
+  <script type="module">import { paintNav } from './auth.js'; paintNav();</script>
 </body>
 </html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Přihlášení do TradeLinku.">
+  <meta name="robots" content="noindex">
+  <title>Přihlášení — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="./#cena">Cena</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="auth shell">
+    <div class="auth__card">
+      <p class="auth__kicker">Přihlášení</p>
+      <h1>Vítejte zpátky</h1>
+      <p class="auth__lead">Přihlaste se e-mailem a heslem.</p>
+
+      <form class="form" id="form" novalidate>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Heslo</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" required>
+        </div>
+
+        <p class="form__status" id="status" hidden></p>
+
+        <button class="btn" type="submit">Přihlásit se</button>
+      </form>
+
+      <p class="auth__alt">
+        <a href="obnova-hesla.html">Zapomněli jste heslo?</a>
+      </p>
+      <p class="auth__alt">
+        Ještě tu účet nemáte? <a href="recepce.html">Začněte na recepci</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span>Lidé. Obory. Příležitosti.</span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, status, busy, requireConfig, czechError, paintNav } from './auth.js';
+
+    var form = document.getElementById('form');
+    var statusEl = document.getElementById('status');
+
+    (async function () {
+      var session = await paintNav();
+      if (session) window.location.replace('ucet.html');
+      if (new URLSearchParams(location.search).has('potvrzeno')) {
+        status(statusEl, 'E-mail je potvrzený. Můžete se přihlásit.', 'ok');
+      }
+    })();
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      status(statusEl, '');
+      if (!requireConfig(statusEl)) return;
+
+      busy(form, true, 'Přihlašuji…');
+
+      var { error } = await supabase.auth.signInWithPassword({
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value
+      });
+
+      busy(form, false);
+
+      if (error) return status(statusEl, czechError(error), 'error');
+      window.location.assign('ucet.html');
+    });
+  </script>
+</body>
+</html>
