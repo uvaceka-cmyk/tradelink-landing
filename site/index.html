@@ -21,6 +21,7 @@
   <link rel="canonical" href="https://tradelink.cz/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="homepage.css">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://tradelink.cz/#organizace","name":"TradeLink","description":"Místo, kde se potkávají firmy, pracovníci a zakázky. Firmy ověřujeme podle registru ARES.","url":"https://tradelink.cz/","areaServed":{"@type":"Country","name":"Česká republika"}},{"@type":"WebSite","@id":"https://tradelink.cz/#web","name":"TradeLink","url":"https://tradelink.cz/","inLanguage":"cs-CZ","publisher":{"@id":"https://tradelink.cz/#organizace"}}]}</script>
 </head>
 <body>
@@ -42,25 +43,29 @@
   </header>
 
   <main>
-    <!-- SCÉNA 1 — hero -->
-    <section class="hero" data-scene="hero">
-      <div class="hero__media" data-depth="1">
-        <img src="tradelink.jpeg" width="1600" height="900" fetchpriority="high"
-             alt="Osvětlená kancelářská věž TradeLink v noci.">
+    <!-- NOVÝ HOMEPAGE MASTER — lobby jako hlavní vstupní scéna -->
+    <section class="home-hero" data-scene="hero">
+      <div class="home-hero__media" data-depth="1">
+        <img src="homepage-master.webp"
+             onerror="this.onerror=null;this.src='tradelink.jpeg';"
+             width="1600" height="900" fetchpriority="high"
+             alt="Luxusní lobby TradeLink s recepcí a večerním panoramatem města.">
       </div>
-      <div class="hero__copy shell" data-depth="2">
-        <p class="hero__eyebrow">Silnější zítřek</p>
-        <h1>TradeLink<span class="hero__claim">Kde se propojuje byznys.</span></h1>
-        <p class="hero__text">
-          Jedno místo, kde se potkávají firmy, pracovníci a zakázky. Nejdřív řeknete,
-          kdo jste a co hledáte — teprve potom se vám otevřou obory a nabídky, které
-          vám dávají smysl.
-        </p>
-        <div class="actions">
-          <a class="btn" href="lobby.html">Vstoupit do lobby</a>
-          <a class="btn btn--ghost" href="registrace.html">Založit účet</a>
+      <div class="home-hero__content">
+        <div class="home-hero__copy" data-depth="2">
+          <p class="home-hero__eyebrow">TradeLink</p>
+          <h1>Where business connects.<span class="home-hero__claim">Kde se propojuje byznys.</span></h1>
+          <p class="home-hero__text">
+            Jedno místo, kde se propojují firmy, lidé a příležitosti. Vstupte do lobby,
+            zvolte svou cestu a dostaňte se rovnou k tomu, co hledáte.
+          </p>
+          <div class="actions">
+            <a class="btn home-hero__enter" href="lobby.html">Vstoupit do TradeLinku</a>
+            <a class="btn btn--ghost home-hero__secondary" href="registrace.html">Založit účet</a>
+          </div>
         </div>
       </div>
+      <a class="home-hero__scroll" href="#o-tradelinku">Zjistit více</a>
     </section>
 
     <!-- SCÉNA 2 — o TradeLinku -->
