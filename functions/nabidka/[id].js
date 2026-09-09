@@ -144,7 +144,7 @@ export async function onRequestGet({ params, request }) {
       '@type': 'Organization',
       name: i.autor_jmeno,
       identifier: i.autor_ico || undefined,
-      url: puvod + '/firma.html?id=' + i.autor_id
+      url: puvod + '/firma/' + i.autor_id
     },
     jobLocation: {
       '@type': 'Place',

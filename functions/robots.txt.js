@@ -38,6 +38,7 @@ export function onRequestGet({ request }) {
     '# která se vykresluje na serveru. Verzi pro prohlížeč neindexujeme,',
     '# aby se tentýž obsah nepočítal dvakrát.',
     'Disallow: /inzerat.html',
+    'Disallow: /firma.html',
     '',
     'Sitemap: ' + puvod + '/sitemap.xml',
     ''

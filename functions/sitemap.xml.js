@@ -46,6 +46,20 @@ export async function onRequestGet({ request }) {
         );
       }
     }
+
+    /* zveřejněné profily — „firma XY recenze" je časté hledání */
+    const pr = await fetch(
+      SUPABASE_URL + '/rest/v1/verejne_profily?select=id,created_at&limit=5000',
+      { headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY } }
+    );
+    if (pr.ok) {
+      for (const p of await pr.json()) {
+        polozky.push(
+          '  <url><loc>' + puvod + '/firma/' + p.id + '</loc>' +
+          '<changefreq>monthly</changefreq><priority>0.6</priority></url>'
+        );
+      }
+    }
   } catch (e) {
     /* Když databáze neodpoví, pošleme aspoň stálé stránky —
        prázdná mapa je horší než neúplná. */
