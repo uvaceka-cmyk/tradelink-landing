@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Přehled odpovědí, které jste odeslali na inzeráty.">
+  <meta name="robots" content="noindex">
+  <title>Moje odpovědi — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="profil.html">Můj profil</a>
+      <a href="moje-inzeraty.html">Moje inzeráty</a>
+      <a href="ucet.html">Můj účet</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="journey shell">
+    <p class="journey__role">Odpovědi</p>
+    <h1>Moje odpovědi</h1>
+    <p class="journey__lead" id="lead">Načítám…</p>
+
+    <p class="form__status" id="gate" hidden></p>
+
+    <div id="seznam"></div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span class="foot__links">
+      <a href="podminky.html">Podmínky užití</a>
+      <a href="soukromi.html">Ochrana údajů</a>
+      <a href="zpetna-vazba.html">Zpětná vazba</a>
+    </span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, status, configured, czechError, paintNav } from './auth.js';
+
+    var gate = document.getElementById('gate');
+    var seznam = document.getElementById('seznam');
+
+    function esc(t) {
+      return String(t == null ? '' : t).replace(/[<>&"]/g, function (c) {
+        return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c];
+      });
+    }
+
+    (async function () {
+      if (!configured) return status(gate, 'Není připojená databáze.', 'error');
+
+      var session = await paintNav();
+      if (!session) return window.location.replace('prihlaseni.html');
+
+      var res = await supabase.from('odpovedi').select('*')
+        .eq('autor', session.user.id).order('created_at', { ascending: false });
+
+      if (res.error) {
+        document.getElementById('lead').textContent = '';
+        return status(gate, czechError(res.error), 'error');
+      }
+
+      if (!res.data.length) {
+        document.getElementById('lead').textContent =
+          'Zatím jste na žádný inzerát neodpověděli. Najdete je přes recepci.';
+        return;
+      }
+
+      /* Na cizí inzeráty se přes tabulku nedostaneme — pravidla to
+         nedovolí — takže si názvy vytáhneme z veřejného výpisu. */
+      var ids = res.data.map(function (o) { return o.inzerat; });
+      var inz = await supabase.from('verejne_inzeraty')
+        .select('id,nazev,typ,autor_jmeno').in('id', ids);
+
+      var podle = {};
+      (inz.data || []).forEach(function (i) { podle[i.id] = i; });
+
+      document.getElementById('lead').textContent =
+        'Zprávy, které jste odeslali. Pokud zadavatele zaujmete, ozve se vám sám.';
+
+      seznam.innerHTML = res.data.map(function (o) {
+        var i = podle[o.inzerat];
+        return '<article class="card" style="margin-bottom:14px">' +
+          (i
+            ? '<h3><a href="inzerat.html?id=' + esc(o.inzerat) + '">' + esc(i.nazev) + '</a></h3>' +
+              '<p>' + esc(i.autor_jmeno) + '</p>'
+            : '<h3>Inzerát už není zveřejněný</h3>' +
+              '<p>Zadavatel ho stáhl, nebo mu vypršela platnost.</p>') +
+          '<p class="nahlaseni__text">' + esc(o.zprava) + '</p>' +
+          '<p style="font-size:.82rem">Odesláno ' +
+            new Date(o.created_at).toLocaleString('cs-CZ') +
+            (o.precteno ? ' · zadavatel si ji přečetl' : ' · zatím nepřečteno') +
+          '</p>' +
+        '</article>';
+      }).join('');
+    })();
+  </script>
+</body>
+</html>

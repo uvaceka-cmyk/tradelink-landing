@@ -102,7 +102,8 @@
         box.innerHTML = '<div class="card"><h3>Už jste se ozvali</h3>' +
           '<p style="white-space:pre-wrap">' + esc(uz.data.zprava) + '</p>' +
           '<p class="field__hint" style="margin-top:12px">Odesláno ' +
-            new Date(uz.data.created_at).toLocaleString('cs-CZ') + '.</p></div>';
+            new Date(uz.data.created_at).toLocaleString('cs-CZ') + '. ' +
+            '<a href="moje-odpovedi.html">Všechny mé odpovědi</a></p></div>';
         return;
       }
 
