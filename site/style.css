@@ -266,6 +266,10 @@ a.floor:active{transform:translateX(4px) scale(.98)}
   background:linear-gradient(180deg,#05070a1a 0%,#05070a73 62%,var(--ink) 100%);
 }
 .reception__intro{position:relative;padding:26px var(--gutter) 0;text-align:center}
+.reception__kicker{
+  font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:10px;
+}
 .reception__intro h1{font-size:var(--step-3);margin-bottom:12px}
 .reception__intro p{color:var(--fg-dim);max-width:46ch;margin-inline:auto;font-size:.98rem}
 

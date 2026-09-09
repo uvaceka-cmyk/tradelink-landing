@@ -85,6 +85,38 @@
   }
 }
 
+/* ---------- utility cluster (search / účet / jazyk) ----------
+   Search a jazyk jsou čistě dekorativní doplňky bez funkce (web
+   nemá vyhledávání ani jinou jazykovou verzi) — proto aria-hidden
+   a mimo tab-pořadí, a na mobilu schované, aby v rozbalovacím menu
+   nezůstávaly neaktivní řádky. Přihlásit se / Založit účet jsou
+   pořád ty samé skutečné odkazy, jen na desktopu vizuálně odsazené
+   doprava a "Založit účet" jako plné tlačítko (styl "Get started"
+   z reference). */
+.nav--hud .nav__item--decorative{ display:none; }
+
+@media (min-width:1100px){
+  .nav--hud .nav__item--decorative{
+    display:inline-flex; align-items:center; padding:8px; border-radius:10px;
+  }
+  .nav--hud .nav__item--util-first{ margin-left:auto; }
+  .nav--hud .nav__locale{ gap:6px; padding-inline:10px; }
+  .nav--hud .nav__locale span{
+    font-size:.72rem; font-weight:600; letter-spacing:.06em; color:var(--muted);
+  }
+
+  .nav--hud .nav__item--button{ padding:0; }
+  .nav--hud .nav__item--button:hover,
+  .nav--hud .nav__item--button:focus-within{ background:none; border-color:transparent; }
+  .nav--hud .nav__item--button .nav__icon{ display:none; }
+  .nav--hud .nav__item--button a{
+    padding:9px 20px; border-radius:999px;
+    background:rgba(238,241,244,.96); color:#05070a; font-weight:600;
+  }
+  .nav--hud .nav__item--button a:hover,
+  .nav--hud .nav__item--button a:focus-visible{ background:#fff; color:#05070a; }
+}
+
 @media (prefers-reduced-motion:reduce){
   .nav--hud .nav__icon,.nav--hud .nav__item{ transition:none!important; }
 }
