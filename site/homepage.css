@@ -1,15 +1,13 @@
 /* TradeLink homepage visual — interaktivní atrium budovy.
    Izolované od zbytku designu — nic tady nemění vzhled ostatních stránek. */
 
-/* ---------- nav integrovaná do scény ---------- */
+/* ---------- nav integrovaná do scény ----------
+   Vizuální skin (pozadí, blur, ikony...) je v nav-hud.css a sdílí ho
+   s recepcí — tady zůstává jen to, co dělá nav součástí atria. */
 .nav--atrium{
   position:absolute; inset-inline:0; top:0; z-index:50;
-  background:rgba(6,9,13,.4);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(255,255,255,.09);
 }
-.nav--atrium .nav__bar{padding-block:11px}
-.nav--atrium .nav__menu{background:rgba(6,9,13,.72);backdrop-filter:blur(14px)}
+.nav--atrium .nav__menu{background:rgba(6,9,13,.78);backdrop-filter:blur(16px)}
 
 /* ---------- atrium — fullscreen scéna ---------- */
 .atrium{
@@ -84,10 +82,17 @@ body.is-leaving .atrium{
   z-index:3;
 }
 .elevator .floors{
+  position:relative;
   margin-top:0;
   min-width:216px;
   background:linear-gradient(180deg,#12161ce6,#090c10ee);
   box-shadow:0 30px 70px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);
+}
+/* stejná jemná metalická linka jako u horní navigace (nav-hud.css) */
+.elevator .floors::before{
+  content:"";position:absolute;left:14%;right:14%;top:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.32),transparent);
+  pointer-events:none;
 }
 .elevator .floors__head{
   display:flex;align-items:center;gap:8px;

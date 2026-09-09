@@ -1,0 +1,90 @@
+/* TradeLink — HUD navigace, sdílená homepage (atrium) a recepce.
+   Izolované pod .nav--hud — plain .nav na ostatních stránkách
+   (lobby.html, obory.html, účet...) zůstává úplně beze změny.
+   Barvy/radiusy přebírá z výtahu (.floor / .floor__num v style.css),
+   aby nav a výtah působily jako jeden systém. */
+
+.nav--hud{
+  position: sticky;
+  background: linear-gradient(180deg, rgba(7,10,14,.88), rgba(7,10,14,.72));
+  backdrop-filter: blur(18px) saturate(1.15);
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset;
+}
+.nav--hud::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.32),transparent);
+  pointer-events:none;
+}
+.nav--hud .nav__bar{ padding-block: 10px; }
+
+.nav--hud .nav__brand{
+  display:inline-flex; align-items:center; gap:9px;
+  font-size:1.02rem; font-weight:600; letter-spacing:-.01em;
+}
+.nav--hud .nav__brand-mark{
+  width:19px; height:19px; flex:none; color:var(--fg-dim);
+}
+
+.nav--hud .nav__toggle{
+  width:38px; height:38px; border-radius:10px;
+  background:rgba(255,255,255,.03);
+}
+
+/* ikona + odkaz jako jedna položka. Ikona je SOUROZENEC <a>, ne její
+   potomek — u #nav-account totiž auth.js přepisuje textContent
+   odkazu (přihlásit / můj účet) a smazal by tak i ikonu, kdyby byla
+   uvnitř. Tahle stavba to obchází bez zásahu do auth.js. */
+.nav--hud .nav__item{
+  position:relative;
+  display:flex; align-items:center; gap:12px;
+}
+.nav--hud .nav__icon{
+  width:18px; height:18px; flex:none; color:var(--muted);
+  transition:color .2s var(--ease), filter .2s var(--ease);
+}
+.nav--hud .nav__menu a{
+  flex:1; display:flex; align-items:center;
+  padding:13px 0; font-size:.92rem; letter-spacing:.03em;
+  color:var(--fg-dim); border-bottom:1px solid var(--line);
+  transition:color .2s var(--ease);
+}
+/* odkaz jako celý řádek klikatelný, i přes ikonu vedle sebe */
+.nav--hud .nav__menu a::before{
+  content:""; position:absolute; inset:0;
+}
+.nav--hud .nav__item:last-child a{ border-bottom:0; }
+
+.nav--hud .nav__item:hover .nav__icon,
+.nav--hud .nav__item:focus-within .nav__icon{
+  color:var(--accent); filter:drop-shadow(0 0 6px var(--accent-dim));
+}
+.nav--hud .nav__menu a:hover,
+.nav--hud .nav__menu a:focus-visible{ color:var(--fg); }
+
+.nav--hud .nav__item:has(a.is-cta) .nav__icon{
+  color:var(--accent); filter:drop-shadow(0 0 6px var(--accent-dim));
+}
+
+@media (min-width:1100px){
+  .nav--hud .nav__menu{ gap:4px; }
+  .nav--hud .nav__item{
+    gap:9px; padding:9px 14px; border-radius:10px;
+    border:1px solid transparent;
+    transition:background-color .2s var(--ease), border-color .2s var(--ease);
+  }
+  .nav--hud .nav__item:hover,
+  .nav--hud .nav__item:focus-within{
+    background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.14);
+  }
+  .nav--hud .nav__item:has(a.is-cta){
+    background:var(--accent-bg); border-color:var(--accent-dim);
+  }
+  .nav--hud .nav__menu a{
+    flex:none; padding:0; border-bottom:0; font-size:.82rem; letter-spacing:.08em;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .nav--hud .nav__icon,.nav--hud .nav__item{ transition:none!important; }
+}

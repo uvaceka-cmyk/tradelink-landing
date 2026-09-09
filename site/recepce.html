@@ -21,21 +21,54 @@
   <link rel="canonical" href="https://tradelink.cz/recepce">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="nav-hud.css">
   <noscript><style>.reception[data-enter]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
-  <header class="nav">
+  <header class="nav nav--hud">
     <div class="nav__bar">
-      <a class="nav__brand" href="./">TradeLink</a>
+      <a class="nav__brand" href="./">
+        <svg class="nav__brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M5 20V9M12 20V4M19 20V12"/>
+          <path d="M3 20h18"/>
+        </svg>
+        <span>TradeLink</span>
+      </a>
       <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
         <span></span>
       </button>
     </div>
     <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
-      <a href="./">Hlavní stránka</a>
-      <a href="lobby.html">Lobby</a>
-      <a href="registrace.html">Založit účet</a>
-      <a id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+      <span class="nav__item">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M4 11.5 12 4l8 7.5"/>
+          <path d="M6 10v9.5a.8.8 0 0 0 .8.8H10v-5h4v5h3.2a.8.8 0 0 0 .8-.8V10"/>
+        </svg>
+        <a href="./">Hlavní stránka</a>
+      </span>
+      <span class="nav__item">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <rect x="5" y="3" width="14" height="18" rx="2"/>
+          <path d="M10 9l2-2 2 2M10 15l2 2 2-2"/>
+        </svg>
+        <a href="lobby.html">Lobby</a>
+      </span>
+      <span class="nav__item">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="10" cy="8" r="3.2"/>
+          <path d="M3.5 19.5c0-3.3 2.8-5.5 6.5-5.5"/>
+          <path d="M17 8v6M14 11h6"/>
+        </svg>
+        <a href="registrace.html">Založit účet</a>
+      </span>
+      <span class="nav__item">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="9"/>
+          <circle cx="12" cy="10" r="3"/>
+          <path d="M6.5 18.5c1.2-2.3 3.2-3.5 5.5-3.5s4.3 1.2 5.5 3.5"/>
+        </svg>
+        <a id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+      </span>
     </nav>
   </header>
 
