@@ -117,12 +117,14 @@ None — current work is in a stable state.
 
 ## Known Issues
 
-- **Profil ani inzeráty nebyly vyzkoušené s přihlášeným účtem.** Databáze, pohledy a
-  ochrany ověřené dotazy zvenčí; formuláře reálným průchodem neprošly — chybí testovací
-  účet kvůli limitu e-mailů. Ověřit při dalším sezení.
-- **Pravidla zápisu (RLS) nejsou ověřená na skutečném řádku.** Tabulky jsou prázdné, takže
-  pokus o zápis bez přihlášení vrací „nic nezměněno" — což vypadá stejně jako zablokovaný
-  zápis. Až budou existovat data, zkusit je přepsat a smazat cizím účtem.
+- **V databázi jsou testovací data — před spuštěním smazat.** Účet
+  `uvacek.a+tlfirma@gmail.com` (heslo `TestHeslo12345`) vystupuje jako Alza.cz a.s.,
+  má zveřejněný profil a tři inzeráty (dva zveřejněné, jeden skrytý). Nechal jsem je
+  schválně, aby měl kamarád na čem stavět výpis. Úklid:
+  `delete from auth.users where email like 'uvacek.a+tl%';` (profil i inzeráty odejdou s ním).
+- **Cizí účet zatím nikdo nezkoušel.** Kontroly vlastnictví (RLS) jsou ověřené jen
+  z pohledu vlastníka a nepřihlášeného. Druhý testovací účet nešlo založit kvůli limitu
+  e-mailů — až půjde, zkusit z něj číst, měnit a mazat data toho prvního. **Musí selhat.**
 - **Rozhraní Supabase i Cloudflare padá pod překladačem Chromu.** Supabase to hlásí přímo
   chybovou stránkou. Uživatel má překlad zapnutý — než se vypne, dělat zásahy raději přes
   SQL editor (ten přežívá) nebo přes API.
@@ -152,13 +154,12 @@ None — current work is in a stable state.
 
 ## Next Steps
 
-1. Vyzkoušet profil s reálným přihlášeným účtem (uložení, zveřejnění, kontrola pohledu).
-   Nešlo to hned kvůli limitu e-mailů — viz Known Issues.
-2. **[Claude]** Inzeráty a poptávky: zadat, upravit, smazat.
-3. **[Kamarád]** Výpis po výběru podoboru nad pohledem `verejne_inzeraty` — dnes tam končí
-   placeholder „zatím připravujeme".
-4. **[Claude]** Ochrana proti falešnému obsahu: nahlášení inzerátu a fronta na kontrolu.
+1. **[Kamarád]** Výpis po výběru podoboru nad pohledem `verejne_inzeraty` — dnes tam končí
+   placeholder „zatím připravujeme". V databázi jsou testovací inzeráty, na kterých to jde
+   rovnou vidět. Filtr: `typ` + `obor` + `podobor` (na to je index).
+2. **[Claude]** Ochrana proti falešnému obsahu: nahlášení inzerátu a fronta na kontrolu.
    (Ověřená firma a limity na účet jsou už v migraci `007`.)
+3. **[Claude]** Ověřit kontroly vlastnictví z druhého účtu — viz Known Issues.
 5. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
 6. **Doména a odesílání e-mailů** — až ji uživatel koupí (`tradelink.cz` byla 9. 9. volná,
    `tradelink.com` obsazená). Postup: doména → účet u odesílatele (Resend / Brevo / Mailjet)
@@ -196,17 +197,17 @@ None — current work is in a stable state.
 
 ## Last Session
 
-**9. 9. 2026** — Výměna kompromitovaného klíče `ARES_SECRET` (byl commitnutý v `5e0534f`),
-zesílení ověřování podpisu, odstranění klíče ze zdrojáků, otestování celého řetězce.
-Založen tento handoff. Přidáno odmítání jednorázových e-mailových schránek při registraci.
+**9. 9. 2026** — Výměna kompromitovaného klíče ARES, blokace jednorázových e-mailových
+schránek, profily lidí i firem, inzeráty a poptávky. Číselník odvětví přesunut do
+`site/obory-data.js`.
 
-Přidány profily lidí i firem, číselník odvětví přesunut do `obory-data.js`.
-Klíč je v Cloudflare uložený jako Secret (zašifrovaný), testovací účet smazán.
-Ověření celého řetězce po změně typu klíče se nedokončilo — Supabase odmítl poslat
-potvrzovací e-mail kvůli limitu 2 zpráv za hodinu. Podpis se vydává, k databázi se
-dotaz nedostal. **Zopakovat registraci firmy, až limit vyprší.**
+Proběhl první reálný průchod s přihlášeným účtem. Ověřeno: registrace firmy přes ARES,
+založení profilu triggerem, odmítnutí zveřejnění bez popisu a odvětví, zadání inzerátu
+formulářem, odmítnutí krátkého popisu i inzerátu pod cizím účtem, skrytý inzerát se
+neobjeví ve veřejném výpisu, filtrování podle oboru funguje. Při testu se našla a opravila
+chyba: stránka účtu četla metadata registrace místo profilu.
 
-Poslední commit: `1393dfa`
+Poslední commit: `826e3b7`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
