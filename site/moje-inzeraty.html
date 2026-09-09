@@ -40,6 +40,7 @@
       </div>
 
       <div id="seznam"></div>
+      <div id="panel-odpovedi" style="margin-top:28px"></div>
 
       <!-- formulář se otevírá pod seznamem -->
       <form class="form" id="form" hidden style="margin-top:34px">
@@ -150,8 +151,51 @@
       return profil.account_type === 'firma' ? 'prace' : 'zakazka';
     }
 
+    /* ---------- odpovědi na inzeráty ---------- */
+    var pocty = {};
+
+    async function nactiPocty() {
+      var res = await supabase.rpc('pocty_odpovedi');
+      pocty = {};
+      (res.data || []).forEach(function (p) { pocty[p.inzerat] = p; });
+    }
+
+    function odpovedi(id) {
+      var p = pocty[id];
+      if (!p) return '';
+      return ' (' + p.pocet + (p.neprectenych ? ', ' + p.neprectenych + ' nových' : '') + ')';
+    }
+
+    async function ukazOdpovedi(idInzeratu) {
+      var res = await supabase.from('odpovedi').select('*').eq('inzerat', idInzeratu)
+        .order('created_at', { ascending: false });
+      if (res.error) return status(statusEl, czechError(res.error), 'error');
+
+      var box = document.getElementById('panel-odpovedi');
+      if (!res.data.length) {
+        box.innerHTML = '<p class=journey__lead>Na tenhle inzerát zatím nikdo neodpověděl.</p>';
+      } else {
+        box.innerHTML = res.data.map(function (o) {
+          return '<article class=recenze>' +
+            '<div class=recenze__hlava><span class=recenze__autor>' +
+              new Date(o.created_at).toLocaleString('cs-CZ') +
+              (o.precteno ? '' : ' · nové') + '</span></div>' +
+            '<p style=white-space:pre-wrap>' + o.zprava.replace(/[<>&]/g, '') + '</p>' +
+            (o.kontakt ? '<p class=field__hint>Kontakt: ' + o.kontakt.replace(/[<>&]/g, '') + '</p>' : '') +
+            '<p class=field__hint><a href=firma.html?id= + o.autor + >Zobrazit profil</a></p>' +
+          '</article>';
+        }).join('');
+
+        // označit za přečtené
+        await supabase.from('odpovedi').update({ precteno: true })
+          .eq('inzerat', idInzeratu).eq('precteno', false);
+      }
+      box.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+
     /* ---------- výpis vlastních inzerátů ---------- */
     async function nacti() {
+      await nactiPocty();
       var res = await supabase.from('inzeraty').select('*').order('created_at', { ascending: false });
       if (res.error) return status(statusEl, czechError(res.error), 'error');
 
@@ -172,6 +216,8 @@
           '<p>' + nazevOboru(i.obor) + (i.podobor ? ' → ' + i.podobor : '') +
           (i.lokalita ? ' · ' + i.lokalita : '') + (i.odmena ? ' · ' + i.odmena : '') + '</p>' +
           '<div class="actions" style="margin-top:16px">' +
+            (i.zverejnen ? '<a class="btn btn--ghost" href="inzerat.html?id=' + i.id + '">Zobrazit</a>' : '') +
+            '<button class="btn btn--ghost" type="button" data-odpovedi="' + i.id + '">Odpovědi' + odpovedi(i.id) + '</button>' +
             '<button class="btn btn--ghost" type="button" data-upravit="' + i.id + '">Upravit</button>' +
             '<button class="btn btn--ghost" type="button" data-smazat="' + i.id + '">Smazat</button>' +
           '</div></article>';
@@ -202,6 +248,8 @@
     seznam.addEventListener('click', async function (e) {
       var el = e.target.closest('[data-upravit],[data-smazat]');
       if (!el) return;
+
+      if (el.dataset.odpovedi) return ukazOdpovedi(el.dataset.odpovedi);
 
       if (el.dataset.upravit) {
         var r = await supabase.from('inzeraty').select('*').eq('id', el.dataset.upravit).single();

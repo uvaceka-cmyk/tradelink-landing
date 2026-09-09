@@ -26,16 +26,18 @@
 
   <main class="journey shell">
     <p class="journey__role">Správa</p>
-    <h1>Zpětná vazba od uživatelů</h1>
+    <h1 id="nadpis-sekce">Zpětná vazba od uživatelů</h1>
     <p class="journey__lead" id="lead">Načítám…</p>
 
     <p class="form__status" id="gate" hidden></p>
 
     <div id="obsah" hidden>
       <div class="actions" style="margin-bottom:24px">
+        <button class="btn" type="button" id="sekce">Přepnout na nahlášený obsah</button>
         <button class="btn btn--ghost" type="button" id="prepnout">Zobrazit i vyřízené</button>
       </div>
       <div id="seznam"></div>
+      <div id="seznam-nahlaseni" hidden></div>
     </div>
   </main>
 
@@ -111,6 +113,63 @@
       vsechny = !vsechny;
       e.target.textContent = vsechny ? 'Zobrazit jen nevyřízené' : 'Zobrazit i vyřízené';
       nacti();
+    });
+
+    /* ---------- nahlášený obsah ---------- */
+    var DUVODY = {
+      podvod: 'Podvod', 'neexistujici-firma': 'Neexistující firma',
+      'urazlivy-obsah': 'Urážlivý obsah', 'nesouvisi-s-oborem': 'Nesouvisí s oborem',
+      diskriminace: 'Diskriminace', spam: 'Spam', jine: 'Jiné'
+    };
+    var TYPY = { inzerat: 'Inzerát', hodnoceni: 'Hodnocení', profil: 'Profil' };
+
+    async function nactiNahlaseni() {
+      var res = await supabase.rpc('fronta_pro_spravce');
+      var box = document.getElementById('seznam-nahlaseni');
+      if (res.error) return status(gate, czechError(res.error), 'error');
+      if (!res.data.length) {
+        box.innerHTML = '<p class="journey__lead">Nic nahlášeného.</p>';
+        return;
+      }
+      box.innerHTML = res.data.map(function (n) {
+        return '<article class="card" style="margin-bottom:14px">' +
+          '<span class="tag">' + TYPY[n.typ] + '</span> ' +
+          '<span class="tag tag--trial">' + (DUVODY[n.duvod] || n.duvod) + '</span>' +
+          (n.vyrizeno ? ' <span class="tag">vyřízeno: ' + (n.vysledek || '') + '</span>' : '') +
+          (n.cil_viditelny === false ? ' <span class="tag">skryté</span>' : '') +
+          '<h3 style="margin-top:12px">' + esc(n.cil_popis || '(obsah smazán)') + '</h3>' +
+          (n.poznamka ? '<p class="nahlaseni__text">' + esc(n.poznamka) + '</p>' : '') +
+          '<p style="font-size:.82rem">' + new Date(n.created_at).toLocaleString('cs-CZ') +
+            ' · ' + (n.od_prihlaseneho ? 'přihlášený' : 'nepřihlášený') + '</p>' +
+          (n.vyrizeno ? '' :
+            '<div class="actions" style="margin-top:14px">' +
+              '<button class="btn btn--ghost" type="button" data-skryt="' + n.id + '">Skrýt obsah</button>' +
+              '<button class="btn btn--ghost" type="button" data-ponechat="' + n.id + '">Ponechat</button>' +
+            '</div>') +
+        '</article>';
+      }).join('');
+    }
+
+    document.getElementById('seznam-nahlaseni').addEventListener('click', async function (e) {
+      var el = e.target.closest('[data-skryt],[data-ponechat]');
+      if (!el) return;
+      var res = await supabase.rpc('vyridit_nahlaseni', {
+        p_id: el.dataset.skryt || el.dataset.ponechat,
+        p_skryt: Boolean(el.dataset.skryt)
+      });
+      if (res.error) return status(gate, czechError(res.error), 'error');
+      nactiNahlaseni();
+    });
+
+    document.getElementById('sekce').addEventListener('click', function (e) {
+      var naNahlaseni = document.getElementById('seznam-nahlaseni').hidden;
+      document.getElementById('seznam').hidden = naNahlaseni;
+      document.getElementById('seznam-nahlaseni').hidden = !naNahlaseni;
+      document.getElementById('prepnout').hidden = naNahlaseni;
+      document.getElementById('nadpis-sekce').textContent =
+        naNahlaseni ? 'Nahlášený obsah' : 'Zpětná vazba od uživatelů';
+      e.target.textContent = naNahlaseni ? 'Přepnout na zpětnou vazbu' : 'Přepnout na nahlášený obsah';
+      if (naNahlaseni) nactiNahlaseni();
     });
 
     (async function () {

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Detail inzerátu na TradeLinku.">
+  <title>Inzerát — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="registrace.html">Založit účet</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="journey shell">
+    <p class="form__status" id="gate" hidden></p>
+
+    <article id="obsah" hidden>
+      <p class="journey__role" id="stitek">Inzerát</p>
+      <h1 id="nazev"></h1>
+      <div class="firma__meta" id="meta"></div>
+
+      <p id="popis" style="color:var(--fg-dim);line-height:1.75;white-space:pre-wrap;margin-bottom:28px"></p>
+
+      <dl class="detail" id="udaje"></dl>
+
+      <div id="odpoved" style="margin-top:34px"></div>
+
+      <p style="margin-top:40px;font-size:.85rem;color:var(--muted)">
+        Přijde vám na inzerátu něco špatně?
+        <button class="odkaz" type="button" id="nahlasit">Nahlásit</button>
+      </p>
+      <div id="nahlaseni-form"></div>
+    </article>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span class="foot__links">
+      <a href="podminky.html">Podmínky užití</a>
+      <a href="soukromi.html">Ochrana údajů</a>
+      <a href="zpetna-vazba.html">Zpětná vazba</a>
+    </span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="obory-data.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, status, configured, czechError, paintNav } from './auth.js';
+
+    var id = new URLSearchParams(location.search).get('id');
+    var gate = document.getElementById('gate');
+    var mojeId = null;
+    var inzerat = null;
+
+    function esc(t) {
+      return String(t == null ? '' : t).replace(/[<>&"]/g, function (c) {
+        return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c];
+      });
+    }
+    function nazevOboru(kod) {
+      var o = (window.TRADELINK_OBORY || []).filter(function (x) { return x.id === kod; })[0];
+      return o ? o.name : kod;
+    }
+
+    /* ---------- odpověď na inzerát ---------- */
+    async function vykresliOdpoved() {
+      var box = document.getElementById('odpoved');
+
+      if (!mojeId) {
+        box.innerHTML = '<div class="card"><h3>Zaujalo vás to?</h3>' +
+          '<p>Odpovídat může jen přihlášený účet — díky tomu zadavatel ví, s kým mluví.</p>' +
+          '<div class="actions" style="margin-top:16px">' +
+            '<a class="btn" href="prihlaseni.html">Přihlásit se</a>' +
+            '<a class="btn btn--ghost" href="registrace.html">Založit účet</a>' +
+          '</div></div>';
+        return;
+      }
+      if (mojeId === inzerat.autor_id) {
+        box.innerHTML = '<p class="journey__lead">Tohle je váš inzerát. Odpovědi najdete v ' +
+          '<a href="moje-inzeraty.html">Mých inzerátech</a>.</p>';
+        return;
+      }
+
+      var uz = await supabase.from('odpovedi').select('*').eq('inzerat', id).eq('autor', mojeId).maybeSingle();
+      if (uz.data) {
+        box.innerHTML = '<div class="card"><h3>Už jste se ozvali</h3>' +
+          '<p style="white-space:pre-wrap">' + esc(uz.data.zprava) + '</p>' +
+          '<p class="field__hint" style="margin-top:12px">Odesláno ' +
+            new Date(uz.data.created_at).toLocaleString('cs-CZ') + '.</p></div>';
+        return;
+      }
+
+      box.innerHTML =
+        '<form class="form card" id="form-o">' +
+          '<h3>Ozvat se</h3>' +
+          '<div class="field"><label for="zprava">Vaše zpráva</label>' +
+            '<textarea id="zprava" rows="6" maxlength="2000" required ' +
+            'placeholder="Napište, proč se hlásíte a co umíte…"></textarea>' +
+            '<p class="field__hint">20–2000 znaků.</p></div>' +
+          '<div class="field"><label for="kontakt">Kontakt na vás ' +
+            '<span class="field__hint">nepovinné — telefon nebo jiný e-mail</span></label>' +
+            '<input type="text" id="kontakt" maxlength="200"></div>' +
+          '<p class="field__hint">Zadavatel uvidí vaši zprávu a odkaz na váš profil.</p>' +
+          '<p class="form__status" id="stav-o" hidden></p>' +
+          '<button class="btn" type="submit">Odeslat</button>' +
+        '</form>';
+
+      document.getElementById('form-o').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var stav = document.getElementById('stav-o');
+        var zprava = document.getElementById('zprava').value.trim();
+        if (zprava.length < 20) return status(stav, 'Napište prosím aspoň pár vět.', 'error');
+
+        var res = await supabase.from('odpovedi').insert({
+          inzerat: id, autor: mojeId, zprava: zprava,
+          kontakt: document.getElementById('kontakt').value.trim() || null
+        });
+        if (res.error) return status(stav, czechError(res.error), 'error');
+        await vykresliOdpoved();
+      });
+    }
+
+    /* ---------- nahlášení ---------- */
+    var DUVODY = [
+      ['podvod', 'Vypadá to na podvod'],
+      ['neexistujici-firma', 'Firma podle mě neexistuje'],
+      ['urazlivy-obsah', 'Urážlivý obsah'],
+      ['nesouvisi-s-oborem', 'Nesouvisí s oborem'],
+      ['diskriminace', 'Diskriminační podmínky'],
+      ['spam', 'Spam nebo reklama'],
+      ['jine', 'Jiný důvod']
+    ];
+
+    document.getElementById('nahlasit').addEventListener('click', function () {
+      var box = document.getElementById('nahlaseni-form');
+      if (box.innerHTML) { box.innerHTML = ''; return; }
+
+      box.innerHTML =
+        '<form class="form card" id="form-n" style="margin-top:14px">' +
+          '<div class="field"><label for="duvod">Co je špatně</label>' +
+            '<select id="duvod">' +
+              DUVODY.map(function (d) { return '<option value="' + d[0] + '">' + d[1] + '</option>'; }).join('') +
+            '</select></div>' +
+          '<div class="field"><label for="poznamka">Upřesnění <span class="field__hint">nepovinné</span></label>' +
+            '<textarea id="poznamka" rows="3" maxlength="1000"></textarea></div>' +
+          '<p class="form__status" id="stav-n" hidden></p>' +
+          '<button class="btn btn--ghost" type="submit">Odeslat hlášení</button>' +
+        '</form>';
+
+      document.getElementById('form-n').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var stav = document.getElementById('stav-n');
+        var res = await supabase.from('nahlaseni').insert({
+          typ: 'inzerat', cil: id, autor: mojeId,
+          duvod: document.getElementById('duvod').value,
+          poznamka: document.getElementById('poznamka').value.trim() || null
+        });
+        if (res.error) return status(stav, czechError(res.error), 'error');
+        box.innerHTML = '<p class="form__status form__status--ok" style="margin-top:14px">' +
+          'Děkujeme, podíváme se na to.</p>';
+      });
+    });
+
+    /* ---------- načtení ---------- */
+    (async function () {
+      if (!configured) return status(gate, 'Není připojená databáze.', 'error');
+      if (!id) return status(gate, 'Chybí adresa inzerátu.', 'error');
+
+      var session = await paintNav();
+      mojeId = session ? session.user.id : null;
+
+      var res = await supabase.from('verejne_inzeraty').select('*').eq('id', id).maybeSingle();
+      if (res.error) return status(gate, czechError(res.error), 'error');
+      if (!res.data) return status(gate, 'Inzerát tu není — mohl být stažený nebo mu vypršela platnost.', 'error');
+
+      inzerat = res.data;
+      document.title = inzerat.nazev + ' — TradeLink';
+      document.getElementById('stitek').textContent =
+        inzerat.typ === 'prace' ? 'Nabídka práce' : 'Poptávka zakázky';
+      document.getElementById('nazev').textContent = inzerat.nazev;
+      document.getElementById('popis').textContent = inzerat.popis;
+
+      document.getElementById('meta').innerHTML =
+        (inzerat.autor_overena_firma ? '<span class="tag tag--free">Ověřená firma</span>' : '') +
+        '<span class="tag">' + esc(nazevOboru(inzerat.obor)) +
+          (inzerat.podobor ? ' → ' + esc(inzerat.podobor) : '') + '</span>' +
+        (inzerat.lokalita ? '<span class="tag">' + esc(inzerat.lokalita) + '</span>' : '');
+
+      var radky = [];
+      radky.push(['Zadal',
+        inzerat.autor_typ === 'firma'
+          ? '<a href="firma.html?id=' + esc(inzerat.autor_id) + '">' + esc(inzerat.autor_jmeno) + '</a>'
+          : esc(inzerat.autor_jmeno)]);
+      if (inzerat.odmena) radky.push([inzerat.typ === 'prace' ? 'Mzda' : 'Rozpočet', esc(inzerat.odmena)]);
+      if (inzerat.plati_do) radky.push(['Platí do', new Date(inzerat.plati_do).toLocaleDateString('cs-CZ')]);
+      radky.push(['Zveřejněno', new Date(inzerat.created_at).toLocaleDateString('cs-CZ')]);
+      document.getElementById('udaje').innerHTML = radky.map(function (r) {
+        return '<div class="detail__row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
+      }).join('');
+
+      document.getElementById('obsah').hidden = false;
+      await vykresliOdpoved();
+    })();
+  </script>
+</body>
+</html>
