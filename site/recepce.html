@@ -3,38 +3,51 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080c0f">
-  <meta name="description" content="Recepce TradeLinku — vyberte si, co hledáte: zaměstnance, práci, zakázky, nebo firmu na zakázku.">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Recepce TradeLinku — řekněte, kdo jste a co hledáte: zaměstnance, práci, zakázky, nebo firmu na zakázku.">
   <title>Recepce — TradeLink</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav class="nav">
-    <a class="nav__brand" href="./">TradeLink</a>
-    <div class="nav__links">
-      <a href="lobby.html">Lobby</a>
-      <a href="./">Hlavní stránka</a>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
     </div>
-  </nav>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="./#cena">Cena</a>
+    </nav>
+  </header>
 
   <main>
-    <div class="reception__head">
-      <h1>Recepce</h1>
-      <p>Řekněte nám, co hledáte. Podle vaší volby se vám pak zobrazí jen relevantní obory a podobory.</p>
-    </div>
+    <!--
+      SCÉNA RECEPCE
+      data-depth="0" architektura (fotka), "2" panely a text.
+      Panely jsou <a> odkazy — vedou na výběr odvětví podle role.
+    -->
+    <section class="reception" data-scene="reception" data-camera="reception">
+      <div class="reception__media" data-depth="0">
+        <img src="recepce.jpeg" width="1600" height="900" fetchpriority="high"
+             alt="Recepce TradeLinku — mramorový pult, teplé podsvícení a logo TradeLink na stěně z černého mramoru.">
+      </div>
 
-    <div class="reception">
-      <img class="reception__bg" src="recepce.jpeg" width="1600" height="900" alt="Recepce TradeLinku — osvětlený mramorový pult s nápisem TradeLink a panelem výtahu.">
+      <div class="reception__intro" data-depth="2">
+        <h1>Recepce</h1>
+        <p>Řekněte nám, kdo jste a co hledáte. Odvětví a obory se otevřou až podle vaší volby.</p>
+      </div>
 
-      <div class="choices">
+      <div class="choices" data-depth="2">
         <div class="choices__col">
-          <p class="choices__head">Kdo jste<br>a co hledáte?</p>
+          <p class="choices__head">Kdo jste a co hledáte?</p>
 
-          <button class="choice" type="button" aria-pressed="false"
-                  data-note="Hledáte zaměstnance. Po spuštění se vám tu zobrazí obory a podobory, ve kterých můžete lidi oslovit.">
+          <a class="choice" href="obory.html?role=hledam-zamestnance">
             <span class="choice__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="9" cy="8" r="3.2"/><path d="M2.8 19.5c0-3.3 2.8-5.5 6.2-5.5s6.2 2.2 6.2 5.5"/>
                 <path d="M16.5 5.4a3 3 0 0 1 0 5.4"/><path d="M18 14.4c2 .8 3.2 2.5 3.2 5.1"/>
               </svg>
@@ -44,14 +57,13 @@
               <span class="choice__desc">Jsem firma a potřebuji nové lidi.</span>
             </span>
             <span class="choice__arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
             </span>
-          </button>
+          </a>
 
-          <button class="choice" type="button" aria-pressed="false"
-                  data-note="Hledáte práci. Po spuštění se vám tu zobrazí obory a podobory s nabídkami práce.">
+          <a class="choice" href="obory.html?role=hledam-praci">
             <span class="choice__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="8" r="3.4"/><path d="M5 19.6c0-3.5 3-5.8 7-5.8s7 2.3 7 5.8"/>
               </svg>
             </span>
@@ -60,19 +72,19 @@
               <span class="choice__desc">Chci najít práci nebo pracovní příležitost.</span>
             </span>
             <span class="choice__arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
             </span>
-          </button>
+          </a>
         </div>
 
         <div class="choices__col">
-          <p class="choices__head">Kdo jste<br>a co hledáte?</p>
+          <p class="choices__head">Kdo jste a co hledáte?</p>
 
-          <button class="choice" type="button" aria-pressed="false"
-                  data-note="Hledáte zakázky. Po spuštění se vám tu zobrazí obory a podobory s poptávkami.">
+          <a class="choice" href="obory.html?role=hledam-zakazky">
             <span class="choice__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2.8" y="7.2" width="18.4" height="12.6" rx="2"/><path d="M9 7.2V5.6a1.8 1.8 0 0 1 1.8-1.8h2.4A1.8 1.8 0 0 1 15 5.6v1.6"/><path d="M2.8 12.4h18.4"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2.8" y="7.2" width="18.4" height="12.6" rx="2"/>
+                <path d="M9 7.2V5.6a1.8 1.8 0 0 1 1.8-1.8h2.4A1.8 1.8 0 0 1 15 5.6v1.6M2.8 12.4h18.4"/>
               </svg>
             </span>
             <span class="choice__body">
@@ -80,14 +92,13 @@
               <span class="choice__desc">Jsem firma nebo živnostník a hledám nové zakázky.</span>
             </span>
             <span class="choice__arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
             </span>
-          </button>
+          </a>
 
-          <button class="choice" type="button" aria-pressed="false"
-                  data-note="Chcete zadat zakázku. Po spuštění si tu vyberete obor a najdete firmu nebo živnostníka.">
+          <a class="choice" href="obory.html?role=chci-zadat-zakazku">
             <span class="choice__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5.6 3.8h9.2l4.6 4.6v11.8a1.8 1.8 0 0 1-1.8 1.8H5.6a1.8 1.8 0 0 1-1.8-1.8V5.6a1.8 1.8 0 0 1 1.8-1.8z"/>
                 <path d="M8 12h8M8 16h5"/>
               </svg>
@@ -97,38 +108,20 @@
               <span class="choice__desc">Hledám firmu nebo živnostníka, který práci provede.</span>
             </span>
             <span class="choice__arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
             </span>
-          </button>
+          </a>
         </div>
       </div>
-    </div>
-
-    <p class="reception__status" id="status" role="status">
-      Vyberte jednu ze čtyř možností. Obory a podobory se otevřou po spuštění platformy.
-    </p>
-
-    <div class="reception__foot">
-      <a class="btn btn--ghost" href="lobby.html">Zpět do lobby</a>
-    </div>
+    </section>
   </main>
 
-  <footer>
-    <a href="./" aria-label="Domovská stránka TradeLink">TradeLink</a>
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
     <span>Lidé. Obory. Příležitosti.</span>
     <small>© 2026 TradeLink</small>
   </footer>
 
-  <script>
-    var choices = document.querySelectorAll('.choice');
-    var status = document.getElementById('status');
-    choices.forEach(function (choice) {
-      choice.addEventListener('click', function () {
-        choices.forEach(function (other) { other.setAttribute('aria-pressed', 'false'); });
-        choice.setAttribute('aria-pressed', 'true');
-        status.textContent = choice.dataset.note;
-      });
-    });
-  </script>
+  <script src="app.js" defer></script>
 </body>
 </html>

@@ -3,39 +3,75 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080c0f">
-  <meta name="description" content="Lobby TradeLinku — vstupní hala. Odtud pokračujete na recepci, kde si vyberete, co hledáte.">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Lobby TradeLinku — vstupní hala budovy. Odtud pokračujete k recepci, kde si vyberete, co hledáte.">
   <title>Lobby — TradeLink</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="lobby">
-    <div class="lobby__inner">
-      <div>
-        <p class="lobby__kicker">Lobby</p>
-        <h1 class="lobby__title">Jste uvnitř.</h1>
-        <p>
-          Vítejte v TradeLinku. Odtud vede cesta na recepci — tam si vyberete jednu ze čtyř cest
-          podle toho, kdo jste a co hledáte. Teprve pak přijdou obory a podobory.
-        </p>
-        <div class="lobby__actions">
-          <a class="btn" href="recepce.html">Pokračovat na recepci</a>
-          <a class="btn btn--ghost" href="./">Zpět na hlavní stránku</a>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="./#cena">Cena</a>
+      <a class="is-cta" href="recepce.html">Na recepci</a>
+    </nav>
+  </header>
+
+  <main>
+    <!--
+      SCÉNA LOBBY
+      Vrstvy jsou oddělené kvůli pozdější animaci pohybu kamery:
+      data-depth="0" pozadí architektury, "1" světelná záře, "2" obsah.
+      Cílový efekt: scroll = pohyb hlouběji do budovy směrem k recepci.
+    -->
+    <section class="stage lobby" data-scene="lobby" data-camera="lobby-to-reception">
+      <div class="stage__layer stage__layer--deep" data-depth="0" aria-hidden="true"></div>
+      <div class="stage__glow" data-depth="1" aria-hidden="true"></div>
+
+      <div class="shell stage__layer" data-depth="2">
+        <div class="lobby__inner">
+          <div>
+            <p class="lobby__kicker">Lobby</p>
+            <h1>Jste uvnitř.</h1>
+            <p>
+              Vstupní hala TradeLinku. Odtud vede cesta hlouběji do budovy — na recepci,
+              kde řeknete, kdo jste a co hledáte. Teprve pak se otevřou odvětví a obory.
+            </p>
+            <div class="actions">
+              <a class="btn" href="recepce.html">Pokračovat na recepci</a>
+              <a class="btn btn--ghost" href="./">Zpět na hlavní stránku</a>
+            </div>
+            <p class="scroll-hint" aria-hidden="true">Směr recepce</p>
+          </div>
+
+          <div class="floors" data-depth="2">
+            <p class="floors__head">Patra budovy</p>
+            <div class="floor"><span class="floor__num">12</span> IT a technologie</div>
+            <div class="floor"><span class="floor__num">10</span> Administrativa</div>
+            <div class="floor"><span class="floor__num">08</span> Gastro a hotelnictví</div>
+            <div class="floor"><span class="floor__num">06</span> Logistika</div>
+            <div class="floor"><span class="floor__num">04</span> Stavebnictví</div>
+            <div class="floor"><span class="floor__num">02</span> Výroba</div>
+            <div class="floor is-here"><span class="floor__num">L</span> Lobby — jste tady</div>
+          </div>
         </div>
       </div>
-
-      <div class="panel" aria-label="Přehled pater budovy TradeLink">
-        <p class="panel__head">Patra</p>
-        <div class="floor"><span class="floor__num">12</span> IT</div>
-        <div class="floor"><span class="floor__num">10</span> Administrativa</div>
-        <div class="floor"><span class="floor__num">08</span> Gastronomie</div>
-        <div class="floor"><span class="floor__num">06</span> Logistika</div>
-        <div class="floor"><span class="floor__num">04</span> Stavebnictví</div>
-        <div class="floor"><span class="floor__num">02</span> Výroba</div>
-        <div class="floor is-active"><span class="floor__num">L</span> Lobby</div>
-      </div>
-    </div>
+    </section>
   </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span>Lidé. Obory. Příležitosti.</span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="app.js" defer></script>
 </body>
 </html>
