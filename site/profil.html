@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Úprava profilu na TradeLinku.">
+  <meta name="robots" content="noindex">
+  <title>Můj profil — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="ucet.html">Můj účet</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="auth shell">
+    <div class="auth__card auth__card--wide">
+      <p class="auth__kicker" id="typ-uctu">Profil</p>
+      <h1>Můj profil</h1>
+      <p class="auth__lead" id="lead">Načítám…</p>
+
+      <form class="form" id="form" hidden novalidate>
+        <div class="detail" id="z-registru" hidden></div>
+
+        <div class="field" id="pole-jmeno">
+          <label for="jmeno" id="jmeno-label">Jméno a příjmení</label>
+          <input type="text" id="jmeno" autocomplete="name" maxlength="120">
+        </div>
+
+        <div class="field">
+          <label for="popis" id="popis-label">Čím se zabýváte</label>
+          <textarea id="popis" rows="6" maxlength="2000"></textarea>
+          <p class="field__hint"><span id="pocet">0</span> / 2000 znaků. Alespoň 20 znaků, aby šel profil zveřejnit.</p>
+        </div>
+
+        <div class="field">
+          <label for="obor">Odvětví</label>
+          <select id="obor">
+            <option value="">— vyberte —</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="podobor">Obor</label>
+          <select id="podobor" disabled>
+            <option value="">— nejdřív vyberte odvětví —</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="lokalita">Kde působíte <span class="field__hint">nepovinné</span></label>
+          <input type="text" id="lokalita" maxlength="120" placeholder="Praha a Středočeský kraj">
+        </div>
+
+        <div class="field" id="pole-web" hidden>
+          <label for="web">Web <span class="field__hint">nepovinné</span></label>
+          <input type="url" id="web" maxlength="200" placeholder="https://">
+        </div>
+
+        <div class="field" id="pole-telefon" hidden>
+          <label for="telefon">Telefon <span class="field__hint">nepovinné, uvidí ho ostatní</span></label>
+          <input type="tel" id="telefon" maxlength="30" autocomplete="tel">
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="zverejnen">
+          <span>Zveřejnit profil — ostatní ho uvidí ve výpisu. Bez zaškrtnutí zůstává skrytý.</span>
+        </label>
+
+        <p class="form__status" id="status" hidden></p>
+
+        <button class="btn" type="submit">Uložit profil</button>
+      </form>
+
+      <p class="form__status" id="gate" hidden></p>
+
+      <p class="auth__alt"><a href="ucet.html">Zpět na účet</a></p>
+    </div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span class="foot__links">
+      <a href="podminky.html">Podmínky užití</a>
+      <a href="soukromi.html">Ochrana údajů</a>
+    </span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="obory-data.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, status, busy, configured, czechError, paintNav } from './auth.js';
+
+    var form = document.getElementById('form');
+    var statusEl = document.getElementById('status');
+    var gate = document.getElementById('gate');
+    var lead = document.getElementById('lead');
+    var obory = window.TRADELINK_OBORY || [];
+
+    /* ---------- číselník odvětví ---------- */
+    var selObor = document.getElementById('obor');
+    var selPodobor = document.getElementById('podobor');
+
+    obory.forEach(function (o) {
+      selObor.insertAdjacentHTML('beforeend', '<option value="' + o.id + '">' + o.name + '</option>');
+    });
+
+    function naplnPodobory(idOboru, vybrany) {
+      var o = obory.filter(function (x) { return x.id === idOboru; })[0];
+      selPodobor.innerHTML = '<option value="">— vyberte —</option>';
+      selPodobor.disabled = !o;
+      if (!o) return;
+      o.subs.forEach(function (s) {
+        selPodobor.insertAdjacentHTML('beforeend',
+          '<option value="' + s + '"' + (s === vybrany ? ' selected' : '') + '>' + s + '</option>');
+      });
+    }
+
+    selObor.addEventListener('change', function () { naplnPodobory(selObor.value, null); });
+
+    var popis = document.getElementById('popis');
+    var pocet = document.getElementById('pocet');
+    popis.addEventListener('input', function () { pocet.textContent = popis.value.length; });
+
+    /* ---------- načtení profilu ---------- */
+    if (!configured) {
+      lead.textContent = '';
+      status(gate, 'Účty zatím nejsou připojené k databázi.', 'error');
+    } else {
+      (async function () {
+        var session = await paintNav();
+        if (!session) return window.location.replace('prihlaseni.html');
+
+        var res = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        if (res.error) {
+          lead.textContent = '';
+          return status(gate, 'Profil se nepodařilo načíst: ' + czechError(res.error), 'error');
+        }
+
+        var p = res.data;
+        var firma = p.account_type === 'firma';
+
+        document.getElementById('typ-uctu').textContent = firma ? 'Firemní profil' : 'Osobní profil';
+        lead.textContent = firma
+          ? 'Údaje z registru měnit nelze — jsou tak, jak je vede ARES. Doplňte, čemu se firma věnuje.'
+          : 'Napište, co umíte a co hledáte. Profil uvidí ostatní až po zveřejnění.';
+
+        if (firma) {
+          document.getElementById('jmeno-label').textContent = 'Kontaktní osoba';
+          document.getElementById('popis-label').textContent = 'Čím se firma zabývá';
+          document.getElementById('pole-web').hidden = false;
+          document.getElementById('pole-telefon').hidden = false;
+
+          var radky = [['Firma', p.ares_nazev || p.company_name || '—'], ['IČO', p.ico || '—']];
+          if (p.ares_sidlo) radky.push(['Sídlo', p.ares_sidlo]);
+          var box = document.getElementById('z-registru');
+          box.innerHTML = radky.map(function (r) {
+            return '<div class="detail__row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
+          }).join('');
+          box.hidden = false;
+        }
+
+        document.getElementById('jmeno').value = p.full_name || '';
+        popis.value = p.popis || '';
+        pocet.textContent = popis.value.length;
+        selObor.value = p.obor || '';
+        naplnPodobory(p.obor, p.podobor);
+        document.getElementById('lokalita').value = p.lokalita || '';
+        document.getElementById('web').value = p.web || '';
+        document.getElementById('telefon').value = p.telefon || '';
+        document.getElementById('zverejnen').checked = Boolean(p.zverejnen);
+
+        form.hidden = false;
+      })();
+    }
+
+    /* ---------- uložení ---------- */
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      status(statusEl, '');
+
+      var zverejnit = document.getElementById('zverejnen').checked;
+      if (zverejnit && popis.value.trim().length < 20) {
+        return status(statusEl, 'Ke zveřejnění potřebujeme aspoň pár vět o tom, čemu se věnujete.', 'error');
+      }
+      if (zverejnit && !selObor.value) {
+        return status(statusEl, 'Ke zveřejnění vyberte odvětví.', 'error');
+      }
+
+      var web = document.getElementById('web').value.trim();
+      if (web && !/^https?:\/\//i.test(web)) web = 'https://' + web;
+
+      busy(form, true, 'Ukládám…');
+
+      var session = (await supabase.auth.getSession()).data.session;
+      var res = await supabase.from('profiles').update({
+        full_name: document.getElementById('jmeno').value.trim() || null,
+        popis:     popis.value.trim() || null,
+        obor:      selObor.value || null,
+        podobor:   selPodobor.value || null,
+        lokalita:  document.getElementById('lokalita').value.trim() || null,
+        web:       web || null,
+        telefon:   document.getElementById('telefon').value.trim() || null,
+        zverejnen: zverejnit
+      }).eq('id', session.user.id);
+
+      busy(form, false);
+
+      if (res.error) return status(statusEl, czechError(res.error), 'error');
+
+      status(statusEl, zverejnit
+        ? 'Uloženo. Profil je zveřejněný a uvidí ho ostatní.'
+        : 'Uloženo. Profil zůstává skrytý — zveřejníte ho zaškrtnutím políčka.', 'ok');
+    });
+  </script>
+</body>
+</html>
