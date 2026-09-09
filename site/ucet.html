@@ -72,23 +72,32 @@
         if (!session) return window.location.replace('prihlaseni.html');
 
         var user = session.user;
-        var meta = user.user_metadata || {};
-        var role = ROLES[meta.role];
+
+        /* Údaje bereme z profilu, ne z metadat registrace — metadata se
+           od založení účtu nemění, profil ano. */
+        var res = await supabase.from('profiles').select('*').eq('id', user.id).single();
+        var p = res.data || {};
+        var role = ROLES[p.entry_role];
+        var firma = p.account_type === 'firma';
 
         document.getElementById('account-type').textContent = role ? role.accountLabel : 'Účet';
         document.getElementById('account-name').textContent =
-          meta.company_name || meta.full_name || 'Můj účet';
-        document.getElementById('account-lead').textContent =
-          'Platforma se teprve staví. Zatím tu máte jen svůj účet — nabídky, poptávky a profily přibudou.';
+          p.ares_nazev || p.company_name || p.full_name || 'Můj účet';
+        document.getElementById('account-lead').textContent = p.zverejnen
+          ? 'Váš profil je zveřejněný, takže vás ostatní najdou ve výpisu.'
+          : 'Váš profil je zatím skrytý. Zveřejníte ho v úpravách profilu.';
 
         var rows = [
           ['E-mail', user.email],
-          ['Typ účtu', meta.account_type === 'firma' ? 'Firma nebo živnostník' : 'Osoba'],
+          ['Typ účtu', firma ? 'Firma nebo živnostník' : 'Osoba'],
           ['Na TradeLink jste přišli jako', role ? role.title : '—']
         ];
-        if (meta.company_name) rows.push(['Firma', meta.company_name]);
-        if (meta.ico) rows.push(['IČO', meta.ico]);
-        if (meta.full_name) rows.push(['Kontaktní osoba', meta.full_name]);
+        if (p.ares_nazev || p.company_name) rows.push(['Firma', p.ares_nazev || p.company_name]);
+        if (p.ico) rows.push(['IČO', p.ico]);
+        if (p.ares_sidlo) rows.push(['Sídlo', p.ares_sidlo]);
+        if (firma) rows.push(['Ověření v ARES', p.ares_overeno_at ? 'ověřeno' : 'chybí']);
+        if (p.full_name) rows.push([firma ? 'Kontaktní osoba' : 'Jméno', p.full_name]);
+        rows.push(['Profil', p.zverejnen ? 'zveřejněný' : 'skrytý']);
 
         var detail = document.getElementById('detail');
         detail.innerHTML = rows.map(function (r) {
