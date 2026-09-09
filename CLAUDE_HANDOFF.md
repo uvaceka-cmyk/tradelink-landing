@@ -190,24 +190,21 @@ navržený text je připravený, čeká na vložení uživatelem.
 
 ## Known Issues
 
-- **V databázi jsou testovací data — před spuštěním smazat.** Dva účty, heslo u obou
-  `TestHeslo12345`:
-  - `uvacek.a+tlfirma@gmail.com` — firma (Alza.cz a.s.), **správce**, zveřejněný profil,
-    tři inzeráty, jedno hodnocení od druhého účtu
-  - `uvacek.a+tlosoba@gmail.com` — osoba, odpověděla na inzerát a firmu ohodnotila
-
-  Nechal jsem je schválně, aby měl kamarád na čem stavět výpis. Úklid:
-  `delete from auth.users where email like 'uvacek.a+tl%';` (profily, inzeráty,
-  odpovědi i hodnocení odejdou s nimi). Zbývají ještě tři vyřízená hlášení a jedna
-  zkušební zpráva ve zpětné vazbě — ty se mažou zvlášť.
+- **Databáze je prázdná — žádná testovací data.** Testovací účty i s profily, inzeráty,
+  odpověďmi, hodnoceními, hlášeními a zpětnou vazbou byly 9. 9. večer na přání uživatele
+  smazány. **Kdo bude stavět výpis, musí si testovací data vytvořit sám** — buď registrací
+  přes web (naráží na limit e-mailů), nebo vložením do `auth.users` a `auth.identities`
+  podle receptu níž.
 - **Registrace naráží na limit dvou e-mailů za hodinu**, takže druhý testovací účet
   vznikl přímo v databázi vložením do `auth.users` **a `auth.identities`** — bez toho
   druhého se účet nepřihlásí („Database error querying schema"). Hodí se to vědět,
   až bude potřeba další testovací účet, dokud není vlastní odesílatel e-mailů.
-- **Uživatel ještě nemá vlastní účet.** `uvacek.a@gmail.com` je v `private.budouci_spravci`,
-  takže se správcem stane sám, jakmile se zaregistruje. **Ten mechanismus zatím nikdo
-  nevyzkoušel** — registraci blokoval limit e-mailů. Po registraci ověřit, že `spravce`
-  je `true`. Zatím je správcem jen testovací účet `uvacek.a+tlfirma@gmail.com`.
+- **Nikdo teď není správce, na `/sprava` se nikdo nedostane.** V `private.budouci_spravci`
+  jsou `uvacek.a@gmail.com` i `info@tradelink.cz` — oba se stanou správcem sami, jakmile
+  se s tou adresou zaregistrují. **Ten mechanismus zatím nikdo nevyzkoušel**, po první
+  registraci ověřit, že `spravce` je `true`.
+  Uživatel chce svůj účet na `info@tradelink.cz`; to jde až po zprovoznění domény a pošty.
+  **Heslo si volí sám a nikde se nesdílí** — nevymýšlet mu ho ani ho po něm nechtít.
 - **Automatické skrytí při třech hlášeních jde zneužít** — tři spolčené účty shodí
   konkurenci, než se k tomu správce dostane. Zatím to beru jako přijatelnou cenu za to,
   že podvod neviselo ve výpisu; při větším provozu zvážit vyšší mez nebo váhu podle
