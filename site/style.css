@@ -479,3 +479,8 @@ p{margin:0}
 @media (min-width:600px){
   .auth__card{padding:38px 34px}
 }
+
+/* pole s tlačítkem vedle (ověření IČO) */
+.field__row{display:flex;gap:10px;align-items:stretch}
+.field__row input{flex:1;min-width:0}
+.btn--inline{width:auto;min-height:50px;padding:0 20px;font-size:.92rem;flex:none;border-radius:11px}

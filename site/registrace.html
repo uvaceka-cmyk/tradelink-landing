@@ -33,14 +33,14 @@
       <p class="auth__lead" id="account-lead">Vyplňte údaje a potvrďte e-mail, který vám přijde.</p>
 
       <form class="form" id="form" novalidate>
-        <div class="field" id="field-company" hidden>
-          <label for="company">Název firmy</label>
-          <input type="text" id="company" name="company" autocomplete="organization">
-        </div>
-
         <div class="field" id="field-ico" hidden>
-          <label for="ico">IČO <span class="field__hint">nepovinné</span></label>
-          <input type="text" id="ico" name="ico" inputmode="numeric" autocomplete="off">
+          <label for="ico">IČO</label>
+          <div class="field__row">
+            <input type="text" id="ico" name="ico" inputmode="numeric" maxlength="8" autocomplete="off">
+            <button class="btn btn--ghost btn--inline" type="button" id="verify">Ověřit</button>
+          </div>
+          <p class="field__hint">Firmu dohledáme v registru ARES.</p>
+          <p class="form__status" id="ares" hidden></p>
         </div>
 
         <div class="field">
@@ -85,7 +85,7 @@
   <script src="supabase-config.js"></script>
   <script src="app.js" defer></script>
   <script type="module">
-    import { supabase, ROLES, roleFromUrl, status, busy, requireConfig, czechError, paintNav } from './auth.js';
+    import { supabase, ROLES, roleFromUrl, status, busy, requireConfig, czechError, paintNav, configured } from './auth.js';
 
     var role = roleFromUrl();
     var meta = ROLES[role];
@@ -96,15 +96,77 @@
     document.getElementById('account-lead').textContent =
       meta.title + ' — vyplňte údaje a potvrďte e-mail, který vám přijde.';
 
+    var icoField = document.getElementById('ico');
+    var aresEl = document.getElementById('ares');
+    var verifyBtn = document.getElementById('verify');
+
     if (isCompany) {
-      document.getElementById('field-company').hidden = false;
       document.getElementById('field-ico').hidden = false;
-      document.getElementById('company').required = true;
+      icoField.required = true;
       document.getElementById('name-label').textContent = 'Kontaktní osoba';
     }
 
     paintNav();
 
+    /* ---------- ověření firmy v ARES ---------- */
+    var firma = null;   // { ico, nazev, sidlo } po úspěšném ověření
+
+    function resetFirma() {
+      firma = null;
+      status(aresEl, '');
+    }
+
+    icoField.addEventListener('input', function () {
+      icoField.value = icoField.value.replace(/\D/g, '').slice(0, 8);
+      if (firma && firma.ico !== icoField.value) resetFirma();
+    });
+
+    async function overitFirmu() {
+      var ico = icoField.value.trim();
+      if (ico.length !== 8) {
+        resetFirma();
+        return status(aresEl, 'IČO má osm číslic.', 'error');
+      }
+
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Hledám…';
+      status(aresEl, '');
+
+      try {
+        var res = await fetch('/api/ares?ico=' + encodeURIComponent(ico));
+        var data = await res.json();
+
+        if (!data.ok) {
+          resetFirma();
+          return status(aresEl, data.zprava || 'Firmu se nepodařilo ověřit.', 'error');
+        }
+
+        /* Jedno IČO smí mít jen jeden účet. */
+        if (configured) {
+          var taken = await supabase.rpc('ico_je_obsazene', { p_ico: ico });
+          if (taken.data === true) {
+            resetFirma();
+            return status(aresEl, 'Na toto IČO už je účet založený. Přihlaste se, nebo napište na podporu.', 'error');
+          }
+        }
+
+        firma = { ico: data.ico, nazev: data.nazev, sidlo: data.sidlo };
+        status(aresEl, 'Ověřeno v ARES: ' + data.nazev + (data.sidlo ? ' — ' + data.sidlo : ''), 'ok');
+      } catch (e) {
+        resetFirma();
+        status(aresEl, 'Ověření se nepodařilo spustit. Zkuste to prosím znovu.', 'error');
+      } finally {
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Ověřit';
+      }
+    }
+
+    verifyBtn.addEventListener('click', overitFirmu);
+    icoField.addEventListener('blur', function () {
+      if (icoField.value.length === 8 && !firma) overitFirmu();
+    });
+
+    /* ---------- odeslání ---------- */
     var form = document.getElementById('form');
     var statusEl = document.getElementById('status');
 
@@ -112,6 +174,9 @@
       e.preventDefault();
       status(statusEl, '');
 
+      if (isCompany && !firma) {
+        return status(statusEl, 'Nejdřív prosím ověřte IČO své firmy.', 'error');
+      }
       if (!document.getElementById('consent').checked) {
         return status(statusEl, 'Bez souhlasu se zpracováním údajů účet založit nelze.', 'error');
       }
@@ -131,8 +196,10 @@
             role: role,
             account_type: meta.account,
             full_name: document.getElementById('name').value.trim(),
-            company_name: isCompany ? document.getElementById('company').value.trim() : null,
-            ico: isCompany ? document.getElementById('ico').value.trim() || null : null
+            company_name: firma ? firma.nazev : null,
+            ico: firma ? firma.ico : null,
+            ares_nazev: firma ? firma.nazev : null,
+            ares_sidlo: firma ? firma.sidlo : null
           }
         }
       });
