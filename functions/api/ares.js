@@ -95,16 +95,31 @@ export async function onRequestGet({ request, env }) {
     vznik: data.datumVzniku || null
   };
 
-  /* Podpis pro databázi. Bez klíče projde ověření jen v prohlížeči
-     a databáze registraci firmy odmítne — to je zamýšlené chování,
-     ne tiché selhání. */
-  if (env && env.ARES_SECRET) {
+  /* Podpis pro databázi. Bez klíče nebo při chybě podpisu
+     nevracíme ověření vůbec — registrace firmy se má zastavit,
+     ne tiše projít bez ověření. */
+  const tajemstvi = env && env.ARES_SECRET;
+  if (!tajemstvi || tajemstvi.length < 32) {
+    return json({
+      ok: false,
+      duvod: 'podpis-nedostupny',
+      zprava: 'Ověřování firem je dočasně mimo provoz. Zkuste to prosím později.'
+    }, 503);
+  }
+
+  try {
     const platiDo = Math.floor(Date.now() / 1000) + PLATNOST_SEKUND;
     const podpis = await podepsat(
       odpoved.ico + ':' + odpoved.nazev + ':' + platiDo,
-      env.ARES_SECRET
+      tajemstvi
     );
     odpoved.token = platiDo + '.' + podpis;
+  } catch (e) {
+    return json({
+      ok: false,
+      duvod: 'podpis-selhal',
+      zprava: 'Ověřování firem je dočasně mimo provoz. Zkuste to prosím později.'
+    }, 503);
   }
 
   return json(odpoved);

@@ -32,10 +32,19 @@ alter table private.app_secrets enable row level security;
 revoke all on schema private from anon, authenticated;
 revoke all on table private.app_secrets from anon, authenticated;
 
--- POZOR: stejná hodnota musí být v Cloudflare jako ARES_SECRET.
+-- Klíč se do souboru NEZAPISUJE. Repozitář je veřejný.
+--
+-- Vygenerování nového klíče (hodnotu nikam nekopírujte ručně):
+--   update private.app_secrets
+--      set hodnota = encode(extensions.gen_random_bytes(32), 'hex')
+--    where klic = 'ares_secret';
+--
+-- Stejnou hodnotu je pak potřeba nastavit v Cloudflare jako proměnnou
+-- ARES_SECRET (Workers & Pages → tradelink-landing → Settings →
+-- Variables and Secrets) a projekt znovu nasadit.
 insert into private.app_secrets (klic, hodnota)
-values ('ares_secret', 'bb05f3be8e7e11a001363e5bccb55c7230dae0662966d1818e9c700085691482')
-on conflict (klic) do update set hodnota = excluded.hodnota;
+values ('ares_secret', encode(extensions.gen_random_bytes(32), 'hex'))
+on conflict (klic) do nothing;
 
 -- ---------------------------------------------------------
 -- Ověření podpisu: token má tvar "platiDo.hmac"
