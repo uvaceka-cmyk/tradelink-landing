@@ -45,6 +45,14 @@
         <a class="btn btn--ghost" href="recepce.html">Zpět na recepci</a>
         <button class="btn btn--ghost" type="button" id="signout">Odhlásit se</button>
       </div>
+
+      <div class="zruseni">
+        <h2>Zrušení účtu</h2>
+        <p>Zrušením účtu se nenávratně smaže váš profil, inzeráty, odpovědi i hodnocení,
+           která jste napsali. Vrátit to nepůjde.</p>
+        <p class="form__status" id="stav-zruseni" hidden></p>
+        <button class="btn btn--ghost" type="button" id="zrusit-ucet">Zrušit účet a smazat údaje</button>
+      </div>
     </div>
   </main>
 
@@ -109,6 +117,18 @@
         document.getElementById('actions').hidden = false;
       })();
     }
+
+    document.getElementById('zrusit-ucet').addEventListener('click', async function () {
+      var stav = document.getElementById('stav-zruseni');
+      if (!window.confirm('Opravdu zrušit účet? Smažou se všechna vaše data a vrátit to nepůjde.')) return;
+      if (!window.confirm('Poslední potvrzení — účet i s obsahem bude nenávratně smazán.')) return;
+
+      var res = await supabase.rpc('zrusit_muj_ucet');
+      if (res.error) return status(stav, res.error.message, 'error');
+
+      await supabase.auth.signOut();
+      window.location.assign('./');
+    });
 
     document.getElementById('signout').addEventListener('click', async function () {
       await supabase.auth.signOut();

@@ -214,6 +214,12 @@
         return '<article class="card" style="margin-bottom:14px">' +
           stav + prosly +
           '<h3>' + i.nazev + '</h3>' +
+          (i.skryto_duvod
+            ? '<p class="form__status form__status--error" style="margin:10px 0">' +
+                'Skryto ' + new Date(i.skryto_at).toLocaleDateString('cs-CZ') + ': ' + i.skryto_duvod +
+                ' Pokud s tím nesouhlasíte, napište nám.' +
+              '</p>'
+            : '') +
           '<p>' + nazevOboru(i.obor) + (i.podobor ? ' → ' + i.podobor : '') +
           (i.lokalita ? ' · ' + i.lokalita : '') + (i.odmena ? ' · ' + i.odmena : '') + '</p>' +
           '<div class="actions" style="margin-top:16px">' +

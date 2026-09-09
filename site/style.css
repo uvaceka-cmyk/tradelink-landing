@@ -587,3 +587,15 @@ p{margin:0}
   transition:background .2s var(--ease);
 }
 .sdileni__odkaz:hover{background:var(--accent-bg)}
+
+/* zrušení účtu a povinná sdělení */
+.zruseni{
+  margin-top:40px;padding-top:26px;border-top:1px solid var(--line);
+}
+.zruseni h2{font-size:var(--step-1);margin-bottom:10px}
+.zruseni p{color:var(--muted);font-size:.9rem;line-height:1.7;margin-bottom:16px}
+.overovani-recenzi{
+  color:var(--muted);font-size:.88rem;line-height:1.7;margin-bottom:22px;
+  border-left:2px solid var(--line-2);padding-left:16px;
+}
+.overovani-recenzi strong{color:var(--fg-dim)}
