@@ -39,6 +39,11 @@ Web je celý česky. Vlastní doména zatím není.
 - název a sídlo se do profilu zapisují jen z podepsaných dat, ne od zadávajícího
 - jedno IČO = jeden účet (unikátní index v databázi)
 
+**Ověřování lidí**
+- potvrzení e-mailu je vyžadované pro všechny účty (nastaveno v Supabase)
+- jednorázové schránky (mailinator, yopmail a spol.) se odmítají — seznam je
+  v , kontrola běží v triggeru, formulář ji jen předběhne
+
 **Právní texty** — GDPR zásady a podmínky užití, odkazované z patičky všech stránek
 a od souhlasu při registraci.
 
@@ -66,6 +71,10 @@ None — current work is in a stable state.
   (povinné IČO, unikátnost, platný podpis) jsou v triggeru a v indexech.
 - **Klíč `ARES_SECRET` se nikdy nezapisuje do repozitáře.** V migraci se generuje přes
   `gen_random_bytes`, hodnota žije jen v Supabase (`private.app_secrets`) a v Cloudflare.
+- **Lidé se ověřují e-mailem, ne telefonem.** SMS by znamenaly účet u poskytovatele a
+  platbu za každou zprávu — u služby, která je pro lidi zdarma, přímý náklad na registraci
+  i terč pro zneužití. Místo toho běží blokace jednorázových schránek. Telefon se může
+  přidat později jako **nepovinný** odznak důvěry, ne jako podmínka registrace.
 - **Dělba práce:** obory (rozšíření na ~30), fotky a animace dělá kamarád uživatele.
   Doménu zařizuje uživatel později.
 - **Na projektu pracují dva lidé pod jedním účtem Claude**, z různých počítačů a terminálů.
@@ -100,6 +109,8 @@ None — current work is in a stable state.
   zatím nikdo nedělá; je to popsané v podmínkách užití.
 - **Starý uniklý klíč zůstává v historii gitu** (commit `5e0534f`). Je neplatný, takže
   nepředstavuje riziko; vyčištění historie by rozbilo existující klony.
+- **Seznam jednorázových domén zastarává.** Nové schránky vznikají průběžně; doplňují se
+  řádkem .
 - **Lobby nemá fotku** — je poskládané z CSS. Čeká na obrázek od kamaráda.
 - **Odvětví je zatím 6**, uživatel chce ~30 (seznam měl ze starší verze webu).
 - **Animace nejsou implementované.** Struktura je připravená: sekce nesou `data-scene`,
@@ -125,8 +136,8 @@ None — current work is in a stable state.
 - `site/supabase-config.js` — adresa projektu a veřejný publishable klíč (patří do prohlížeče)
 - `site/style.css` — celý designový systém, mobile-first, breakpointy 600/900/1100/1500 px
 - `functions/api/ares.js` — ověření firmy v ARES a podpis výsledku
-- `supabase/schema.sql` → `002` → `003` → `004` — migrace v tomto pořadí; spouští se ručně
-  v SQL editoru Supabase
+- `supabase/schema.sql` → `002` → `003` → `004` → `005` — migrace v tomto pořadí; spouští se
+  ručně v SQL editoru Supabase. Trigger `handle_new_user` je vždy v té nejnovější z nich.
 
 ## Do Not Change
 
@@ -140,12 +151,10 @@ None — current work is in a stable state.
 
 ## Last Session
 
-**9. 9. 2026** — Výměna kompromitovaného klíče `ARES_SECRET` (byl commitnutý v `5e0534f`),
-zesílení ověřování podpisu (porovnání odolné proti měření času, strop platnosti, fail closed),
-odstranění klíče ze zdrojáků. Otestován celý řetězec: platná registrace projde, podvržený
-i starým klíčem podepsaný pokus databáze odmítne.
+**9. 9. 2026** — Výměna kompromitovaného klíče  (byl commitnutý v ),
+zesílení ověřování podpisu, odstranění klíče ze zdrojáků, otestování celého řetězce.
+Založen tento handoff. Přidáno odmítání jednorázových e-mailových schránek při registraci.
 
-Poslední commit: `7644ab2`
-
-Doplněno: na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů —
-sessions nemají společnou paměť, kontext drží jen repozitář a tento soubor.
+Poslední commit: 
+Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
+společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
