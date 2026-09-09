@@ -4,8 +4,9 @@
 
 TradeLink je statický web nasazený na Cloudflare Pages, napojený na Supabase (účty + databáze)
 a na registr ARES (ověřování firem). Průchod homepage → lobby → recepce → obor → podobor je
-funkční, účty a ověřování firem fungují a jsou otestované. Vlastní obsah platformy
-(profily, inzeráty, poptávky) zatím neexistuje — po výběru podoboru se zobrazí „zatím připravujeme".
+funkční, účty a ověřování firem fungují a jsou otestované. Profily lidí i firem se dají
+vyplnit a zveřejnit. **Inzeráty a poptávky zatím nejsou** — po výběru podoboru se pořád
+zobrazí „zatím připravujeme", takže na sebe uživatelé ještě nevidí.
 
 **Živě:** https://tradelink-landing.pages.dev
 **Repo:** https://github.com/uvaceka-cmyk/tradelink-landing (veřejné, větev `main`)
@@ -112,9 +113,6 @@ None — current work is in a stable state.
 - **Redirect URL allow-list v Supabase není nastavený.** Obchází to směrovač v `app.js`,
   který odkazy z e-mailů přesměruje z úvodní stránky, kam patří. Správně tam patří
   `https://tradelink-landing.pages.dev/**`.
-- **Google Translate rozbíjí dashboardy Supabase i Cloudflare** — přepisuje DOM, aplikace
-  padají a neukazují data (kvůli tomu se jednou nezobrazila existující proměnná prostředí).
-  Před prací v dashboardech vypnout překlad pro daný web.
 - **Supabase zdarma pošle jen 2 e-maily za hodinu.** Na ostrý provoz je potřeba vlastní
   doména a odesílací služba.
 - **ARES neověří oprávnění.** Potvrdí, že firma existuje — ne že IČO zadal její jednatel.
@@ -178,7 +176,7 @@ Ověření celého řetězce po změně typu klíče se nedokončilo — Supabas
 potvrzovací e-mail kvůli limitu 2 zpráv za hodinu. Podpis se vydává, k databázi se
 dotaz nedostal. **Zopakovat registraci firmy, až limit vyprší.**
 
-Poslední commit: `3b9f4f8`
+Poslední commit: `d10e5b2`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
