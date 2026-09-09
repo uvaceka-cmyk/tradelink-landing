@@ -53,6 +53,14 @@ Web je celý česky. Vlastní doména zatím není.
 - ostatním se ukazuje přes pohled `public.verejne_profily` — bez e-mailu, telefon a sídlo
   jen u firem
 
+**Inzeráty a poptávky** (`site/moje-inzeraty.html`, migrace `007`)
+- typ `prace` zadává firma, typ `zakazka` soukromá osoba; texty formuláře se mění podle účtu
+- zadat, upravit, smazat, skrýt / zveřejnit, nepovinná platnost do data
+- ochrany v databázi: nabídku práce zadá jen firma **ověřená v ARES**, neověřená firma
+  nezadá nic, jeden účet smí mít naráz nejvýš **20 zveřejněných** inzerátů
+- `public.verejne_inzeraty` je rozhraní pro výpis — vynechává skryté i prošlé inzeráty
+  a e-mail autora; nese jméno autora, typ účtu a příznak ověřené firmy
+
 **Právní texty** — GDPR zásady a podmínky užití, odkazované z patičky všech stránek
 a od souhlasu při registraci.
 
@@ -108,12 +116,12 @@ None — current work is in a stable state.
 
 ## Known Issues
 
-- **Profil nebyl vyzkoušený s přihlášeným účtem.** Databáze i pohled ověřené dotazy, ale
-  celý formulář (načtení, uložení, zveřejnění) zatím neprošel reálným průchodem — došel
-  limit na odesílání e-mailů, takže nešlo založit testovací účet. Ověřit při dalším sezení.
-- **Pravidla zápisu do `profiles` nejsou ověřená na skutečném řádku.** Tabulka je prázdná,
-  takže pokus o zápis bez přihlášení vrací „nic nezměněno" — což vypadá stejně jako by
-  vypadal zablokovaný zápis. Až bude existovat profil, zkusit ho přepsat cizím účtem.
+- **Profil ani inzeráty nebyly vyzkoušené s přihlášeným účtem.** Databáze, pohledy a
+  ochrany ověřené dotazy zvenčí; formuláře reálným průchodem neprošly — chybí testovací
+  účet kvůli limitu e-mailů. Ověřit při dalším sezení.
+- **Pravidla zápisu (RLS) nejsou ověřená na skutečném řádku.** Tabulky jsou prázdné, takže
+  pokus o zápis bez přihlášení vrací „nic nezměněno" — což vypadá stejně jako zablokovaný
+  zápis. Až budou existovat data, zkusit je přepsat a smazat cizím účtem.
 - **Rozhraní Supabase i Cloudflare padá pod překladačem Chromu.** Supabase to hlásí přímo
   chybovou stránkou. Uživatel má překlad zapnutý — než se vypne, dělat zásahy raději přes
   SQL editor (ten přežívá) nebo přes API.
@@ -166,6 +174,8 @@ None — current work is in a stable state.
   rozšíření na ~30 odvětví. `id` u existujícího odvětví neměnit, ukládá se do profilů.
 - `site/obory.html` + `site/app.js` — výběr odvětví a podoboru; role v `ROLES`
 - `site/profil.html` — formulář profilu, zveřejnění, výběr odvětví z číselníku
+- `site/moje-inzeraty.html` — zadávání a správa inzerátů
+- `supabase/007-inzeraty.sql` — tabulka inzerátů, ochrany proti zneužití, pohled `verejne_inzeraty`
 - `site/auth.js` — Supabase klient, mapování rolí na typ účtu, překlad chybových hlášek
 - `site/supabase-config.js` — adresa projektu a veřejný publishable klíč (patří do prohlížeče)
 - `site/style.css` — celý designový systém, mobile-first, breakpointy 600/900/1100/1500 px
@@ -195,7 +205,7 @@ Ověření celého řetězce po změně typu klíče se nedokončilo — Supabas
 potvrzovací e-mail kvůli limitu 2 zpráv za hodinu. Podpis se vydává, k databázi se
 dotaz nedostal. **Zopakovat registraci firmy, až limit vyprší.**
 
-Poslední commit: `d10e5b2`
+Poslední commit: `1393dfa`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
