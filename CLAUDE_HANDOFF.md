@@ -141,7 +141,12 @@ None — current work is in a stable state.
 4. Ochrana proti falešnému obsahu: inzerát smí zadat jen ověřená firma, limit na účet,
    nahlášení, fronta na kontrolu.
 3. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
-4. Nastavit redirect URL v Supabase a doménu, až bude k dispozici (kvůli doručitelnosti e-mailů).
+5. **Doména a odesílání e-mailů** — až ji uživatel koupí (`tradelink.cz` byla 9. 9. volná,
+   `tradelink.com` obsazená). Postup: doména → účet u odesílatele (Resend / Brevo / Mailjet)
+   → ověřit doménu záznamy SPF a DKIM v DNS → v Supabase přepnout na vlastní SMTP a zvednout
+   limit v Auth → Rate Limits (i s vlastním SMTP je výchozí 30/hodinu). Pak teprve padne
+   limit 2 zprávy za hodinu. Zároveň nastavit novou doménu jako Site URL a přidat ji do
+   redirect allow-listu, a napojit ji na Cloudflare Pages.
 
 ## Important Files
 
