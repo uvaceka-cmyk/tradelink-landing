@@ -157,8 +157,10 @@
         } else {
           box.innerHTML = '<div class="kroky">' +
             '<h2>Co dál</h2>' +
-            '<p class="kroky__uvod">Zbývají ' + zbyva.length + ' ' +
-              (zbyva.length === 1 ? 'krok' : (zbyva.length < 5 ? 'kroky' : 'kroků')) +
+            '<p class="kroky__uvod">' +
+              (zbyva.length === 1 ? 'Zbývá jeden krok' :
+               zbyva.length < 5 ? 'Zbývají ' + zbyva.length + ' kroky' :
+                                  'Zbývá ' + zbyva.length + ' kroků') +
               ', než vás ostatní najdou.</p>' +
             kroky.map(function (k, i) {
               return '<div class="krok' + (k.hotovo ? ' je-hotovy' : '') + '">' +
