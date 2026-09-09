@@ -28,29 +28,79 @@
       <img class="reception__bg" src="recepce.jpeg" width="1600" height="900" alt="Recepce TradeLinku — osvětlený mramorový pult s nápisem TradeLink a panelem výtahu.">
 
       <div class="choices">
-        <button class="choice choice--1" type="button" aria-pressed="false"
-                data-note="Hledáte zaměstnance. Po spuštění se vám tu zobrazí obory a podobory, ve kterých můžete lidi oslovit.">
-          <h3>Hledám zaměstnance</h3>
-          <p>Jsem firma a potřebuji nové lidi.</p>
-        </button>
+        <div class="choices__col">
+          <p class="choices__head">Kdo jste<br>a co hledáte?</p>
 
-        <button class="choice choice--2" type="button" aria-pressed="false"
-                data-note="Hledáte práci. Po spuštění se vám tu zobrazí obory a podobory s nabídkami práce.">
-          <h3>Hledám práci</h3>
-          <p>Chci najít práci nebo pracovní příležitost.</p>
-        </button>
+          <button class="choice" type="button" aria-pressed="false"
+                  data-note="Hledáte zaměstnance. Po spuštění se vám tu zobrazí obory a podobory, ve kterých můžete lidi oslovit.">
+            <span class="choice__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="8" r="3.2"/><path d="M2.8 19.5c0-3.3 2.8-5.5 6.2-5.5s6.2 2.2 6.2 5.5"/>
+                <path d="M16.5 5.4a3 3 0 0 1 0 5.4"/><path d="M18 14.4c2 .8 3.2 2.5 3.2 5.1"/>
+              </svg>
+            </span>
+            <span class="choice__body">
+              <span class="choice__title">Hledám zaměstnance</span>
+              <span class="choice__desc">Jsem firma a potřebuji nové lidi.</span>
+            </span>
+            <span class="choice__arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+            </span>
+          </button>
 
-        <button class="choice choice--3" type="button" aria-pressed="false"
-                data-note="Hledáte zakázky. Po spuštění se vám tu zobrazí obory a podobory s poptávkami.">
-          <h3>Hledám zakázky</h3>
-          <p>Jsem firma nebo živnostník a hledám nové zakázky.</p>
-        </button>
+          <button class="choice" type="button" aria-pressed="false"
+                  data-note="Hledáte práci. Po spuštění se vám tu zobrazí obory a podobory s nabídkami práce.">
+            <span class="choice__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="3.4"/><path d="M5 19.6c0-3.5 3-5.8 7-5.8s7 2.3 7 5.8"/>
+              </svg>
+            </span>
+            <span class="choice__body">
+              <span class="choice__title">Hledám práci</span>
+              <span class="choice__desc">Chci najít práci nebo pracovní příležitost.</span>
+            </span>
+            <span class="choice__arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+            </span>
+          </button>
+        </div>
 
-        <button class="choice choice--4" type="button" aria-pressed="false"
-                data-note="Chcete zadat zakázku. Po spuštění si tu vyberete obor a najdete firmu nebo živnostníka.">
-          <h3>Chci zadat zakázku</h3>
-          <p>Hledám firmu nebo živnostníka, který práci provede.</p>
-        </button>
+        <div class="choices__col">
+          <p class="choices__head">Kdo jste<br>a co hledáte?</p>
+
+          <button class="choice" type="button" aria-pressed="false"
+                  data-note="Hledáte zakázky. Po spuštění se vám tu zobrazí obory a podobory s poptávkami.">
+            <span class="choice__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2.8" y="7.2" width="18.4" height="12.6" rx="2"/><path d="M9 7.2V5.6a1.8 1.8 0 0 1 1.8-1.8h2.4A1.8 1.8 0 0 1 15 5.6v1.6"/><path d="M2.8 12.4h18.4"/>
+              </svg>
+            </span>
+            <span class="choice__body">
+              <span class="choice__title">Hledám zakázky</span>
+              <span class="choice__desc">Jsem firma nebo živnostník a hledám nové zakázky.</span>
+            </span>
+            <span class="choice__arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+            </span>
+          </button>
+
+          <button class="choice" type="button" aria-pressed="false"
+                  data-note="Chcete zadat zakázku. Po spuštění si tu vyberete obor a najdete firmu nebo živnostníka.">
+            <span class="choice__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5.6 3.8h9.2l4.6 4.6v11.8a1.8 1.8 0 0 1-1.8 1.8H5.6a1.8 1.8 0 0 1-1.8-1.8V5.6a1.8 1.8 0 0 1 1.8-1.8z"/>
+                <path d="M8 12h8M8 16h5"/>
+              </svg>
+            </span>
+            <span class="choice__body">
+              <span class="choice__title">Chci zadat zakázku</span>
+              <span class="choice__desc">Hledám firmu nebo živnostníka, který práci provede.</span>
+            </span>
+            <span class="choice__arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
 
