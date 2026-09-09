@@ -86,6 +86,18 @@ Web je celý česky. Vlastní doména zatím není.
 - hodnocení TradeLinku, návrhy a hlášení chyb; psát smí i nepřihlášený
 - čte jen správce (`profiles.spravce`) na `site/sprava.html`
 
+**Viditelnost ve vyhledávačích**
+- `/nabidka/<id>` — inzerát **vykreslený na serveru** (`functions/nabidka/[id].js`).
+  Nutné proto, že Seznam JavaScript nespouští vůbec a Google se zpožděním; stránka
+  `inzerat.html` je pro prohlížeč, `/nabidka/<id>` pro vyhledávače a sdílení.
+- nabídky práce nesou **JobPosting** (Google Jobs), poptávky obecný Offer
+- `/sitemap.xml` (`functions/sitemap.xml.js`) se generuje z databáze, nový inzerát je
+  v mapě hned
+- `site/robots.txt` drží mimo výsledky přihlašování, účty, správu i `inzerat.html`
+  (aby se tentýž obsah nepočítal dvakrát)
+- popisky pro sdílení na veřejných stránkách, `noindex` na soukromých
+- kanonická adresa se dopočítá v `app.js` podle toho, kde web běží
+
 **Právní texty** — GDPR zásady a podmínky užití, odkazované z patičky všech stránek
 a od souhlasu při registraci.
 
@@ -172,6 +184,11 @@ None — current work is in a stable state.
 - **Redirect URL allow-list v Supabase není nastavený.** Obchází to směrovač v `app.js`,
   který odkazy z e-mailů přesměruje z úvodní stránky, kam patří. Správně tam patří
   `https://tradelink-landing.pages.dev/**`.
+- **Doména `tradelink.cz` je koupená u Wedosu a přidaná do Cloudflare** (zóna
+  `3c2c776363aa922f8773259560ddc32e`, stav `pending`). Čeká na to, až uživatel ve Wedosu
+  přepne jmenné servery na `ken.ns.cloudflare.com` a `paislee.ns.cloudflare.com`.
+  Do té doby web běží jen na pages.dev. Po aktivaci: připojit doménu k Pages projektu,
+  přesměrovat pages.dev na tradelink.cz, změnit Site URL v Supabase.
 - **Supabase zdarma pošle jen 2 e-maily za hodinu**, což omezuje i testování registrací.
   Zruší se to vlastním odesílatelem (custom SMTP), ten ale bez domény funguje jen na půl.
   Uživatel se rozhodl pořídit doménu a udělat to rovnou pořádně — **koupí ji po výplatě**.
@@ -216,6 +233,9 @@ None — current work is in a stable state.
 - `site/moje-inzeraty.html` — zadávání a správa inzerátů, přehled odpovědí
 - `site/inzerat.html` — veřejný detail inzerátu, odpověď, nahlášení
 - `site/moje-odpovedi.html` — přehled odeslaných odpovědí
+- `functions/nabidka/[id].js` — inzerát vykreslený na serveru pro vyhledávače
+- `functions/sitemap.xml.js` — mapa webu z databáze
+- `site/robots.txt` — co smí vyhledávače procházet
 - `site/firma.html` — veřejný profil firmy, hodnocení
 - `site/sprava.html` — zpětná vazba a fronta nahlášeného obsahu (jen pro správce)
 - `site/zpetna-vazba.html` — formulář zpětné vazby
@@ -240,20 +260,13 @@ None — current work is in a stable state.
 ## Last Session
 
 **9. 9. 2026** — Profily, inzeráty, odpovědi, hodnocení firem, nahlašování s frontou
-pro správce, zpětná vazba na platformu a přehled odeslaných odpovědí. Výměna
-kompromitovaného klíče ARES a blokace jednorázových schránek. Číselník odvětví
-přesunut do `site/obory-data.js`.
+pro správce, zpětná vazba a viditelnost ve vyhledávačích. Ověřeno ze dvou účtů proti
+živé databázi: co má fungovat funguje, co má selhat selhává (podrobnosti výš).
 
-**Ověřeno ze dvou účtů proti živé databázi.** Prošlo: registrace firmy přes ARES,
-zveřejnění profilu jen s popisem a odvětvím, zadání inzerátu formulářem, odpověď na
-cizí inzerát, hodnocení cizí firmy včetně propsání průměru, automatické skrytí
-inzerátu po třech hlášeních i jeho vrácení rozhodnutím správce.
-Odmítnuto, jak má být: přepis a smazání cizích dat, čtení cizích odpovědí a profilů,
-odpověď na vlastní inzerát, hodnocení sebe sama, přístup k frontě bez práv správce.
+Doména tradelink.cz koupená a přidaná do Cloudflare, čeká na přepnutí jmenných serverů
+ve Wedosu. Server teď posílá inzeráty jako hotové HTML se strukturovanými daty.
 
-Opravena chyba nalezená při testu: stránka účtu četla metadata registrace místo profilu.
-
-Poslední commit: `51cf354`
+Poslední commit: `74da76c`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
