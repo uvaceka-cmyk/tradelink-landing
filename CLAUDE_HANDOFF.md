@@ -147,9 +147,10 @@ None — current work is in a stable state.
 - **Cizí účet zatím nikdo nezkoušel.** Kontroly vlastnictví (RLS) jsou ověřené jen
   z pohledu vlastníka a nepřihlášeného. Druhý testovací účet nešlo založit kvůli limitu
   e-mailů — až půjde, zkusit z něj číst, měnit a mazat data toho prvního. **Musí selhat.**
-- **Zatím není žádný správce.** Bez toho se nikdo nedostane na `/sprava` a nahlášený obsah
-  nikdo nevyřídí. Nastavuje se ručně:
-  `update public.profiles set spravce = true where email = '...';`
+- **Uživatel ještě nemá vlastní účet.** `uvacek.a@gmail.com` je v `private.budouci_spravci`,
+  takže se správcem stane sám, jakmile se zaregistruje. **Ten mechanismus zatím nikdo
+  nevyzkoušel** — registraci blokoval limit e-mailů. Po registraci ověřit, že `spravce`
+  je `true`. Zatím je správcem jen testovací účet `uvacek.a+tlfirma@gmail.com`.
 - **Automatické skrytí při třech hlášeních jde zneužít** — tři spolčené účty shodí
   konkurenci, než se k tomu správce dostane. Zatím to beru jako přijatelnou cenu za to,
   že podvod neviselo ve výpisu; při větším provozu zvážit vyšší mez nebo váhu podle
@@ -239,7 +240,7 @@ přes ARES, zveřejnění profilu jen s popisem a odvětvím, zadání inzerátu
 odmítnutí odpovědi na vlastní inzerát, hodnocení sebe sama a přístupu k cizím datům
 i k frontě správce. Opravena chyba: stránka účtu četla metadata registrace místo profilu.
 
-Poslední commit: `dbc4fc4`
+Poslední commit: `1dd48e2`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
