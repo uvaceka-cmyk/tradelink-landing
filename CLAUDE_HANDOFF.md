@@ -231,9 +231,10 @@ prostředí nejde upravit programově) — navržený text byl předaný v chatu
 - **Rozhraní Supabase i Cloudflare padá pod překladačem Chromu.** Supabase to hlásí přímo
   chybovou stránkou. Uživatel má překlad zapnutý — než se vypne, dělat zásahy raději přes
   SQL editor (ten přežívá) nebo přes API.
-- **Právní texty mají nevyplněná místa** (nově osm, přibylo kontaktní místo) (označené `class="todo"`):
-  provozovatel, IČO, sídlo, kontaktní e-mail, datum účinnosti. Uživatel je doplní, až
-  založí firmu. Bez nich nelze web spustit naostro. Texty by měl před spuštěním vidět právník.
+- **Právní texty mají nevyplněná místa** (označená `class="todo"`): **provozovatel, IČO,
+  sídlo a datum účinnosti** — v `podminky.html`, `soukromi.html` i v `pravni/zaznamy-o-zpracovani.md`.
+  Kontaktní e-mail už doplněný je (`info@tradelink.cz`). Zbytek uživatel doplní, až založí
+  firmu; bez toho nelze web spustit naostro. Texty by měl před spuštěním vidět právník.
 - **Odesílání e-mailů pořád běží přes sdíleného odesílatele Supabase** — limit
   **2 zprávy za hodinu**, což brzdí registrace i testování. Příjem už funguje:
   `info@tradelink.cz` se přeposílá na `uvacek.a@gmail.com`. Na odesílání zbývá:

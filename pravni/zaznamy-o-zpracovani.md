@@ -4,7 +4,7 @@ Podle čl. 30 GDPR. Dokument se nikam neodesílá, ale Úřad pro ochranu osobn�
 údajů si ho může vyžádat. Aktualizujte ho, kdykoli přibude nový druh zpracování.
 
 **Správce:** [DOPLNIT: jméno / název, IČO, sídlo]
-**Kontakt:** [DOPLNIT: e-mail]
+**Kontakt:** info@tradelink.cz
 **Pověřenec:** nejmenován — zákon to v našem případě neukládá
 **Poslední aktualizace:** [DOPLNIT: datum]
 
