@@ -89,10 +89,9 @@ None — current work is in a stable state.
 
 ## Known Issues
 
-- **`ARES_SECRET` je v Cloudflare uložený jako typ „Text", ne „Tajný kód"** — hodnota je
-  čitelná každému, kdo se dostane do dashboardu. Přepnout na Secret.
-- **Testovací účet** `Uvacek.a+tltest@gmail.com` vznikl při testování registrace.
-  Smazat v Supabase → Authentication → Users.
+- **Rozhraní Supabase i Cloudflare padá pod překladačem Chromu.** Supabase to hlásí přímo
+  chybovou stránkou. Uživatel má překlad zapnutý — než se vypne, dělat zásahy raději přes
+  SQL editor (ten přežívá) nebo přes API.
 - **Právní texty mají 6 nevyplněných míst** v každém dokumentu (označené `class="todo"`):
   provozovatel, IČO, sídlo, kontaktní e-mail, datum účinnosti. Uživatel je doplní, až
   založí firmu. Bez nich nelze web spustit naostro. Texty by měl před spuštěním vidět právník.
@@ -118,13 +117,12 @@ None — current work is in a stable state.
 
 ## Next Steps
 
-1. Přepnout `ARES_SECRET` v Cloudflare na typ „Tajný kód" a smazat testovací účet.
-2. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
-3. Postavit vlastní obsah platformy — profily firem a lidí, inzeráty a poptávky, výpis
-   po výběru podoboru. Do té doby je web jen brožura.
-4. K inzerátům přidat ochranu proti falešnému obsahu: inzerát smí zadat jen ověřená firma,
+1. Postavit vlastní obsah platformy — profily firem a lidí, inzeráty a poptávky, výpis
+   po výběru podoboru. Do té doby je web jen brožura. Začít profily.
+2. K inzerátům přidat ochranu proti falešnému obsahu: inzerát smí zadat jen ověřená firma,
    limit na účet, nahlášení, fronta na kontrolu.
-5. Nastavit redirect URL v Supabase a doménu, až bude k dispozici (kvůli doručitelnosti e-mailů).
+3. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
+4. Nastavit redirect URL v Supabase a doménu, až bude k dispozici (kvůli doručitelnosti e-mailů).
 
 ## Important Files
 
@@ -154,6 +152,11 @@ None — current work is in a stable state.
 **9. 9. 2026** — Výměna kompromitovaného klíče `ARES_SECRET` (byl commitnutý v `5e0534f`),
 zesílení ověřování podpisu, odstranění klíče ze zdrojáků, otestování celého řetězce.
 Založen tento handoff. Přidáno odmítání jednorázových e-mailových schránek při registraci.
+
+Klíč je v Cloudflare uložený jako Secret (zašifrovaný), testovací účet smazán.
+Ověření celého řetězce po změně typu klíče se nedokončilo — Supabase odmítl poslat
+potvrzovací e-mail kvůli limitu 2 zpráv za hodinu. Podpis se vydává, k databázi se
+dotaz nedostal. **Zopakovat registraci firmy, až limit vyprší.**
 
 Poslední commit: `9e802c1`
 
