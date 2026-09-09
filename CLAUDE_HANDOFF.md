@@ -112,7 +112,14 @@ Web je celý česky a běží na vlastní doméně.
 - Supabase Site URL i redirect allow-list ukazují na `https://tradelink.cz`
 - `og:image` na všech stránkách ukazuje na `https://tradelink.cz/tradelink.jpeg`
 - `info@tradelink.cz` → `uvacek.a@gmail.com` (Cloudflare Email Routing, MX i SPF
-  nastavené, příjem ověřený). Odesílání z domény zatím nefunguje — viz Known Issues.
+  nastavené, příjem ověřený)
+- **odesílání přes Resend** (region Irsko, `eu-west-1` — data zůstávají v EU).
+  V Cloudflare přibyly tři záznamy: DKIM `resend._domainkey`, MX a SPF na `send`.
+  Doména je v Resendu ve stavu *Verified*. Supabase posílá přes `smtp.resend.com:465`,
+  uživatel `resend`, odesílatel `TradeLink <info@tradelink.cz>`.
+  **API klíč Resendu je jen v Supabase** — není v repozitáři ani nikde v kódu.
+  Ověřeno dvakrát: přímé odeslání přes Resend i potvrzovací e-mail z registrace
+  na Supabase, obojí *Delivered*.
 
 **Právní povinnosti platformy** (migrace `013`, složka `pravni/`)
 - **hodnocení**: web i podmínky uvádějí, že neověřujeme, zda autor s firmou opravdu
@@ -232,16 +239,16 @@ tokenu v tomhle prostředí nejde upravit programově) — navržený text byl p
   smazány. **Kdo bude stavět výpis, musí si testovací data vytvořit sám** — buď registrací
   přes web (naráží na limit e-mailů), nebo vložením do `auth.users` a `auth.identities`
   podle receptu níž.
-- **Registrace naráží na limit dvou e-mailů za hodinu**, takže druhý testovací účet
-  vznikl přímo v databázi vložením do `auth.users` **a `auth.identities`** — bez toho
-  druhého se účet nepřihlásí („Database error querying schema"). Hodí se to vědět,
-  až bude potřeba další testovací účet, dokud není vlastní odesílatel e-mailů.
+- **Testovací účty už jde zakládat normální registrací** — limit dvou e-mailů za hodinu
+  padl s přechodem na Resend. Dřívější obchvat (vložení do `auth.users` **a**
+  `auth.identities`, bez druhého se účet nepřihlásí — „Database error querying schema")
+  už není potřeba, ale hodí se ho znát, kdyby bylo potřeba účet bez e-mailu.
 - **Nikdo teď není správce, na `/sprava` se nikdo nedostane.** V `private.budouci_spravci`
   jsou `uvacek.a@gmail.com` i `info@tradelink.cz` — oba se stanou správcem sami, jakmile
   se s tou adresou zaregistrují. **Ten mechanismus zatím nikdo nevyzkoušel**, po první
   registraci ověřit, že `spravce` je `true`.
-  Uživatel chce svůj účet na `info@tradelink.cz` — schránka už poštu přijímá, takže
-  registraci nic nebrání (jen naráží na limit dvou e-mailů za hodinu).
+  Uživatel chce svůj účet na `info@tradelink.cz` — schránka poštu přijímá, odesílání
+  funguje, takže registraci nic nebrání. **Heslo si volí sám a nikde se nesdílí.**
   **Heslo si volí sám a nikde se nesdílí** — nevymýšlet mu ho ani ho po něm nechtít.
 - **Automatické skrytí při třech hlášeních jde zneužít** — tři spolčené účty shodí
   konkurenci, než se k tomu správce dostane. Zatím to beru jako přijatelnou cenu za to,
@@ -254,14 +261,9 @@ tokenu v tomhle prostředí nejde upravit programově) — navržený text byl p
   sídlo a datum účinnosti** — v `podminky.html`, `soukromi.html` i v `pravni/zaznamy-o-zpracovani.md`.
   Kontaktní e-mail už doplněný je (`info@tradelink.cz`). Zbytek uživatel doplní, až založí
   firmu; bez toho nelze web spustit naostro. Texty by měl před spuštěním vidět právník.
-- **Odesílání e-mailů pořád běží přes sdíleného odesílatele Supabase** — limit
-  **2 zprávy za hodinu**, což brzdí registrace i testování. Příjem už funguje:
-  `info@tradelink.cz` se přeposílá na `uvacek.a@gmail.com`. Na odesílání zbývá:
-  účet u Resend / Brevo / Mailjet → ověřit `tradelink.cz` záznamy SPF a DKIM v DNS
-  (zóna je v Cloudflare, zápis je hotový během minuty) → v Supabase přepnout na vlastní
-  SMTP a zvednout limit v Auth → Rate Limits (i s vlastním SMTP je výchozí 30/hodinu).
-  Bez toho zůstává nouzová možnost vypnout na dobu vývoje potvrzování e-mailu
-  (Authentication → Providers → Email → Confirm email) — **před spuštěním zase zapnout.**
+- **Stropy e-mailů po přepnutí na Resend.** Supabase teď pouští 30 zpráv za hodinu
+  (Auth → Rate Limits), Resend zdarma 100 denně a 3 000 měsíčně. Na rozjezd to stačí,
+  ale při náporu registrací je to první věc, která dojde — hlídat v Resendu → Logs.
 - **ARES neověří oprávnění.** Potvrdí, že firma existuje — ne že IČO zadal její jednatel.
   Řešení (ověřovací dopis, platba z firemního účtu, datová schránka, bankovní identita)
   zatím nikdo nedělá; je to popsané v podmínkách užití.
@@ -287,10 +289,7 @@ tokenu v tomhle prostředí nejde upravit programově) — navržený text byl p
 2. **[Uživatel]** Nastavit si účet jako správce, jinak je fronta nahlášení nepřístupná.
 3. **[Claude]** Doladit podle zpětné vazby, až začnou chodit první uživatelé.
 4. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
-5. **Odesílání e-mailů** — účet u Resend / Brevo / Mailjet, ověřit `tradelink.cz` záznamy
-   SPF a DKIM, v Supabase přepnout na vlastní SMTP a zvednout limit v Auth → Rate Limits.
-   Teprve tím padne limit dvou zpráv za hodinu, který dnes brzdí i registrace.
-6. **Vyhledávače** — Google Search Console (ověření DNS záznamem v Cloudflare),
+5. **Vyhledávače** — Google Search Console (ověření DNS záznamem v Cloudflare),
    Seznam Webmaster a zápis do Firmy.cz (obojí potřebuje účet na Seznamu
    pod `info@tradelink.cz`).
 
@@ -361,6 +360,17 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
 
 ## Last Session
 
+**9. 9. 2026, noc — e-maily chodí z vlastní domény.** Doména `tradelink.cz` přidaná
+do Resendu (region Irsko, data zůstávají v EU), tři DNS záznamy zapsané do Cloudflare,
+doména ověřená. Supabase přepnutý na vlastní SMTP `smtp.resend.com`. Tím padl limit dvou
+zpráv za hodinu — nově 30 za hodinu. Ověřeno na dvou skutečných zprávách (přímé odeslání
+i potvrzení registrace), obě *Delivered*. Zkušební účet po testu smazaný, databáze je zase
+prázdná. **API klíč Resendu je jen v Supabase, ne v repozitáři.**
+
+Do právních textů doplněný kontaktní e-mail `info@tradelink.cz`. Opravené dvě SEO chyby:
+kanonická adresa se doplňovala až v prohlížeči (Seznam JavaScript nespouští, takže ji
+nikdy neviděl) a mapa webu posílala vyhledávače na adresy s `.html`, které se přesměrovávají.
+
 **9. 9. 2026, pozdní večer** — Na `chatgpt/homepage-visual` (draft PR #1): homepage přestavěná
 z scrollovací stránky na jednu fullscreen atriovou scénu s funkčním výtahem (viz Current Work
 pro detaily). Schválený nový flow: `homepage/atrium → recepce → role → obor → podobor`,
@@ -375,7 +385,7 @@ uživatelem**, pak jde přímo do produkce na `tradelink.cz`. Popis PR #1 a pře
 přepnuté na Cloudflare, doména i `www` připojené k Pages, certifikát vydaný, `www`/`pages.dev`
 trvale přesměrované (`functions/_middleware.js`), Supabase Site URL i redirect allow-list
 ukazují na novou adresu, `info@tradelink.cz` přijímá poštu (přeposílá se na `uvacek.a@gmail.com`).
-Odesílání z domény zatím nefunguje, limit dvou zpráv za hodinu pořád platí. Testovací data
+Testovací data
 (účty, profily, inzeráty, hodnocení) byla na přání uživatele smazána — kdo bude dál stavět
 výpis, musí si vytvořit vlastní (viz Known Issues). Poslední commit na `main`: `f8552e0`.
 
