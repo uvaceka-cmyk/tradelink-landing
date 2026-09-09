@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Správa vlastních inzerátů a poptávek na TradeLinku.">
+  <meta name="robots" content="noindex">
+  <title>Moje inzeráty — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="profil.html">Můj profil</a>
+      <a href="ucet.html">Můj účet</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="journey shell">
+    <p class="journey__role" id="typ-uctu">Inzeráty</p>
+    <h1 id="nadpis">Moje inzeráty</h1>
+    <p class="journey__lead" id="lead">Načítám…</p>
+
+    <p class="form__status" id="gate" hidden></p>
+
+    <div id="obsah" hidden>
+      <div class="actions" style="margin-bottom:28px">
+        <button class="btn" type="button" id="novy">Zadat nový</button>
+      </div>
+
+      <div id="seznam"></div>
+
+      <!-- formulář se otevírá pod seznamem -->
+      <form class="form" id="form" hidden style="margin-top:34px">
+        <h2 id="form-nadpis" style="font-size:var(--step-2)">Nový inzerát</h2>
+
+        <div class="field">
+          <label for="nazev" id="nazev-label">Název</label>
+          <input type="text" id="nazev" maxlength="120" required>
+        </div>
+
+        <div class="field">
+          <label for="popis" id="popis-label">Popis</label>
+          <textarea id="popis" rows="7" maxlength="4000" required></textarea>
+          <p class="field__hint"><span id="pocet">0</span> / 4000 znaků, alespoň 30.</p>
+        </div>
+
+        <div class="field">
+          <label for="obor">Odvětví</label>
+          <select id="obor" required><option value="">— vyberte —</option></select>
+        </div>
+
+        <div class="field">
+          <label for="podobor">Obor</label>
+          <select id="podobor" disabled><option value="">— nejdřív vyberte odvětví —</option></select>
+        </div>
+
+        <div class="field">
+          <label for="lokalita">Kde <span class="field__hint">nepovinné</span></label>
+          <input type="text" id="lokalita" maxlength="120" placeholder="Praha, Brno, celá ČR…">
+        </div>
+
+        <div class="field">
+          <label for="odmena" id="odmena-label">Odměna <span class="field__hint">nepovinné</span></label>
+          <input type="text" id="odmena" maxlength="120" placeholder="např. 35 000 Kč / měsíc nebo dohodou">
+        </div>
+
+        <div class="field">
+          <label for="plati-do">Platí do <span class="field__hint">nepovinné</span></label>
+          <input type="date" id="plati-do">
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="zverejnen">
+          <span>Zveřejnit — inzerát se ukáže ve výpisu. Bez zaškrtnutí zůstane jen u vás.</span>
+        </label>
+
+        <p class="form__status" id="status" hidden></p>
+
+        <div class="actions">
+          <button class="btn" type="submit">Uložit</button>
+          <button class="btn btn--ghost" type="button" id="zrusit">Zrušit</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span class="foot__links">
+      <a href="podminky.html">Podmínky užití</a>
+      <a href="soukromi.html">Ochrana údajů</a>
+    </span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="obory-data.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, status, busy, configured, czechError, paintNav } from './auth.js';
+
+    var obory = window.TRADELINK_OBORY || [];
+    var form = document.getElementById('form');
+    var statusEl = document.getElementById('status');
+    var seznam = document.getElementById('seznam');
+    var selObor = document.getElementById('obor');
+    var selPodobor = document.getElementById('podobor');
+    var popis = document.getElementById('popis');
+    var upravovany = null;   // id inzerátu při úpravě
+    var profil = null;
+
+    obory.forEach(function (o) {
+      selObor.insertAdjacentHTML('beforeend', '<option value="' + o.id + '">' + o.name + '</option>');
+    });
+
+    function naplnPodobory(id, vybrany) {
+      var o = obory.filter(function (x) { return x.id === id; })[0];
+      selPodobor.innerHTML = '<option value="">— vyberte —</option>';
+      selPodobor.disabled = !o;
+      if (!o) return;
+      o.subs.forEach(function (s) {
+        selPodobor.insertAdjacentHTML('beforeend',
+          '<option value="' + s + '"' + (s === vybrany ? ' selected' : '') + '>' + s + '</option>');
+      });
+    }
+    selObor.addEventListener('change', function () { naplnPodobory(selObor.value, null); });
+    popis.addEventListener('input', function () {
+      document.getElementById('pocet').textContent = popis.value.length;
+    });
+
+    function nazevOboru(id) {
+      var o = obory.filter(function (x) { return x.id === id; })[0];
+      return o ? o.name : id;
+    }
+
+    function typInzeratu() {
+      return profil.account_type === 'firma' ? 'prace' : 'zakazka';
+    }
+
+    /* ---------- výpis vlastních inzerátů ---------- */
+    async function nacti() {
+      var res = await supabase.from('inzeraty').select('*').order('created_at', { ascending: false });
+      if (res.error) return status(statusEl, czechError(res.error), 'error');
+
+      if (!res.data.length) {
+        seznam.innerHTML = '<p class="journey__lead">Zatím tu nic nemáte. Zadejte první inzerát.</p>';
+        return;
+      }
+
+      seznam.innerHTML = res.data.map(function (i) {
+        var stav = i.zverejnen
+          ? '<span class="tag tag--free">Zveřejněno</span>'
+          : '<span class="tag">Skryté</span>';
+        var prosly = i.plati_do && i.plati_do < new Date().toISOString().slice(0, 10)
+          ? '<span class="tag tag--trial">Platnost vypršela</span>' : '';
+        return '<article class="card" style="margin-bottom:14px">' +
+          stav + prosly +
+          '<h3>' + i.nazev + '</h3>' +
+          '<p>' + nazevOboru(i.obor) + (i.podobor ? ' → ' + i.podobor : '') +
+          (i.lokalita ? ' · ' + i.lokalita : '') + (i.odmena ? ' · ' + i.odmena : '') + '</p>' +
+          '<div class="actions" style="margin-top:16px">' +
+            '<button class="btn btn--ghost" type="button" data-upravit="' + i.id + '">Upravit</button>' +
+            '<button class="btn btn--ghost" type="button" data-smazat="' + i.id + '">Smazat</button>' +
+          '</div></article>';
+      }).join('');
+    }
+
+    /* ---------- otevření formuláře ---------- */
+    function otevri(inzerat) {
+      upravovany = inzerat ? inzerat.id : null;
+      document.getElementById('form-nadpis').textContent = inzerat ? 'Úprava inzerátu' : 'Nový inzerát';
+      document.getElementById('nazev').value = inzerat ? inzerat.nazev : '';
+      popis.value = inzerat ? inzerat.popis : '';
+      document.getElementById('pocet').textContent = popis.value.length;
+      selObor.value = inzerat ? inzerat.obor : '';
+      naplnPodobory(inzerat ? inzerat.obor : '', inzerat ? inzerat.podobor : null);
+      document.getElementById('lokalita').value = inzerat && inzerat.lokalita ? inzerat.lokalita : '';
+      document.getElementById('odmena').value = inzerat && inzerat.odmena ? inzerat.odmena : '';
+      document.getElementById('plati-do').value = inzerat && inzerat.plati_do ? inzerat.plati_do : '';
+      document.getElementById('zverejnen').checked = inzerat ? inzerat.zverejnen : false;
+      status(statusEl, '');
+      form.hidden = false;
+      form.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+
+    document.getElementById('novy').addEventListener('click', function () { otevri(null); });
+    document.getElementById('zrusit').addEventListener('click', function () { form.hidden = true; });
+
+    seznam.addEventListener('click', async function (e) {
+      var el = e.target.closest('[data-upravit],[data-smazat]');
+      if (!el) return;
+
+      if (el.dataset.upravit) {
+        var r = await supabase.from('inzeraty').select('*').eq('id', el.dataset.upravit).single();
+        if (!r.error) otevri(r.data);
+        return;
+      }
+
+      if (!window.confirm('Opravdu inzerát smazat? Vrátit to nepůjde.')) return;
+      var d = await supabase.from('inzeraty').delete().eq('id', el.dataset.smazat);
+      if (d.error) return status(statusEl, czechError(d.error), 'error');
+      nacti();
+    });
+
+    /* ---------- uložení ---------- */
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      status(statusEl, '');
+
+      if (popis.value.trim().length < 30) {
+        return status(statusEl, 'Popis potřebuje aspoň pár vět — nejméně 30 znaků.', 'error');
+      }
+      if (!selObor.value) return status(statusEl, 'Vyberte odvětví.', 'error');
+
+      busy(form, true, 'Ukládám…');
+
+      var data = {
+        autor: profil.id,
+        typ: typInzeratu(),
+        nazev: document.getElementById('nazev').value.trim(),
+        popis: popis.value.trim(),
+        obor: selObor.value,
+        podobor: selPodobor.value || null,
+        lokalita: document.getElementById('lokalita').value.trim() || null,
+        odmena: document.getElementById('odmena').value.trim() || null,
+        plati_do: document.getElementById('plati-do').value || null,
+        zverejnen: document.getElementById('zverejnen').checked
+      };
+
+      var res = upravovany
+        ? await supabase.from('inzeraty').update(data).eq('id', upravovany)
+        : await supabase.from('inzeraty').insert(data);
+
+      busy(form, false);
+
+      if (res.error) return status(statusEl, czechError(res.error), 'error');
+
+      form.hidden = true;
+      await nacti();
+    });
+
+    /* ---------- start ---------- */
+    if (!configured) {
+      document.getElementById('lead').textContent = '';
+      status(document.getElementById('gate'), 'Účty zatím nejsou připojené k databázi.', 'error');
+    } else {
+      (async function () {
+        var session = await paintNav();
+        if (!session) return window.location.replace('prihlaseni.html');
+
+        var p = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        if (p.error) {
+          document.getElementById('lead').textContent = '';
+          return status(document.getElementById('gate'), czechError(p.error), 'error');
+        }
+        profil = p.data;
+
+        var firma = profil.account_type === 'firma';
+        document.getElementById('typ-uctu').textContent = firma ? 'Nabídky práce' : 'Poptávky';
+        document.getElementById('nadpis').textContent = firma ? 'Moje nabídky práce' : 'Moje poptávky';
+        document.getElementById('nazev-label').textContent = firma ? 'Název pozice' : 'Co potřebujete';
+        document.getElementById('popis-label').textContent = firma
+          ? 'Popis pozice — co bude člověk dělat, co od něj čekáte'
+          : 'Popis zakázky — co je potřeba udělat, v jakém rozsahu';
+        document.getElementById('odmena-label').innerHTML = (firma ? 'Mzda' : 'Rozpočet') +
+          ' <span class="field__hint">nepovinné</span>';
+
+        if (firma && !profil.ares_overeno_at) {
+          document.getElementById('lead').textContent = '';
+          return status(document.getElementById('gate'),
+            'Inzeráty může zadávat jen firma ověřená v registru ARES. Ověření u vašeho účtu chybí — ozvěte se nám.',
+            'error');
+        }
+
+        document.getElementById('lead').textContent = firma
+          ? 'Nabídky práce, které jste zadali. Zveřejněné uvidí lidé ve výpisu podle oboru.'
+          : 'Poptávky, které jste zadali. Zveřejněné uvidí firmy a živnostníci ve výpisu podle oboru.';
+
+        document.getElementById('obsah').hidden = false;
+        await nacti();
+      })();
+    }
+  </script>
+</body>
+</html>

@@ -84,8 +84,18 @@ None — current work is in a stable state.
   platbu za každou zprávu — u služby, která je pro lidi zdarma, přímý náklad na registraci
   i terč pro zneužití. Místo toho běží blokace jednorázových schránek. Telefon se může
   přidat později jako **nepovinný** odznak důvěry, ne jako podmínka registrace.
-- **Dělba práce:** obory (rozšíření na ~30), fotky a animace dělá kamarád uživatele.
-  Doménu zařizuje uživatel později.
+- **Dělba práce** (potvrzeno uživatelem 9. 9.):
+  - **Claude:** zadávání inzerátů a poptávek, ochrana proti falešnému obsahu
+  - **Kamarád:** výpis inzerátů po výběru podoboru, rozšíření na ~30 odvětví
+    (`site/obory-data.js`), fotka do lobby, animace přechodů
+  - **Uživatel:** doména a údaje o provozovateli do právních textů
+  Kamarád staví výpis nad pohledem `public.verejne_inzeraty` — ten je pro něj rozhraním,
+  do tabulky `inzeraty` sahat nemusí a kvůli RLS ani nemůže.
+- **Inzerát zadává jen ta strana, která poptává; nabídka se ukazuje profilem.**
+  Firma hledající zaměstnance zadává inzerát typu `prace`, člověk zadávající zakázku
+  inzerát typu `zakazka`. Kdo hledá práci nebo zakázky, žádný inzerát nezadává — ukáže
+  se svým profilem a prochází inzeráty ostatních. Tím sedí čtyři cesty z recepce na sebe
+  a nevznikají dva soubory dat o tomtéž.
 - **Na projektu pracují dva lidé pod jedním účtem Claude**, z různých počítačů a terminálů.
   Sessions se tedy mohou střídat i překrývat a **nemají mezi sebou paměť** — jediné, co
   přetrvává, je repozitář, git historie a tento soubor. Proto:
@@ -135,11 +145,11 @@ None — current work is in a stable state.
 
 1. Vyzkoušet profil s reálným přihlášeným účtem (uložení, zveřejnění, kontrola pohledu).
    Nešlo to hned kvůli limitu e-mailů — viz Known Issues.
-2. Inzeráty a poptávky: zadat, upravit, smazat; typ podle účtu (nabídka práce / poptávka
-   po zakázce). Vázat je na `obor` a `podobor` ze stejného číselníku jako profily.
-3. Výpis po výběru podoboru — dnes končí placeholderem „zatím připravujeme".
-4. Ochrana proti falešnému obsahu: inzerát smí zadat jen ověřená firma, limit na účet,
-   nahlášení, fronta na kontrolu.
+2. **[Claude]** Inzeráty a poptávky: zadat, upravit, smazat.
+3. **[Kamarád]** Výpis po výběru podoboru nad pohledem `verejne_inzeraty` — dnes tam končí
+   placeholder „zatím připravujeme".
+4. **[Claude]** Ochrana proti falešnému obsahu: nahlášení inzerátu a fronta na kontrolu.
+   (Ověřená firma a limity na účet jsou už v migraci `007`.)
 5. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
 6. **Doména a odesílání e-mailů** — až ji uživatel koupí (`tradelink.cz` byla 9. 9. volná,
    `tradelink.com` obsazená). Postup: doména → účet u odesílatele (Resend / Brevo / Mailjet)
