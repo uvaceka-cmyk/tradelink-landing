@@ -253,7 +253,7 @@
     body.innerHTML =
       '<div class="tiles">' +
         INDUSTRIES.map(function (ind) {
-          return tile('data-industry="' + ind.id + '"', icon(ind.id), ind.name, ind.desc);
+          return tile('data-industry="' + ind.id + '"', icon(ind.id), ind.name, '');
         }).join('') +
       '</div>';
   }
