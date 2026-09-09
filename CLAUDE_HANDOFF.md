@@ -140,8 +140,8 @@ None — current work is in a stable state.
 3. Výpis po výběru podoboru — dnes končí placeholderem „zatím připravujeme".
 4. Ochrana proti falešnému obsahu: inzerát smí zadat jen ověřená firma, limit na účet,
    nahlášení, fronta na kontrolu.
-3. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
-5. **Doména a odesílání e-mailů** — až ji uživatel koupí (`tradelink.cz` byla 9. 9. volná,
+5. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
+6. **Doména a odesílání e-mailů** — až ji uživatel koupí (`tradelink.cz` byla 9. 9. volná,
    `tradelink.com` obsazená). Postup: doména → účet u odesílatele (Resend / Brevo / Mailjet)
    → ověřit doménu záznamy SPF a DKIM v DNS → v Supabase přepnout na vlastní SMTP a zvednout
    limit v Auth → Rate Limits (i s vlastním SMTP je výchozí 30/hodinu). Pak teprve padne
