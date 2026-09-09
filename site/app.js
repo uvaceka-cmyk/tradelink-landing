@@ -28,20 +28,20 @@
   })();
 
   /* ---------- 0b) kanonická adresa ----------
-     Web běží na pages.dev i na vlastní doméně. Bez tohohle by
-     vyhledávače viděly tentýž obsah na dvou adresách a rozdělily
-     si mezi ně hodnocení. Odkaz vede vždy na adresu, na které
-     návštěvník právě je. */
+     Stránky, které mají být ve výsledcích hledání, nesou kanonickou
+     adresu rovnou v HTML — Seznam JavaScript nespouští, takže značka
+     doplněná až tady by pro něj neexistovala. Tady se proto doplňuje
+     jen tam, kde v HTML není: na stránkách, které se skládají až
+     v prohlížeči podle parametru v adrese. */
   (function kanonicka() {
+    if (document.querySelector('link[rel="canonical"]')) return;
+
     var adresa = window.location.origin + window.location.pathname;
 
-    var odkaz = document.querySelector('link[rel="canonical"]');
-    if (!odkaz) {
-      odkaz = document.createElement('link');
-      odkaz.setAttribute('rel', 'canonical');
-      document.head.appendChild(odkaz);
-    }
+    var odkaz = document.createElement('link');
+    odkaz.setAttribute('rel', 'canonical');
     odkaz.setAttribute('href', adresa);
+    document.head.appendChild(odkaz);
 
     var og = document.querySelector('meta[property="og:url"]');
     if (!og && document.querySelector('meta[property="og:title"]')) {

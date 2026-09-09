@@ -10,14 +10,19 @@ const SUPABASE_URL = 'https://hgjajfkaotflkmyrryak.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_uAKMzAdb_30eR7VJd39v5Q_bi8wwyY0';
 
 /* Stránky, které mají smysl ve výsledcích hledání. Přihlašování,
-   účet ani správa mezi ně nepatří. */
+   účet ani správa mezi ně nepatří.
+
+   Adresy jsou bez `.html` — Cloudflare Pages `/recepce.html` trvale
+   přesměruje na `/recepce`, takže s příponou bychom vyhledávač
+   posílali na přesměrování, které stejně musí následovat. Tytéž
+   adresy nesou stránky i v kanonické značce. */
 const STRANKY = [
   ['/', '1.0', 'weekly'],
-  ['/recepce.html', '0.9', 'monthly'],
-  ['/lobby.html', '0.5', 'monthly'],
-  ['/zpetna-vazba.html', '0.3', 'yearly'],
-  ['/podminky.html', '0.2', 'yearly'],
-  ['/soukromi.html', '0.2', 'yearly']
+  ['/recepce', '0.9', 'monthly'],
+  ['/lobby', '0.5', 'monthly'],
+  ['/zpetna-vazba', '0.3', 'yearly'],
+  ['/podminky', '0.2', 'yearly'],
+  ['/soukromi', '0.2', 'yearly']
 ];
 
 export async function onRequestGet({ request }) {
