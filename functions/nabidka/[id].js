@@ -32,6 +32,7 @@ function esc(t) {
 }
 
 function stranka({ titulek, popisek, url, telo, jsonLd, robots }) {
+  const puvodProSdileni = new URL(url).origin;
   return `<!doctype html>
 <html lang="cs">
 <head>
@@ -48,7 +49,11 @@ ${robots ? '<meta name="robots" content="' + robots + '">' : ''}
 <meta property="og:title" content="${esc(titulek)}">
 <meta property="og:description" content="${esc(popisek)}">
 <meta property="og:url" content="${esc(url)}">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="${esc(puvodProSdileni)}/tradelink.jpeg">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${esc(puvodProSdileni)}/tradelink.jpeg">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.css">
 ${jsonLd ? '<script type="application/ld+json">' + JSON.stringify(jsonLd) + '</script>' : ''}
@@ -185,6 +190,18 @@ export async function onRequestGet({ params, request }) {
   <div class="actions" style="margin-top:32px">
     <a class="btn" href="/inzerat.html?id=${esc(i.id)}">Ozvat se</a>
     <a class="btn btn--ghost" href="/recepce.html">Další nabídky</a>
+  </div>
+
+  <div class="sdileni">
+    <span class="sdileni__popis">Poslat dál:</span>
+    <a class="sdileni__odkaz" rel="nofollow noopener" target="_blank"
+       href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}">Facebook</a>
+    <a class="sdileni__odkaz" rel="nofollow noopener" target="_blank"
+       href="https://api.whatsapp.com/send?text=${encodeURIComponent(i.nazev + ' — ' + url)}">WhatsApp</a>
+    <a class="sdileni__odkaz" rel="nofollow noopener" target="_blank"
+       href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}">LinkedIn</a>
+    <a class="sdileni__odkaz" rel="nofollow"
+       href="mailto:?subject=${encodeURIComponent(i.nazev)}&body=${encodeURIComponent(url)}">E-mailem</a>
   </div>`;
 
   return new Response(stranka({ titulek, popisek, url, telo, jsonLd }), {

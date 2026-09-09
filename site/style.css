@@ -574,3 +574,16 @@ p{margin:0}
   text-decoration:underline;cursor:pointer;
 }
 .nahlaseni__text{white-space:pre-wrap;color:var(--fg-dim);margin:8px 0}
+
+/* sdílení inzerátu */
+.sdileni{
+  margin-top:34px;padding-top:22px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:.88rem;
+}
+.sdileni__popis{color:var(--muted)}
+.sdileni__odkaz{
+  color:var(--accent);text-decoration:none;
+  border:1px solid var(--accent-dim);border-radius:999px;padding:6px 14px;
+  transition:background .2s var(--ease);
+}
+.sdileni__odkaz:hover{background:var(--accent-bg)}
