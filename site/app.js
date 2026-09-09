@@ -27,6 +27,31 @@
     if (target) window.location.replace(target + (target.indexOf('?') < 0 ? query : '') + hash);
   })();
 
+  /* ---------- 0b) kanonická adresa ----------
+     Web běží na pages.dev i na vlastní doméně. Bez tohohle by
+     vyhledávače viděly tentýž obsah na dvou adresách a rozdělily
+     si mezi ně hodnocení. Odkaz vede vždy na adresu, na které
+     návštěvník právě je. */
+  (function kanonicka() {
+    var adresa = window.location.origin + window.location.pathname;
+
+    var odkaz = document.querySelector('link[rel="canonical"]');
+    if (!odkaz) {
+      odkaz = document.createElement('link');
+      odkaz.setAttribute('rel', 'canonical');
+      document.head.appendChild(odkaz);
+    }
+    odkaz.setAttribute('href', adresa);
+
+    var og = document.querySelector('meta[property="og:url"]');
+    if (!og && document.querySelector('meta[property="og:title"]')) {
+      og = document.createElement('meta');
+      og.setAttribute('property', 'og:url');
+      document.head.appendChild(og);
+    }
+    if (og) og.setAttribute('content', adresa);
+  })();
+
   /* ---------- 1) navigace ---------- */
   var toggle = document.querySelector('.nav__toggle');
   var menu = document.getElementById('nav-menu');
