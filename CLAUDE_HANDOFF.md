@@ -42,7 +42,7 @@ Web je celý česky. Vlastní doména zatím není.
 **Ověřování lidí**
 - potvrzení e-mailu je vyžadované pro všechny účty (nastaveno v Supabase)
 - jednorázové schránky (mailinator, yopmail a spol.) se odmítají — seznam je
-  v , kontrola běží v triggeru, formulář ji jen předběhne
+  v `private.blokovane_domeny`, kontrola běží v triggeru, formulář ji jen předběhne
 
 **Právní texty** — GDPR zásady a podmínky užití, odkazované z patičky všech stránek
 a od souhlasu při registraci.
@@ -109,8 +109,8 @@ None — current work is in a stable state.
   zatím nikdo nedělá; je to popsané v podmínkách užití.
 - **Starý uniklý klíč zůstává v historii gitu** (commit `5e0534f`). Je neplatný, takže
   nepředstavuje riziko; vyčištění historie by rozbilo existující klony.
-- **Seznam jednorázových domén zastarává.** Nové schránky vznikají průběžně; doplňují se
-  řádkem .
+- **Seznam jednorázových domén zastarává.** Nové schránky vznikají průběžně; doplní se
+  vložením řádku do `private.blokovane_domeny` (viz `supabase/005-jednorazove-schranky.sql`).
 - **Lobby nemá fotku** — je poskládané z CSS. Čeká na obrázek od kamaráda.
 - **Odvětví je zatím 6**, uživatel chce ~30 (seznam měl ze starší verze webu).
 - **Animace nejsou implementované.** Struktura je připravená: sekce nesou `data-scene`,
@@ -151,10 +151,11 @@ None — current work is in a stable state.
 
 ## Last Session
 
-**9. 9. 2026** — Výměna kompromitovaného klíče  (byl commitnutý v ),
+**9. 9. 2026** — Výměna kompromitovaného klíče `ARES_SECRET` (byl commitnutý v `5e0534f`),
 zesílení ověřování podpisu, odstranění klíče ze zdrojáků, otestování celého řetězce.
 Založen tento handoff. Přidáno odmítání jednorázových e-mailových schránek při registraci.
 
-Poslední commit: 
+Poslední commit: `9e802c1`
+
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
