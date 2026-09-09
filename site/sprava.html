@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="robots" content="noindex">
+  <title>Správa — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="ucet.html">Můj účet</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="journey shell">
+    <p class="journey__role">Správa</p>
+    <h1>Zpětná vazba od uživatelů</h1>
+    <p class="journey__lead" id="lead">Načítám…</p>
+
+    <p class="form__status" id="gate" hidden></p>
+
+    <div id="obsah" hidden>
+      <div class="actions" style="margin-bottom:24px">
+        <button class="btn btn--ghost" type="button" id="prepnout">Zobrazit i vyřízené</button>
+      </div>
+      <div id="seznam"></div>
+    </div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span class="foot__links">
+      <a href="podminky.html">Podmínky užití</a>
+      <a href="soukromi.html">Ochrana údajů</a>
+    </span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, status, configured, czechError, paintNav } from './auth.js';
+
+    var gate = document.getElementById('gate');
+    var seznam = document.getElementById('seznam');
+    var vsechny = false;
+
+    var NAZVY = { navrh: 'Návrh', hodnoceni: 'Hodnocení', chyba: 'Chyba' };
+
+    function esc(t) {
+      return String(t == null ? '' : t).replace(/[<>&"]/g, function (c) {
+        return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c];
+      });
+    }
+
+    async function nacti() {
+      var q = supabase.from('zpetna_vazba').select('*').order('created_at', { ascending: false });
+      if (!vsechny) q = q.eq('vyrizeno', false);
+      var res = await q;
+
+      if (res.error) return status(gate, czechError(res.error), 'error');
+      if (!res.data.length) {
+        seznam.innerHTML = '<p class="journey__lead">' +
+          (vsechny ? 'Zatím nikdo nic neposlal.' : 'Nic nevyřízeného.') + '</p>';
+        return;
+      }
+
+      seznam.innerHTML = res.data.map(function (z) {
+        return '<article class="card" style="margin-bottom:14px">' +
+          '<span class="tag' + (z.typ === 'chyba' ? ' tag--trial' : '') + '">' + NAZVY[z.typ] + '</span>' +
+          (z.hvezdicky ? ' <span class="tag tag--free">' + z.hvezdicky + ' / 5</span>' : '') +
+          (z.vyrizeno ? ' <span class="tag">vyřízeno</span>' : '') +
+          '<p style="margin:12px 0;color:var(--fg-dim);white-space:pre-wrap">' + esc(z.text) + '</p>' +
+          '<p style="font-size:.82rem">' +
+            new Date(z.created_at).toLocaleString('cs-CZ') +
+            (z.kontakt ? ' · ' + esc(z.kontakt) : '') +
+            (z.stranka ? ' · ' + esc(z.stranka) : '') +
+            (z.autor ? ' · přihlášený' : ' · nepřihlášený') +
+          '</p>' +
+          '<div class="actions" style="margin-top:14px">' +
+            '<button class="btn btn--ghost" type="button" data-vyrizeno="' + z.id + '" data-stav="' +
+              (z.vyrizeno ? 'false' : 'true') + '">' +
+              (z.vyrizeno ? 'Vrátit mezi nevyřízené' : 'Označit za vyřízené') +
+            '</button>' +
+          '</div></article>';
+      }).join('');
+    }
+
+    seznam.addEventListener('click', async function (e) {
+      var el = e.target.closest('[data-vyrizeno]');
+      if (!el) return;
+      var res = await supabase.from('zpetna_vazba')
+        .update({ vyrizeno: el.dataset.stav === 'true' }).eq('id', el.dataset.vyrizeno);
+      if (res.error) return status(gate, czechError(res.error), 'error');
+      nacti();
+    });
+
+    document.getElementById('prepnout').addEventListener('click', function (e) {
+      vsechny = !vsechny;
+      e.target.textContent = vsechny ? 'Zobrazit jen nevyřízené' : 'Zobrazit i vyřízené';
+      nacti();
+    });
+
+    (async function () {
+      if (!configured) return status(gate, 'Není připojená databáze.', 'error');
+
+      var session = await paintNav();
+      if (!session) return window.location.replace('prihlaseni.html');
+
+      var spravce = await supabase.rpc('jsem_spravce');
+      if (spravce.data !== true) {
+        document.getElementById('lead').textContent = '';
+        return status(gate, 'Tahle stránka je jen pro správce.', 'error');
+      }
+
+      document.getElementById('lead').textContent =
+        'Co lidem na TradeLinku vadí a co by změnili.';
+      document.getElementById('obsah').hidden = false;
+      await nacti();
+    })();
+  </script>
+</body>
+</html>

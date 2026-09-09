@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Řekněte nám, co vám na TradeLinku vadí a co byste změnili.">
+  <title>Zpětná vazba — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="registrace.html">Založit účet</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="auth shell">
+    <div class="auth__card">
+      <p class="auth__kicker">Zpětná vazba</p>
+      <h1>Co byste změnili?</h1>
+      <p class="auth__lead">
+        TradeLink se teprve staví. Když vám tu něco chybí, mate vás nebo rovnou nefunguje,
+        napište to — čteme každou zprávu. Přihlašovat se kvůli tomu nemusíte.
+      </p>
+
+      <form class="form" id="form" novalidate>
+        <div class="field">
+          <label for="typ">O co jde</label>
+          <select id="typ">
+            <option value="navrh">Návrh na úpravu</option>
+            <option value="hodnoceni">Hodnocení TradeLinku</option>
+            <option value="chyba">Něco nefunguje</option>
+          </select>
+        </div>
+
+        <div class="field" id="pole-hvezdicky">
+          <label for="hvezdicky">Jak se vám TradeLink zatím jeví</label>
+          <select id="hvezdicky">
+            <option value="">— nechci hodnotit —</option>
+            <option value="5">5 — výborné</option>
+            <option value="4">4 — dobré</option>
+            <option value="3">3 — průměrné</option>
+            <option value="2">2 — slabší</option>
+            <option value="1">1 — špatné</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="text">Vaše zpráva</label>
+          <textarea id="text" rows="7" maxlength="4000" required
+                    placeholder="Co vám chybí, co je nejasné, co byste udělali jinak…"></textarea>
+          <p class="field__hint"><span id="pocet">0</span> / 4000 znaků, alespoň 10.</p>
+        </div>
+
+        <div class="field">
+          <label for="kontakt">E-mail na vás <span class="field__hint">nepovinné, kdybychom se chtěli doptat</span></label>
+          <input type="email" id="kontakt" maxlength="200" autocomplete="email">
+        </div>
+
+        <p class="form__status" id="status" hidden></p>
+
+        <button class="btn" type="submit">Odeslat</button>
+      </form>
+
+      <p class="auth__alt"><a href="./">Zpět na hlavní stránku</a></p>
+    </div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span class="foot__links">
+      <a href="podminky.html">Podmínky užití</a>
+      <a href="soukromi.html">Ochrana údajů</a>
+    </span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, status, busy, configured, czechError, paintNav } from './auth.js';
+
+    paintNav();
+
+    var form = document.getElementById('form');
+    var statusEl = document.getElementById('status');
+    var text = document.getElementById('text');
+    var typ = document.getElementById('typ');
+
+    text.addEventListener('input', function () {
+      document.getElementById('pocet').textContent = text.value.length;
+    });
+
+    /* hvězdičky dávají smysl jen u hodnocení */
+    function prepniHvezdicky() {
+      document.getElementById('pole-hvezdicky').hidden = typ.value !== 'hodnoceni';
+    }
+    typ.addEventListener('change', prepniHvezdicky);
+    prepniHvezdicky();
+
+    /* předvyplnění podle toho, odkud člověk přišel */
+    var odkud = new URLSearchParams(location.search).get('z');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      status(statusEl, '');
+
+      if (text.value.trim().length < 10) {
+        return status(statusEl, 'Napište prosím aspoň větu.', 'error');
+      }
+      if (!configured) {
+        return status(statusEl, 'Odesílání zatím není připojené k databázi.', 'error');
+      }
+
+      busy(form, true, 'Odesílám…');
+
+      var session = (await supabase.auth.getSession()).data.session;
+      var hv = document.getElementById('hvezdicky').value;
+
+      var res = await supabase.from('zpetna_vazba').insert({
+        autor: session ? session.user.id : null,
+        typ: typ.value,
+        hvezdicky: typ.value === 'hodnoceni' && hv ? Number(hv) : null,
+        text: text.value.trim(),
+        stranka: odkud || document.referrer.slice(0, 200) || null,
+        kontakt: document.getElementById('kontakt').value.trim() || null
+      });
+
+      busy(form, false);
+
+      if (res.error) return status(statusEl, czechError(res.error), 'error');
+
+      form.hidden = true;
+      status(statusEl, 'Děkujeme. Přečteme si to.', 'ok');
+    });
+  </script>
+</body>
+</html>
