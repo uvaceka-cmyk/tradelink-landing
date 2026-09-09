@@ -80,6 +80,7 @@ export function czechError(error) {
   if (/rate limit|too many requests/i.test(m)) return 'Příliš mnoho pokusů. Zkuste to za chvíli.';
   if (/Unable to validate email address/i.test(m)) return 'E-mailová adresa nevypadá platně.';
   if (/New password should be different/i.test(m)) return 'Nové heslo musí být jiné než to původní.';
+  if (/Jednorázové e-mailové schránky/i.test(m)) return 'Jednorázové e-mailové schránky nepřijímáme. Použijte prosím svůj běžný e-mail.';
   if (/Database error saving new user|unexpected_failure/i.test(m)) return 'Registraci se nepodařilo dokončit. Ověřte prosím IČO znovu — platnost ověření je hodina.';
   return m || 'Něco se nepovedlo. Zkuste to prosím znovu.';
 }

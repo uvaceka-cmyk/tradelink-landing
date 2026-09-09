@@ -210,6 +210,16 @@
 
       busy(form, true, 'Zakládám účet…');
 
+      var jednorazova = await supabase.rpc('email_domena_blokovana', {
+        p_email: document.getElementById('email').value.trim()
+      });
+      if (jednorazova.data === true) {
+        busy(form, false);
+        return status(statusEl,
+          'Jednorázové e-mailové schránky nepřijímáme. Použijte prosím svůj běžný e-mail.',
+          'error');
+      }
+
       var { error } = await supabase.auth.signUp({
         email: document.getElementById('email').value.trim(),
         password: document.getElementById('password').value,
