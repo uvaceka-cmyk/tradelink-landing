@@ -113,8 +113,12 @@ None — current work is in a stable state.
 - **Redirect URL allow-list v Supabase není nastavený.** Obchází to směrovač v `app.js`,
   který odkazy z e-mailů přesměruje z úvodní stránky, kam patří. Správně tam patří
   `https://tradelink-landing.pages.dev/**`.
-- **Supabase zdarma pošle jen 2 e-maily za hodinu.** Na ostrý provoz je potřeba vlastní
-  doména a odesílací služba.
+- **Supabase zdarma pošle jen 2 e-maily za hodinu**, což omezuje i testování registrací.
+  Zruší se to vlastním odesílatelem (custom SMTP), ten ale bez domény funguje jen na půl.
+  Uživatel se rozhodl pořídit doménu a udělat to rovnou pořádně — **koupí ji po výplatě**.
+  Do té doby limit necháváme být; mezikrok přes Brevo by se stejně předělával.
+  Nouzově jde na dobu vývoje vypnout potvrzování e-mailu (Authentication → Providers →
+  Email → Confirm email) — **před spuštěním se musí zase zapnout.**
 - **ARES neověří oprávnění.** Potvrdí, že firma existuje — ne že IČO zadal její jednatel.
   Řešení (ověřovací dopis, platba z firemního účtu, datová schránka, bankovní identita)
   zatím nikdo nedělá; je to popsané v podmínkách užití.
