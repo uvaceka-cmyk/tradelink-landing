@@ -135,35 +135,54 @@ odstraněn. Ověřeno, že podpisy starým klíčem databáze odmítá.
 
 ## Current Work
 
-**Homepage vizuál** (větev `chatgpt/homepage-visual`, draft PR #1, poslední commit `870cfe9`) —
-redesign hero sekce `index.html` na fullscreen lobby/atrium v dark luxury stylu podle schváleného
-zadání. Hotovo: přesný schválený text (`TradeLink` / `Kde se propojuje byznys.` / „Jedno místo,
-kde se potkávají firmy, pracovníci a příležitosti." / CTA `Vstoupit do lobby` a `Založit účet`),
-izolované `site/homepage.css` (nezasahuje do zbytku designu), `site/homepage-master.webp`
-(schválená fotka lobby — dark luxury, teplé světlo, cedule TradeLink na recepčním pultu, žádné
-vypálené UI) je v repu, `onerror` fallback na starou maketu `tradelink.jpeg` je pryč. Navíc
-opraveno `site/lobby.html` — patra budovy byla netaktivní `<div>`, teď jsou to skutečné odkazy
-na `recepce.html` s hover/focus efektem. Větev je rebasovaná na `main` (nese i profily/inzeráty/
-hodnocení/nahlašování/SEO/právní věci/doménu — vše až po `007f9fc`).
+**Homepage přestavěná na interaktivní budovu** (větev `chatgpt/homepage-visual`, draft PR #1,
+poslední commit `5aa5e44`) — homepage už není klasická scrollovací stránka (hero + O TradeLinku +
+Jak to funguje + Výhody + závěrečné CTA), ale jedna fullscreen scéna „atrium" podle schváleného
+konceptu. `site/homepage-master.webp` (schválená fotka atria, žádné vypálené UI) je hero pozadí.
 
-**Ověřeno v Claude in Chrome** (desktop 1920×1080, skutečný prohlížeč uživatele, žádný jiný
-nástroj): hero bez zdvojeného UI, navigace, obě CTA (`Vstoupit do lobby` → `lobby.html`,
-`Založit účet` → `registrace.html`), klikatelnost pater na `lobby.html` (vedou na `recepce.html`),
-celý průchod homepage → lobby → recepce.
+**Nový flow (schváleno uživatelem 9. 9.):** `homepage/atrium → recepce.html → role → obor →
+podobor → nabídky`. `Vstoupit do lobby` (nav i hero) a všech 7 pater výtahu vedou **přímo** na
+`recepce.html` — `lobby.html` jako mezikrok se teď v hlavním flow nepoužívá. **`site/lobby.html`
+zůstává v repu beze změny jako nepoužívaná legacy stránka — záměrně nesmazaná, nikam z nové
+homepage neodkazovaná.**
 
-**Neověřeno vizuálně: mobilní breakpoint.** `resize_window` i `window.resizeTo()` z JS v tomhle
-prostředí neúčinkují — okno se pokaždé vrátí na plnou šířku displeje (ověřeno čtením
-`window.innerWidth`/`outerWidth` po každém pokusu). Mobilní CSS v `homepage.css`
-(`@media max-width:720px`) bylo zkontrolováno jen čtením kódu, ne renderem. Než se PR #1 schválí,
-měl by se mobil ověřit skutečně — v DevTools na počítači, kde okno lze zmenšit, nebo na telefonu.
+Co je hotové:
+- `site/index.html` — atrium scéna, integrovaná smoked/blur nav (`.nav--atrium`) bez odkazů na
+  smazané sekce, skutečný výtah panel (`aside.elevator`, 7 klikatelných pater, kruhová čísla,
+  modrobílý prstenec na aktivním „L"), mobilní tlačítko „Patra" + bottom sheet se stejnými patry.
+- `site/homepage.css` — přepsáno pro atrium layout, pozice/glow výtahu, bottom sheet, `is-leaving`
+  přechodový stav. Pořád izolované od zbytku designu.
+- `site/recepce.html` — vizuálně beze změny (existující panely/ikony/texty netknuté), jen přidán
+  `data-enter` pro vstupní fade a načtení `transition.js`.
+- `site/transition.js` **(nové)** — sdílené, bez závislostí: exit animace + navigace pro
+  `[data-transition]` odkazy (~650 ms, jen `opacity`/`transform`/`filter`), entrance reveal pro
+  `[data-enter]`. Respektuje `prefers-reduced-motion`; bez JS odkazy fungují okamžitě.
+- `site/homepage.js` **(nové)** — jen pro `index.html`: otevírání/zavírání mobilního bottom
+  sheetu (klik, Escape, klik na pozadí).
+- `site/style.css` — pár řádků pro `.reception[data-enter]` vstupní animaci.
 
-Popis PR #1 na GitHubu čeká na ruční aktualizaci uživatelem (bez `gh`/API tokenu v tomhle
-prostředí nejde upravit programově) — navržený text byl předaný v chatu.
+**Ověřeno živě v Claude in Chrome** (stejné okno uživatele, žádný jiný nástroj — protože
+`resize_window` v tomhle prostředí nefunguje, přes lokální stránku se dvěma stejně-původovými
+`<iframe>` v reálné šířce 1920px a 390px, jen vizuálně zmenšenými transformací, takže `@media`
+dotazy se spouští doopravdy): desktop i mobilní layout, hover na výtahu, klik na patro → přechod →
+přistání na `recepce.html`, pokračování z recepce do `obory.html`, otevření/zavření mobilního
+bottom sheetu. **Mobil byl tentokrát ověřen vizuálně** (na rozdíl od minula).
+
+Větev je rebasovaná na aktuální `main` (`f8552e0` — nese kontaktní e-mail v právních textech
+a vše předtím). Pushnuto na `chatgpt/homepage-visual`. **Do `main` zatím nemergováno — čeká na
+finální schválení uživatelem.**
+
+Popis PR #1 na GitHubu a přepnutí z Draft na Ready čekají na ruční akci uživatele (bez `gh`/API
+tokenu v tomhle prostředí nejde upravit programově) — navržený text byl předaný v chatu.
 
 ## Decisions Made
 
-- **Homepage nesmí začínat výběrem oboru ani typu uživatele.** Flow je záměrně
-  homepage → info → lobby → recepce → kdo jsem → obor → podobor → nabídky.
+- **Homepage nesmí začínat výběrem oboru ani typu uživatele.** Obor/podobor/role musí přijít
+  až po recepci.
+- **Homepage přestavěná na jednu fullscreen scénu „atrium" místo scrollovací stránky**
+  (schváleno 9. 9., viz Current Work). `Vstoupit do lobby` i patra výtahu teď vedou přímo na
+  `recepce.html` — mezikrok `lobby.html` z hlavního flow vypadl, ale soubor zůstává v repu
+  nesmazaný jako legacy stránka (uživatel to výslovně chtěl takhle, ne smazat).
 - **Ceny jsou z webu úmyslně odstraněné** (uživatel to výslovně chtěl). V databázi zůstal
   sloupec `trial_ends_at`, který se firmám plní — na webu se nikde nezobrazuje.
   Obchodní model, na kterém se domluvili: lidé zdarma navždy, firmy první 3 měsíce zdarma,
@@ -328,7 +347,11 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
 
 ## Do Not Change
 
-- Pořadí flow (homepage → lobby → recepce → volba → obor → podobor). Nedávat obory na homepage.
+- Pořadí flow: role/obor/podobor musí přijít až po recepci, ne na homepage. Do 9. 9. platilo
+  `homepage → lobby → recepce → volba → obor → podobor`; od schválení nové atriové homepage
+  (viz `chatgpt/homepage-visual`, Current Work) je to `homepage/atrium → recepce → volba → obor
+  → podobor` — `lobby.html` už v hlavním flow není mezikrok, zůstává v repu jen jako nepoužívaná
+  legacy stránka. Po mergi do `main` tenhle řádek i „Current State" nahoře aktualizovat.
 - Zmínky o cenách na webu. Byly odstraněny na výslovné přání a mají zůstat pryč,
   dokud uživatel neřekne jinak.
 - Popisky pod názvy voleb na recepci — odstraněny záměrně.
@@ -338,31 +361,23 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
 
 ## Last Session
 
-**9. 9. 2026, večer — `tradelink.cz` je živá.** Přepnutí jmenných serverů z Wedosu na
-Cloudflare doběhlo, zóna je aktivní, doména i `www` jsou připojené k Pages projektu
-a certifikát je vydaný. `www` a `pages.dev` se trvale přesměrují na hlavní adresu
-(`functions/_middleware.js`). Supabase Site URL i redirect allow-list ukazují na novou
-adresu. `info@tradelink.cz` přijímá poštu — přes Cloudflare Email Routing se přeposílá
-na `uvacek.a@gmail.com`. Odesílání z domény zatím nefunguje, limit dvou zpráv za hodinu
-tedy pořád platí; je to poslední věc, která brzdí registrace.
+**9. 9. 2026, pozdní večer** — Na `chatgpt/homepage-visual` (draft PR #1): homepage přestavěná
+z scrollovací stránky na jednu fullscreen atriovou scénu s funkčním výtahem (viz Current Work
+pro detaily). Schválený nový flow: `homepage/atrium → recepce → role → obor → podobor`,
+`lobby.html` zůstává v repu nesmazaná jako legacy. Ověřeno živě v Claude in Chrome — tentokrát
+včetně mobilu (přes lokální iframe stránku s reálnou šířkou viewportu, protože `resize_window`
+v tomhle prostředí nefunguje). Rebasováno na aktuální `main`, pushnuto. Poslední commit na
+`chatgpt/homepage-visual`: `5aa5e44`. **Do `main` zatím nemergováno — čeká na finální schválení
+uživatelem**, pak jde přímo do produkce na `tradelink.cz`. Popis PR #1 a přepnutí Draft → Ready
+čekají na ruční akci uživatele (bez `gh`/tokenu nejde upravit programově).
 
-**9. 9. 2026** — Na `chatgpt/homepage-visual` (draft PR #1): uživatel dodal schválený obrázek
-lobby, uložen jako `site/homepage-master.webp` (převeden z PNG, 1672×941). Odstraněn `onerror`
-fallback na starou maketu `tradelink.jpeg` a doplněny správné `width`/`height`, aby seděly
-skutečnému obrázku. Větev znovu rebasovaná na aktuální `main` (`007f9fc` — nese redirecty na
-`tradelink.cz` navíc oproti dřívějšímu stavu). Ověřeno v Claude in Chrome (skutečný prohlížeč
-uživatele, žádný jiný nástroj): desktop 1920×1080 bez zdvojeného UI, navigace, obě CTA, patra
-na `lobby.html` klikatelná a vedou na `recepce.html`, celý průchod homepage → lobby → recepce.
-**Mobil se nepodařilo vizuálně ověřit** — `resize_window` i `window.resizeTo()` v tomhle
-prostředí okno nezmenší (potvrzeno čtením `window.innerWidth` po každém pokusu, vždy skočí
-zpět na plnou šířku displeje); mobilní CSS bylo jen přečtené, ne vyrenderované. Poslední commit
-na `chatgpt/homepage-visual`: `870cfe9`. Popis PR #1 na GitHubu stále čeká na ruční aktualizaci
-uživatelem (bez `gh`/tokenu nejde upravit programově).
-
-Souběžně na `main`: doména `tradelink.cz` získala redirect middleware ze starých adres
-(`functions/_middleware.js`) a testovací data (účty, profily, inzeráty, hodnocení) byla na
-přání uživatele smazána — kdo bude dál stavět výpis, musí si vytvořit vlastní testovací data
-(viz Known Issues). Poslední commit na `main`: `007f9fc`.
+**Dřívější stav (stejný den, dopoledne/odpoledne):** `tradelink.cz` je živá — jmenné servery
+přepnuté na Cloudflare, doména i `www` připojené k Pages, certifikát vydaný, `www`/`pages.dev`
+trvale přesměrované (`functions/_middleware.js`), Supabase Site URL i redirect allow-list
+ukazují na novou adresu, `info@tradelink.cz` přijímá poštu (přeposílá se na `uvacek.a@gmail.com`).
+Odesílání z domény zatím nefunguje, limit dvou zpráv za hodinu pořád platí. Testovací data
+(účty, profily, inzeráty, hodnocení) byla na přání uživatele smazána — kdo bude dál stavět
+výpis, musí si vytvořit vlastní (viz Known Issues). Poslední commit na `main`: `f8552e0`.
 
 Předchozí session (výměna ARES klíče, profily, inzeráty, hodnocení, nahlašování, zpětná
 vazba) skončila commitem `dbc4fc4`.
