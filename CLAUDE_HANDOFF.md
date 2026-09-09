@@ -11,16 +11,14 @@ Funguje hodnocení firem, nahlašování obsahu s frontou pro správce a sběr z
 takže se uživatelé k inzerátům dostanou jen přes přímý odkaz. Výpis staví kamarád nad
 pohledem `public.verejne_inzeraty` a odkazuje na `inzerat.html?id=` a `firma.html?id=`.
 
-**Živě:** https://tradelink-landing.pages.dev
-**Doména:** `tradelink.cz` — koupená u Wedosu, 9. 9. 2026 odeslán požadavek na přepnutí
-jmenných serverů na Cloudflare (`ken.ns.cloudflare.com`, `paislee.ns.cloudflare.com`).
-Wedos požadavek přijal; propagace trvá **nejméně 6 hodin**. Než doběhne, web běží
-jen na pages.dev a čeká na ni i pošta, Seznam, Search Console a odesílání e-mailů.
+**Živě:** https://tradelink.cz — doména je připojená, certifikát vydaný.
+`www.tradelink.cz` i původní `tradelink-landing.pages.dev` se trvale (301) přesměrují
+na hlavní adresu (`functions/_middleware.js`), aby se tentýž obsah nepočítal vícekrát.
 **Repo:** https://github.com/uvaceka-cmyk/tradelink-landing (veřejné, větev `main`)
 **Nasazení:** Cloudflare Pages, automaticky z `main`, build output directory = `site`, bez build příkazu
 **Databáze:** Supabase projekt `tradelink`, ref `hgjajfkaotflkmyrryak`, region eu-central-1 (Frankfurt)
 
-Web je celý česky. Vlastní doména zatím není.
+Web je celý česky a běží na vlastní doméně.
 
 ## Completed
 
@@ -105,6 +103,16 @@ Web je celý česky. Vlastní doména zatím není.
   web běží — statický robots.txt byl neplatný, mapa webu se musí uvádět celou adresou
 - Lighthouse na mobilu: přístupnost, osvědčené postupy, SEO i přístupnost pro AI
   agenty **100/100**, 47 kontrol prošlo, žádná neselhala
+
+**Doména a infrastruktura**
+- `tradelink.cz` běží na Cloudflare (přepnuto z Wedosu 9. 9. 2026, zóna aktivní)
+- doména i `www` připojené k Pages projektu, certifikát vydaný
+- `www` a `pages.dev` se trvale přesměrují na hlavní adresu (`functions/_middleware.js`);
+  náhledová nasazení `<hash>.tradelink-landing.pages.dev` zůstávají přístupná
+- Supabase Site URL i redirect allow-list ukazují na `https://tradelink.cz`
+- `og:image` na všech stránkách ukazuje na `https://tradelink.cz/tradelink.jpeg`
+- `info@tradelink.cz` → `uvacek.a@gmail.com` (Cloudflare Email Routing, MX i SPF
+  nastavené, příjem ověřený). Odesílání z domény zatím nefunguje — viz Known Issues.
 
 **Právní povinnosti platformy** (migrace `013`, složka `pravni/`)
 - **hodnocení**: web i podmínky uvádějí, že neověřujeme, zda autor s firmou opravdu
@@ -213,7 +221,8 @@ prostředí nejde upravit programově) — navržený text byl předaný v chatu
   jsou `uvacek.a@gmail.com` i `info@tradelink.cz` — oba se stanou správcem sami, jakmile
   se s tou adresou zaregistrují. **Ten mechanismus zatím nikdo nevyzkoušel**, po první
   registraci ověřit, že `spravce` je `true`.
-  Uživatel chce svůj účet na `info@tradelink.cz`; to jde až po zprovoznění domény a pošty.
+  Uživatel chce svůj účet na `info@tradelink.cz` — schránka už poštu přijímá, takže
+  registraci nic nebrání (jen naráží na limit dvou e-mailů za hodinu).
   **Heslo si volí sám a nikde se nesdílí** — nevymýšlet mu ho ani ho po něm nechtít.
 - **Automatické skrytí při třech hlášeních jde zneužít** — tři spolčené účty shodí
   konkurenci, než se k tomu správce dostane. Zatím to beru jako přijatelnou cenu za to,
@@ -225,23 +234,14 @@ prostředí nejde upravit programově) — navržený text byl předaný v chatu
 - **Právní texty mají nevyplněná místa** (nově osm, přibylo kontaktní místo) (označené `class="todo"`):
   provozovatel, IČO, sídlo, kontaktní e-mail, datum účinnosti. Uživatel je doplní, až
   založí firmu. Bez nich nelze web spustit naostro. Texty by měl před spuštěním vidět právník.
-- **Redirect URL allow-list v Supabase není nastavený.** Obchází to směrovač v `app.js`,
-  který odkazy z e-mailů přesměruje z úvodní stránky, kam patří. Správně tam patří
-  `https://tradelink-landing.pages.dev/**`.
-- **Doména `tradelink.cz` čeká na propagaci.** Zóna v Cloudflare
-  (`3c2c776363aa922f8773259560ddc32e`) je ve stavu `pending`; požadavek na změnu
-  jmenných serverů byl ve Wedosu odeslán 9. 9. 2026 večer. Až doména začne odpovídat
-  z Cloudflare, zbývá: připojit ji k Pages projektu (i `www`), přesměrovat pages.dev
-  na tradelink.cz kvůli dvojímu obsahu, zprovoznit `info@tradelink.cz` přes Cloudflare
-  Email Routing, přenastavit Site URL a redirect allow-list v Supabase, přepsat
-  absolutní adresu náhledového obrázku (`og:image` v `site/*.html` ukazuje na pages.dev)
-  a založit odesílání e-mailů.
-- **Supabase zdarma pošle jen 2 e-maily za hodinu**, což omezuje i testování registrací.
-  Zruší se to vlastním odesílatelem (custom SMTP), ten ale bez domény funguje jen na půl.
-  Uživatel se rozhodl pořídit doménu a udělat to rovnou pořádně — **koupí ji po výplatě**.
-  Do té doby limit necháváme být; mezikrok přes Brevo by se stejně předělával.
-  Nouzově jde na dobu vývoje vypnout potvrzování e-mailu (Authentication → Providers →
-  Email → Confirm email) — **před spuštěním se musí zase zapnout.**
+- **Odesílání e-mailů pořád běží přes sdíleného odesílatele Supabase** — limit
+  **2 zprávy za hodinu**, což brzdí registrace i testování. Příjem už funguje:
+  `info@tradelink.cz` se přeposílá na `uvacek.a@gmail.com`. Na odesílání zbývá:
+  účet u Resend / Brevo / Mailjet → ověřit `tradelink.cz` záznamy SPF a DKIM v DNS
+  (zóna je v Cloudflare, zápis je hotový během minuty) → v Supabase přepnout na vlastní
+  SMTP a zvednout limit v Auth → Rate Limits (i s vlastním SMTP je výchozí 30/hodinu).
+  Bez toho zůstává nouzová možnost vypnout na dobu vývoje potvrzování e-mailu
+  (Authentication → Providers → Email → Confirm email) — **před spuštěním zase zapnout.**
 - **ARES neověří oprávnění.** Potvrdí, že firma existuje — ne že IČO zadal její jednatel.
   Řešení (ověřovací dopis, platba z firemního účtu, datová schránka, bankovní identita)
   zatím nikdo nedělá; je to popsané v podmínkách užití.
@@ -262,17 +262,17 @@ prostředí nejde upravit programově) — navržený text byl předaný v chatu
 ## Next Steps
 
 1. **[Kamarád]** Výpis po výběru podoboru nad pohledem `verejne_inzeraty` — dnes tam končí
-   placeholder „zatím připravujeme". V databázi jsou testovací inzeráty, na kterých to jde
-   rovnou vidět. Filtr: `typ` + `obor` + `podobor` (na to je index).
+   placeholder „zatím připravujeme". Databáze je prázdná — testovací inzeráty je potřeba
+   si napřed vytvořit (recept v Known Issues). Filtr: `typ` + `obor` + `podobor` (na to je index).
 2. **[Uživatel]** Nastavit si účet jako správce, jinak je fronta nahlášení nepřístupná.
 3. **[Claude]** Doladit podle zpětné vazby, až začnou chodit první uživatelé.
-5. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
-6. **Doména a odesílání e-mailů** — až ji uživatel koupí (`tradelink.cz` byla 9. 9. volná,
-   `tradelink.com` obsazená). Postup: doména → účet u odesílatele (Resend / Brevo / Mailjet)
-   → ověřit doménu záznamy SPF a DKIM v DNS → v Supabase přepnout na vlastní SMTP a zvednout
-   limit v Auth → Rate Limits (i s vlastním SMTP je výchozí 30/hodinu). Pak teprve padne
-   limit 2 zprávy za hodinu. Zároveň nastavit novou doménu jako Site URL a přidat ji do
-   redirect allow-listu, a napojit ji na Cloudflare Pages.
+4. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
+5. **Odesílání e-mailů** — účet u Resend / Brevo / Mailjet, ověřit `tradelink.cz` záznamy
+   SPF a DKIM, v Supabase přepnout na vlastní SMTP a zvednout limit v Auth → Rate Limits.
+   Teprve tím padne limit dvou zpráv za hodinu, který dnes brzdí i registrace.
+6. **Vyhledávače** — Google Search Console (ověření DNS záznamem v Cloudflare),
+   Seznam Webmaster a zápis do Firmy.cz (obojí potřebuje účet na Seznamu
+   pod `info@tradelink.cz`).
 
 ## Pro druhou stranu (kamarád a jeho AI)
 
@@ -336,6 +336,14 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
   neoslabovat ve prospěch kontrol ve formuláři.
 
 ## Last Session
+
+**9. 9. 2026, večer — `tradelink.cz` je živá.** Přepnutí jmenných serverů z Wedosu na
+Cloudflare doběhlo, zóna je aktivní, doména i `www` jsou připojené k Pages projektu
+a certifikát je vydaný. `www` a `pages.dev` se trvale přesměrují na hlavní adresu
+(`functions/_middleware.js`). Supabase Site URL i redirect allow-list ukazují na novou
+adresu. `info@tradelink.cz` přijímá poštu — přes Cloudflare Email Routing se přeposílá
+na `uvacek.a@gmail.com`. Odesílání z domény zatím nefunguje, limit dvou zpráv za hodinu
+tedy pořád platí; je to poslední věc, která brzdí registrace.
 
 **9. 9. 2026** — Na `chatgpt/homepage-visual` (draft PR #1): uživatel dodal schválený obrázek
 lobby, uložen jako `site/homepage-master.webp` (převeden z PNG, 1672×941). Odstraněn `onerror`
