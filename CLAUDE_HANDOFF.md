@@ -127,7 +127,20 @@ odstraněn. Ověřeno, že podpisy starým klíčem databáze odmítá.
 
 ## Current Work
 
-None — current work is in a stable state.
+**Homepage vizuál** (větev `chatgpt/homepage-visual`, draft PR #1, poslední commit `f0b2f92`) —
+redesign hero sekce `index.html` na fullscreen lobby/atrium v dark luxury stylu podle schváleného
+zadání. Hotovo: přesný schválený text (`TradeLink` / `Kde se propojuje byznys.` / „Jedno místo,
+kde se potkávají firmy, pracovníci a příležitosti." / CTA `Vstoupit do lobby` a `Založit účet`),
+izolované `site/homepage.css` (nezasahuje do zbytku designu), větev rebasovaná na aktuální `main`
+(nese i profily/inzeráty/hodnocení/nahlašování). Navíc opraveno `site/lobby.html` — patra budovy
+byla netaktivní `<div>`, teď jsou to skutečné odkazy na `recepce.html` s hover/focus efektem.
+
+**Chybí:** `site/homepage-master.webp` — uživatel obrázek ještě nedodal. Hero zatím běží na
+`onerror` fallbacku na `tradelink.jpeg`, což je stará maketa s vypáleným UI (fake nabídka, fake
+tlačítka) — vizuálně zdvojuje skutečnou navigaci a tlačítka. **Nemergovat do `main`, dokud
+`homepage-master.webp` nepřijde a fallback se neověří jako zbytečný.** Popis PR #1 na GitHubu je
+potřeba ručně aktualizovat (bez `gh`/API tokenu v tomhle prostředí nejde upravit programově) —
+navržený text je připravený, čeká na vložení uživatelem.
 
 ## Decisions Made
 
@@ -229,7 +242,10 @@ None — current work is in a stable state.
   nepředstavuje riziko; vyčištění historie by rozbilo existující klony.
 - **Seznam jednorázových domén zastarává.** Nové schránky vznikají průběžně; doplní se
   vložením řádku do `private.blokovane_domeny` (viz `supabase/005-jednorazove-schranky.sql`).
-- **Lobby nemá fotku** — je poskládané z CSS. Čeká na obrázek od kamaráda.
+- **Lobby nemá fotku** — je poskládané z CSS. Čeká na obrázek od kamaráda. (Jiná věc než
+  `homepage-master.webp` níž — to je foto pro homepage hero, ne pro `lobby.html`.)
+- **`site/homepage-master.webp` chybí** — viz `Current Work`. Bez něj homepage hero ukazuje
+  starou maketu s vypáleným UI přes `onerror` fallback. Blokuje merge `chatgpt/homepage-visual`.
 - **Odvětví je zatím 6**, uživatel chce ~30 (seznam měl ze starší verze webu).
 - **Animace nejsou implementované.** Struktura je připravená: sekce nesou `data-scene`,
   vrstvy `data-depth`, `app.js` nastavuje `--scene-progress`. Čeká na kamaráda.
@@ -312,18 +328,33 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
 
 ## Last Session
 
-**9. 9. 2026** — Profily, inzeráty, odpovědi, hodnocení firem, nahlašování s frontou
-pro správce, zpětná vazba, viditelnost ve vyhledávačích a právní povinnosti platformy.
-Lighthouse 100/100 ve všech čtyřech kategoriích.
+**9. 9. 2026** — Dvě session běžely souběžně na různých větvích.
 
-Ověřeno proti živé databázi ze dvou účtů: cizí data nejdou číst, měnit ani mazat;
-zrušení účtu smaže i hodnocení a odpovědi; skrytí obsahu uloží důvod, který autor vidí.
+Na `main`: profily, inzeráty, odpovědi, hodnocení firem, nahlašování s frontou pro správce,
+zpětná vazba, viditelnost ve vyhledávačích a právní povinnosti platformy. Lighthouse 100/100
+ve všech čtyřech kategoriích. Ověřeno proti živé databázi ze dvou účtů: cizí data nejdou číst,
+měnit ani mazat; zrušení účtu smaže i hodnocení a odpovědi; skrytí obsahu uloží důvod, který
+autor vidí. **Odeslán požadavek na přepnutí domény `tradelink.cz` z Wedosu na Cloudflare** —
+Wedos ho přijal, propagace trvá nejméně 6 hodin; postup dál je v Known Issues a Next Steps.
+Poslední commit na `main`: `669a10f`.
 
-**Odeslán požadavek na přepnutí domény `tradelink.cz` z Wedosu na Cloudflare.**
-Wedos ho přijal, propagace trvá nejméně 6 hodin. Až doběhne, pokračuje se domenou,
-poštou, Seznamem a odesíláním e-mailů — postup je v Known Issues a Next Steps.
+Na větvi `chatgpt/homepage-visual` (draft PR #1): dokončena textová a interakční část homepage
+redesignu — schválený text hero sekce, rebase větve na tehdejší `main`, zprovoznění klikatelných
+pater na `site/lobby.html`. Ověřeno v prohlížeči na desktopu: navigace, obě CTA, hover na
+patrech, průchod homepage → lobby → recepce. Mobilní emulace přes browser tool se nedařilo
+spolehlivě přenastavit (okno se nezmenšilo), mobilní breakpoint v `homepage.css` byl tedy
+ověřen jen čtením CSS, ne vizuálně — stojí za to ještě zkontrolovat na reálném telefonu.
+`site/homepage-master.webp` čeká na dodání uživatelem — bez něj větev nejde sloučit do `main`
+(viz Current Work a Known Issues). Popis PR #1 čeká na ruční aktualizaci uživatelem (v tomhle
+prostředí není k dispozici `gh` ani token pro GitHub API). Push na tuhle větev se z terminálu
+opakovaně zasekával na Git Credential Manager promptu (bez viditelné chyby, jen visel) —
+nakonec ho úspěšně dokončil uživatel sám; pokud se to bude opakovat, zkusit push rovnou
+z terminálu, kde je GCM/prohlížeč viditelný. Poslední commit na `chatgpt/homepage-visual`:
+`f0b2f92` (založen na `main` ve stavu `ce0d026` — **před** domain/SEO/legal prací výše;
+větev je potřeba před mergem znovu rebasovat na aktuální `main`).
 
-Poslední commit: `1960d62`
+Předchozí session (výměna ARES klíče, profily, inzeráty, hodnocení, nahlašování, zpětná
+vazba) skončila commitem `dbc4fc4`.
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
