@@ -5,9 +5,11 @@
 TradeLink je statický web nasazený na Cloudflare Pages, napojený na Supabase (účty + databáze)
 a na registr ARES (ověřování firem). Průchod homepage → lobby → recepce → obor → podobor je
 funkční, účty a ověřování firem fungují a jsou otestované. Profily lidí i firem se dají
-vyplnit a zveřejnit, inzeráty a poptávky se dají zadávat a spravovat. **Chybí poslední
-článek: výpis** — po výběru podoboru se pořád zobrazí „zatím připravujeme", takže na sebe
-uživatelé ještě nevidí. Výpis staví kamarád nad pohledem `public.verejne_inzeraty`.
+vyplnit a zveřejnit, inzeráty a poptávky se dají zadávat, zveřejňovat a odpovídat na ně.
+Funguje hodnocení firem, nahlašování obsahu s frontou pro správce a sběr zpětné vazby.
+**Chybí poslední článek: výpis** — po výběru podoboru se pořád zobrazí „zatím připravujeme",
+takže se uživatelé k inzerátům dostanou jen přes přímý odkaz. Výpis staví kamarád nad
+pohledem `public.verejne_inzeraty` a odkazuje na `inzerat.html?id=` a `firma.html?id=`.
 
 **Živě:** https://tradelink-landing.pages.dev
 **Repo:** https://github.com/uvaceka-cmyk/tradelink-landing (veřejné, větev `main`)
@@ -61,6 +63,26 @@ Web je celý česky. Vlastní doména zatím není.
   nezadá nic, jeden účet smí mít naráz nejvýš **20 zveřejněných** inzerátů
 - `public.verejne_inzeraty` je rozhraní pro výpis — vynechává skryté i prošlé inzeráty
   a e-mail autora; nese jméno autora, typ účtu a příznak ověřené firmy
+
+**Odpovědi na inzerát** (`site/inzerat.html`, migrace `010`)
+- veřejný detail inzerátu s formulářem „Ozvat se"
+- odpověď vidí jen zadavatel a její autor; na vlastní, skrytý ani prošlý inzerát
+  odpovědět nelze, jedna odpověď na inzerát od účtu, denní strop 30
+- zadavatel vidí u svých inzerátů počet odpovědí včetně nepřečtených
+
+**Hodnocení firem a živnostníků** (`site/firma.html`, migrace `008`)
+- jeden účet hodnotí jednu firmu jednou, jen s potvrzeným e-mailem, vlastní firmu ne
+- průměr a počet se propisují do `verejne_profily`
+- jméno hodnotícího jen u zveřejněných profilů, jinak „ověřený uživatel"
+
+**Nahlašování obsahu** (migrace `011`)
+- nahlásit inzerát, hodnocení nebo profil může i nepřihlášený
+- při **třech** nezávislých hlášeních se obsah sám skryje (pojistka, ne rozsudek)
+- fronta a rozhodnutí správce na `site/sprava.html`
+
+**Zpětná vazba na platformu** (`site/zpetna-vazba.html`, migrace `009`)
+- hodnocení TradeLinku, návrhy a hlášení chyb; psát smí i nepřihlášený
+- čte jen správce (`profiles.spravce`) na `site/sprava.html`
 
 **Právní texty** — GDPR zásady a podmínky užití, odkazované z patičky všech stránek
 a od souhlasu při registraci.
@@ -125,6 +147,13 @@ None — current work is in a stable state.
 - **Cizí účet zatím nikdo nezkoušel.** Kontroly vlastnictví (RLS) jsou ověřené jen
   z pohledu vlastníka a nepřihlášeného. Druhý testovací účet nešlo založit kvůli limitu
   e-mailů — až půjde, zkusit z něj číst, měnit a mazat data toho prvního. **Musí selhat.**
+- **Zatím není žádný správce.** Bez toho se nikdo nedostane na `/sprava` a nahlášený obsah
+  nikdo nevyřídí. Nastavuje se ručně:
+  `update public.profiles set spravce = true where email = '...';`
+- **Automatické skrytí při třech hlášeních jde zneužít** — tři spolčené účty shodí
+  konkurenci, než se k tomu správce dostane. Zatím to beru jako přijatelnou cenu za to,
+  že podvod neviselo ve výpisu; při větším provozu zvážit vyšší mez nebo váhu podle
+  stáří účtu.
 - **Rozhraní Supabase i Cloudflare padá pod překladačem Chromu.** Supabase to hlásí přímo
   chybovou stránkou. Uživatel má překlad zapnutý — než se vypne, dělat zásahy raději přes
   SQL editor (ten přežívá) nebo přes API.
@@ -157,9 +186,9 @@ None — current work is in a stable state.
 1. **[Kamarád]** Výpis po výběru podoboru nad pohledem `verejne_inzeraty` — dnes tam končí
    placeholder „zatím připravujeme". V databázi jsou testovací inzeráty, na kterých to jde
    rovnou vidět. Filtr: `typ` + `obor` + `podobor` (na to je index).
-2. **[Claude]** Ochrana proti falešnému obsahu: nahlášení inzerátu a fronta na kontrolu.
-   (Ověřená firma a limity na účet jsou už v migraci `007`.)
-3. **[Claude]** Ověřit kontroly vlastnictví z druhého účtu — viz Known Issues.
+2. **[Uživatel]** Nastavit si účet jako správce, jinak je fronta nahlášení nepřístupná.
+3. **[Claude]** Ověřit z druhého účtu: kontroly vlastnictví, odpověď na cizí inzerát,
+   hodnocení firmy, automatické skrytí po třech hlášeních. Blokuje limit e-mailů.
 5. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
 6. **Doména a odesílání e-mailů** — až ji uživatel koupí (`tradelink.cz` byla 9. 9. volná,
    `tradelink.com` obsazená). Postup: doména → účet u odesílatele (Resend / Brevo / Mailjet)
@@ -176,7 +205,11 @@ None — current work is in a stable state.
   rozšíření na ~30 odvětví. `id` u existujícího odvětví neměnit, ukládá se do profilů.
 - `site/obory.html` + `site/app.js` — výběr odvětví a podoboru; role v `ROLES`
 - `site/profil.html` — formulář profilu, zveřejnění, výběr odvětví z číselníku
-- `site/moje-inzeraty.html` — zadávání a správa inzerátů
+- `site/moje-inzeraty.html` — zadávání a správa inzerátů, přehled odpovědí
+- `site/inzerat.html` — veřejný detail inzerátu, odpověď, nahlášení
+- `site/firma.html` — veřejný profil firmy, hodnocení
+- `site/sprava.html` — zpětná vazba a fronta nahlášeného obsahu (jen pro správce)
+- `site/zpetna-vazba.html` — formulář zpětné vazby
 - `supabase/007-inzeraty.sql` — tabulka inzerátů, ochrany proti zneužití, pohled `verejne_inzeraty`
 - `site/auth.js` — Supabase klient, mapování rolí na typ účtu, překlad chybových hlášek
 - `site/supabase-config.js` — adresa projektu a veřejný publishable klíč (patří do prohlížeče)
@@ -197,17 +230,16 @@ None — current work is in a stable state.
 
 ## Last Session
 
-**9. 9. 2026** — Výměna kompromitovaného klíče ARES, blokace jednorázových e-mailových
-schránek, profily lidí i firem, inzeráty a poptávky. Číselník odvětví přesunut do
-`site/obory-data.js`.
+**9. 9. 2026** — Výměna kompromitovaného klíče ARES, blokace jednorázových schránek,
+profily, inzeráty, hodnocení firem, odpovědi na inzeráty, nahlašování obsahu s frontou
+pro správce a sběr zpětné vazby. Číselník odvětví přesunut do `site/obory-data.js`.
 
-Proběhl první reálný průchod s přihlášeným účtem. Ověřeno: registrace firmy přes ARES,
-založení profilu triggerem, odmítnutí zveřejnění bez popisu a odvětví, zadání inzerátu
-formulářem, odmítnutí krátkého popisu i inzerátu pod cizím účtem, skrytý inzerát se
-neobjeví ve veřejném výpisu, filtrování podle oboru funguje. Při testu se našla a opravila
-chyba: stránka účtu četla metadata registrace místo profilu.
+Proběhl první reálný průchod s přihlášeným účtem. Ověřeno mimo jiné: registrace firmy
+přes ARES, zveřejnění profilu jen s popisem a odvětvím, zadání inzerátu formulářem,
+odmítnutí odpovědi na vlastní inzerát, hodnocení sebe sama a přístupu k cizím datům
+i k frontě správce. Opravena chyba: stránka účtu četla metadata registrace místo profilu.
 
-Poslední commit: `826e3b7`
+Poslední commit: `dbc4fc4`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
