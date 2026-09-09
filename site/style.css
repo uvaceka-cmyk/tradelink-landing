@@ -254,6 +254,11 @@ a.floor:active{transform:translateX(4px) scale(.98)}
    Desktop: fullscreen scéna, panely vlevo a vpravo.
    ========================================================= */
 .reception{position:relative;background:var(--ink)}
+.reception[data-enter]{
+  opacity:0;transform:translateY(14px) scale(.99);
+  transition:opacity .5s var(--ease),transform .5s var(--ease);
+}
+.reception[data-enter].is-entered{opacity:1;transform:none}
 .reception__media{position:relative;isolation:isolate}
 .reception__media img{width:100%;height:clamp(260px,44svh,420px);object-fit:cover;object-position:center 38%}
 .reception__media::after{

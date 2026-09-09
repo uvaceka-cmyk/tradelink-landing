@@ -20,12 +20,14 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://tradelink.cz/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" as="image" href="homepage-master.webp" fetchpriority="high">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="homepage.css">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://tradelink.cz/#organizace","name":"TradeLink","description":"Místo, kde se potkávají firmy, pracovníci a zakázky. Firmy ověřujeme podle registru ARES.","url":"https://tradelink.cz/","areaServed":{"@type":"Country","name":"Česká republika"}},{"@type":"WebSite","@id":"https://tradelink.cz/#web","name":"TradeLink","url":"https://tradelink.cz/","inLanguage":"cs-CZ","publisher":{"@id":"https://tradelink.cz/#organizace"}}]}</script>
+  <noscript><style>.atrium{opacity:1!important}</style></noscript>
 </head>
 <body>
-  <header class="nav">
+  <header class="nav nav--atrium">
     <div class="nav__bar">
       <a class="nav__brand" href="./">TradeLink</a>
       <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
@@ -33,137 +35,84 @@
       </button>
     </div>
     <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
-      <a href="#o-tradelinku">O TradeLinku</a>
-      <a href="#jak-to-funguje">Jak to funguje</a>
-      <a href="#vyhody">Výhody</a>
-      <a class="is-cta" href="lobby.html">Vstoupit do lobby</a>
+      <a class="is-cta" href="recepce.html" data-transition>Vstoupit do lobby</a>
       <a href="registrace.html">Založit účet</a>
       <a id="nav-account" href="prihlaseni.html">Přihlásit se</a>
     </nav>
   </header>
 
   <main>
-    <!-- NOVÝ HOMEPAGE MASTER — lobby jako hlavní vstupní scéna -->
-    <section class="home-hero" data-scene="hero">
-      <div class="home-hero__media" data-depth="1">
+    <!--
+      SCÉNA 1 — ATRIUM
+      Homepage jako jedna fullscreen scéna budovy TradeLink.
+      data-depth zůstává kvůli pozdější kamerové animaci (viz app.js).
+    -->
+    <section class="atrium" id="atrium" data-scene="atrium">
+      <div class="atrium__media" data-depth="1">
         <img src="homepage-master.webp"
              width="1672" height="941" fetchpriority="high"
-             alt="Luxusní lobby TradeLink s recepcí a večerním panoramatem města.">
+             alt="Luxusní atrium TradeLink — prosklená patra budovy nad recepcí, večerní panorama města.">
       </div>
-      <div class="home-hero__content">
-        <div class="home-hero__copy" data-depth="2">
-          <h1>TradeLink<span class="home-hero__claim">Kde se propojuje byznys.</span></h1>
-          <p class="home-hero__text">
+
+      <div class="atrium__content">
+        <div class="atrium__copy" data-depth="2">
+          <h1>TradeLink<span class="atrium__claim">Kde se propojuje byznys.</span></h1>
+          <p class="atrium__text">
             Jedno místo, kde se potkávají firmy, pracovníci a příležitosti.
           </p>
           <div class="actions">
-            <a class="btn home-hero__enter" href="lobby.html">Vstoupit do lobby</a>
-            <a class="btn btn--ghost home-hero__secondary" href="registrace.html">Založit účet</a>
+            <a class="btn atrium__enter" href="recepce.html" data-transition>Vstoupit do lobby</a>
+            <a class="btn btn--ghost atrium__secondary" href="registrace.html">Založit účet</a>
           </div>
         </div>
       </div>
-      <a class="home-hero__scroll" href="#o-tradelinku">Zjistit více</a>
-    </section>
 
-    <!-- SCÉNA 2 — o TradeLinku -->
-    <section class="scene" id="o-tradelinku" data-scene="about">
-      <div class="shell">
-        <p class="scene__kicker">O TradeLinku</p>
-        <h2>Čtyři strany trhu pod jednou střechou</h2>
-        <p class="scene__lead">
-          Firmy, které hledají lidi. Lidé, kteří hledají práci. Firmy a živnostníci,
-          kteří shánějí zakázky. A lidé, kteří mají zakázku k zadání. Místo dalšího
-          inzertního serveru stavíme budovu, ve které každý ví, kam jde.
-        </p>
-        <div class="grid grid--3">
-          <article class="card">
-            <h3>Jeden vchod, čtyři cesty</h3>
-            <p>Na recepci si vyberete, kdo jste. Obory přijdou až potom — ne naopak.</p>
-          </article>
-          <article class="card">
-            <h3>Lidé i zakázky</h3>
-            <p>Práce i poptávky po řemesle a službách na jednom místě, ne ve dvou oddělených světech.</p>
-          </article>
-          <article class="card">
-            <h3>Ověřené firmy</h3>
-            <p>Firemní účet nevznikne bez platného IČO. Každou firmu dohledáme v registru ARES.</p>
-          </article>
+      <!-- Výtah — desktop/tablet: skutečný panel s klikatelnými patry -->
+      <aside class="elevator" aria-label="Výtah — patra budovy">
+        <div class="floors">
+          <p class="floors__head">Patra budovy</p>
+          <a class="floor" href="recepce.html" data-transition aria-label="Patro 12 — IT a technologie"><span class="floor__num">12</span> IT a technologie</a>
+          <a class="floor" href="recepce.html" data-transition aria-label="Patro 10 — Administrativa"><span class="floor__num">10</span> Administrativa</a>
+          <a class="floor" href="recepce.html" data-transition aria-label="Patro 08 — Gastro a hotelnictví"><span class="floor__num">08</span> Gastro a hotelnictví</a>
+          <a class="floor" href="recepce.html" data-transition aria-label="Patro 06 — Logistika"><span class="floor__num">06</span> Logistika</a>
+          <a class="floor" href="recepce.html" data-transition aria-label="Patro 04 — Stavebnictví"><span class="floor__num">04</span> Stavebnictví</a>
+          <a class="floor" href="recepce.html" data-transition aria-label="Patro 02 — Výroba"><span class="floor__num">02</span> Výroba</a>
+          <a class="floor is-here" href="recepce.html" data-transition aria-label="Lobby — jste tady, pokračovat na recepci"><span class="floor__num">L</span> Lobby — jste tady</a>
         </div>
-      </div>
-    </section>
+      </aside>
 
-    <!-- SCÉNA 3 — jak to funguje -->
-    <section class="scene" id="jak-to-funguje" data-scene="how">
-      <div class="shell">
-        <p class="scene__kicker">Jak to funguje</p>
-        <h2>Od vstupu k domluvené spolupráci</h2>
-        <p class="scene__lead">Pět kroků, které na sebe navazují.</p>
-        <div class="grid grid--4">
-          <article class="card">
-            <span class="card__index">01</span>
-            <h3>Projdete lobby</h3>
-            <p>Ze vstupní haly se dostanete hlouběji do budovy až k recepci.</p>
-          </article>
-          <article class="card">
-            <span class="card__index">02</span>
-            <h3>Řeknete, co hledáte</h3>
-            <p>Na recepci si vyberete jednu ze čtyř cest podle toho, kdo jste.</p>
-          </article>
-          <article class="card">
-            <span class="card__index">03</span>
-            <h3>Zvolíte odvětví</h3>
-            <p>Zobrazí se jen odvětví, která k vaší volbě opravdu patří.</p>
-          </article>
-          <article class="card">
-            <span class="card__index">04</span>
-            <h3>Upřesníte obor</h3>
-            <p>Z odvětví se propadnete do konkrétního oboru a podoboru.</p>
-          </article>
-        </div>
-        <div class="grid" style="margin-top:14px">
-          <article class="card">
-            <span class="card__index">05</span>
-            <h3>Propojíte se</h3>
-            <p>Uvidíte konkrétní nabídky, poptávky, firmy nebo lidi — a domluvíte se napřímo.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- SCÉNA 4 — výhody -->
-    <section class="scene" id="vyhody" data-scene="benefits">
-      <div class="shell">
-        <p class="scene__kicker">Výhody</p>
-        <h2>Proč TradeLink</h2>
-        <p class="scene__lead">Tři věci, na kterých celou platformu stavíme.</p>
-        <div class="grid grid--3">
-          <article class="card">
-            <h3>Jednoduchost</h3>
-            <p>Žádná registrace dřív, než vůbec uvidíte, co platforma nabízí. Nejdřív se rozhlédnete, pak se rozhodnete.</p>
-          </article>
-          <article class="card">
-            <h3>Bez prostředníků</h3>
-            <p>Domlouváte se přímo s druhou stranou. TradeLink vás propojí a dál do toho nemluví.</p>
-          </article>
-          <article class="card">
-            <h3>Napříč obory</h3>
-            <p>Stavebnictví, výroba, logistika, gastro, administrativa i IT — všechno pod jednou střechou.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- SCÉNA 6 — vstup do budovy -->
-    <section class="scene closing" data-scene="enter">
-      <div class="shell">
-        <h2>Pojďte dál</h2>
-        <p>Projděte lobby až na recepci a řekněte nám, co hledáte.</p>
-        <div class="actions">
-          <a class="btn" href="lobby.html">Vstoupit do lobby</a>
-        </div>
-      </div>
+      <!-- Výtah — mobil: kompaktní tlačítko otevírá bottom sheet se stejnými patry -->
+      <button class="floors-toggle" type="button" aria-haspopup="dialog" aria-controls="floors-sheet" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="4" y="3" width="16" height="18" rx="2"/>
+          <path d="M9 8h.01M9 12h.01M9 16h.01M15 8h.01M15 12h.01M15 16h.01"/>
+        </svg>
+        Patra
+      </button>
     </section>
   </main>
+
+  <!-- Bottom sheet s patry — jen mobil, ovládá ho homepage.js -->
+  <div class="floors-sheet" id="floors-sheet" hidden>
+    <div class="floors-sheet__backdrop" data-sheet-close></div>
+    <div class="floors-sheet__panel" role="dialog" aria-modal="true" aria-label="Patra budovy">
+      <div class="floors-sheet__head">
+        <p>Patra budovy</p>
+        <button class="floors-sheet__close" type="button" aria-label="Zavřít" data-sheet-close>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="floors">
+        <a class="floor" href="recepce.html" data-transition aria-label="Patro 12 — IT a technologie"><span class="floor__num">12</span> IT a technologie</a>
+        <a class="floor" href="recepce.html" data-transition aria-label="Patro 10 — Administrativa"><span class="floor__num">10</span> Administrativa</a>
+        <a class="floor" href="recepce.html" data-transition aria-label="Patro 08 — Gastro a hotelnictví"><span class="floor__num">08</span> Gastro a hotelnictví</a>
+        <a class="floor" href="recepce.html" data-transition aria-label="Patro 06 — Logistika"><span class="floor__num">06</span> Logistika</a>
+        <a class="floor" href="recepce.html" data-transition aria-label="Patro 04 — Stavebnictví"><span class="floor__num">04</span> Stavebnictví</a>
+        <a class="floor" href="recepce.html" data-transition aria-label="Patro 02 — Výroba"><span class="floor__num">02</span> Výroba</a>
+        <a class="floor is-here" href="recepce.html" data-transition aria-label="Lobby — jste tady, pokračovat na recepci"><span class="floor__num">L</span> Lobby — jste tady</a>
+      </div>
+    </div>
+  </div>
 
   <footer class="foot shell">
     <a class="foot__brand" href="./">TradeLink</a>
@@ -177,6 +126,8 @@
 
   <script src="supabase-config.js"></script>
   <script src="app.js" defer></script>
+  <script src="transition.js" defer></script>
+  <script src="homepage.js" defer></script>
   <script type="module">import { paintNav } from './auth.js'; paintNav();</script>
 </body>
 </html>

@@ -1,188 +1,185 @@
-/* TradeLink homepage visual override — isolated from the rest of the app. */
+/* TradeLink homepage visual — interaktivní atrium budovy.
+   Izolované od zbytku designu — nic tady nemění vzhled ostatních stránek. */
 
-.home-hero {
-  position: relative;
-  min-height: calc(100svh - 72px);
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-  isolation: isolate;
-  border-bottom: 1px solid var(--line);
-  background: #05070a;
+/* ---------- nav integrovaná do scény ---------- */
+.nav--atrium{
+  position:absolute; inset-inline:0; top:0; z-index:50;
+  background:rgba(6,9,13,.4);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+.nav--atrium .nav__bar{padding-block:11px}
+.nav--atrium .nav__menu{background:rgba(6,9,13,.72);backdrop-filter:blur(14px)}
+
+/* ---------- atrium — fullscreen scéna ---------- */
+.atrium{
+  position:relative;
+  height:100svh; min-height:560px;
+  display:flex; align-items:flex-end;
+  overflow:hidden;
+  isolation:isolate;
+  background:#05070a;
+  opacity:1;
+  transition:opacity .55s var(--ease),transform .55s var(--ease),filter .55s var(--ease);
 }
 
-.home-hero__media {
-  position: absolute;
-  inset: 0;
-  z-index: -3;
+.atrium__media{position:absolute;inset:0;z-index:-3}
+.atrium__media img{
+  width:100%;height:100%;object-fit:cover;object-position:58% center;
+  transform:scale(1.01);
 }
 
-.home-hero__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 58% center;
-  transform: scale(1.01);
-}
-
-.home-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
+.atrium::before{
+  content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
   background:
-    linear-gradient(90deg, rgba(2,4,7,.94) 0%, rgba(2,4,7,.77) 27%, rgba(2,4,7,.28) 53%, rgba(2,4,7,.08) 72%, rgba(2,4,7,.22) 100%),
-    linear-gradient(180deg, rgba(2,4,7,.08) 0%, rgba(2,4,7,.05) 45%, rgba(2,4,7,.82) 100%);
+    linear-gradient(90deg,rgba(2,4,7,.94) 0%,rgba(2,4,7,.78) 26%,rgba(2,4,7,.32) 52%,rgba(2,4,7,.1) 70%,rgba(2,4,7,.3) 100%),
+    linear-gradient(180deg,rgba(2,4,7,.35) 0%,rgba(2,4,7,.05) 30%,rgba(2,4,7,.1) 60%,rgba(2,4,7,.85) 100%);
+}
+.atrium::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle at 62% 56%,rgba(231,200,154,.08),transparent 38%);
 }
 
-.home-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(circle at 62% 56%, rgba(231,200,154,.08), transparent 38%);
+.atrium__content{
+  position:relative;
+  width:var(--shell);margin-inline:auto;
+  padding:84px var(--gutter) 64px;
+}
+.atrium__copy{max-width:600px}
+
+.atrium h1{
+  font-size:clamp(2.6rem,7vw,5.4rem);
+  line-height:.95;letter-spacing:-.05em;text-wrap:balance;
+  text-shadow:0 10px 50px #000;
+}
+.atrium__claim{
+  display:block;margin-top:12px;
+  font-size:clamp(1.2rem,2.6vw,1.9rem);font-weight:300;line-height:1.1;
+  letter-spacing:-.03em;color:rgba(238,241,244,.82);
+}
+.atrium__text{
+  max-width:48ch;margin:20px 0 28px;
+  font-size:clamp(.98rem,1.5vw,1.08rem);line-height:1.65;
+  color:rgba(238,241,244,.78);text-shadow:0 4px 24px #000;
 }
 
-.home-hero__content {
-  width: var(--shell);
-  margin-inline: auto;
-  padding: 84px var(--gutter) 72px;
+.atrium .actions{flex-direction:row;flex-wrap:wrap}
+.atrium .btn{width:auto;min-width:172px}
+.atrium__enter{background:rgba(238,241,244,.96);color:#05070a;box-shadow:0 14px 40px rgba(0,0,0,.32)}
+.atrium__secondary{background:rgba(5,7,10,.4);border-color:rgba(255,255,255,.25);backdrop-filter:blur(12px)}
+
+/* leaving state — spouští JS v transition.js před navigací na recepci */
+body.is-leaving .atrium{
+  opacity:0;
+  transform:scale(1.035);
+  filter:blur(2px) brightness(.72);
 }
 
-.home-hero__copy {
-  max-width: 640px;
+/* ---------- výtah (desktop/tablet) ---------- */
+.elevator{
+  display:none;
+  position:absolute;
+  right:var(--gutter);
+  top:50%;transform:translateY(-50%);
+  z-index:3;
+}
+.elevator .floors{
+  margin-top:0;
+  min-width:216px;
+  background:linear-gradient(180deg,#12161ce6,#090c10ee);
+  box-shadow:0 30px 70px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.elevator .floors__head{
+  display:flex;align-items:center;gap:8px;
+}
+.elevator .floors__head::after{
+  content:"";flex:1;height:1px;background:var(--line);
+}
+.elevator .floor{font-size:.82rem}
+
+/* silnější prstenec kolem aktivního patra L, jen ve výtahu na homepage */
+.elevator .floor.is-here .floor__num{
+  box-shadow:0 0 0 3px var(--accent-dim),0 0 16px 3px var(--accent-dim);
 }
 
-.home-hero__eyebrow {
-  margin-bottom: 18px;
-  font-size: .7rem;
-  font-weight: 600;
-  letter-spacing: .24em;
-  text-transform: uppercase;
-  color: #d9c09b;
+/* ---------- výtah spuštěný / stisknutý patro ---------- */
+.floor.is-pressed{background:var(--accent-bg);border-color:var(--accent-dim);transform:translateX(4px) scale(.98)}
+.floor.is-pressed .floor__num{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- mobilní spouštěč výtahu ---------- */
+.floors-toggle{
+  position:absolute;
+  right:var(--gutter);bottom:22px;z-index:3;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 18px;border-radius:999px;
+  background:rgba(9,12,16,.72);border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(12px);
+  color:var(--fg);font:inherit;font-size:.86rem;letter-spacing:.02em;
+  cursor:pointer;
 }
+.floors-toggle svg{width:18px;height:18px;flex:none}
+.floors-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
-.home-hero h1 {
-  font-size: clamp(3rem, 8vw, 6.6rem);
-  line-height: .93;
-  letter-spacing: -.055em;
-  text-wrap: balance;
-  text-shadow: 0 10px 50px #000;
+/* ---------- bottom sheet (mobil) ---------- */
+.floors-sheet{position:fixed;inset:0;z-index:80}
+.floors-sheet[hidden]{display:none}
+.floors-sheet__backdrop{position:absolute;inset:0;background:rgba(2,4,7,.6);backdrop-filter:blur(3px)}
+.floors-sheet__panel{
+  position:absolute;left:0;right:0;bottom:0;
+  max-height:78svh;overflow-y:auto;
+  border-radius:20px 20px 0 0;
+  border:1px solid rgba(255,255,255,.14);border-bottom:0;
+  background:linear-gradient(180deg,#12161cf2,#090c10f7);
+  padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);
+  animation:sheet-in .28s var(--ease);
 }
-
-.home-hero__claim {
-  display: block;
-  margin-top: 14px;
-  font-size: clamp(1.35rem, 3vw, 2.2rem);
-  font-weight: 300;
-  line-height: 1.08;
-  letter-spacing: -.035em;
-  color: rgba(238,241,244,.82);
+.floors-sheet__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.floors-sheet__head p{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.floors-sheet__close{
+  display:grid;place-items:center;width:36px;height:36px;border-radius:10px;
+  background:none;border:1px solid var(--line-2);color:var(--fg);cursor:pointer;padding:0;
 }
+.floors-sheet__close svg{width:16px;height:16px}
+.floors-sheet .floors{border:0;padding:0;background:none;backdrop-filter:none;margin-top:0}
 
-.home-hero__text {
-  max-width: 52ch;
-  margin: 26px 0 32px;
-  font-size: clamp(1rem, 1.6vw, 1.16rem);
-  line-height: 1.7;
-  color: rgba(238,241,244,.78);
-  text-shadow: 0 4px 24px #000;
-}
+@keyframes sheet-in{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
-.home-hero .actions {
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-.home-hero .btn {
-  width: auto;
-  min-width: 180px;
-}
-
-.home-hero__enter {
-  background: rgba(238,241,244,.96);
-  color: #05070a;
-  box-shadow: 0 14px 40px rgba(0,0,0,.32);
-}
-
-.home-hero__secondary {
-  background: rgba(5,7,10,.4);
-  border-color: rgba(255,255,255,.25);
-  backdrop-filter: blur(12px);
-}
-
-.home-hero__scroll {
-  position: absolute;
-  right: var(--gutter);
-  bottom: 26px;
-  display: none;
-  gap: 10px;
-  align-items: center;
-  font-size: .66rem;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: rgba(238,241,244,.56);
-}
-
-.home-hero__scroll::before {
-  content: "";
-  width: 42px;
-  height: 1px;
-  background: rgba(255,255,255,.32);
-}
-
-@media (max-width: 720px) {
-  .home-hero {
-    min-height: calc(100svh - 64px);
-    align-items: flex-end;
-  }
-
-  .home-hero__media img {
-    object-position: 63% center;
-  }
-
-  .home-hero::before {
+/* ---------- mobil ---------- */
+@media (max-width:719px){
+  .atrium{align-items:flex-end}
+  .atrium__media img{object-position:66% center}
+  .atrium::before{
     background:
-      linear-gradient(180deg, rgba(3,5,8,.16) 0%, rgba(3,5,8,.18) 34%, rgba(3,5,8,.88) 72%, #05070a 100%),
-      linear-gradient(90deg, rgba(3,5,8,.44) 0%, rgba(3,5,8,.05) 75%);
+      linear-gradient(180deg,rgba(3,5,8,.2) 0%,rgba(3,5,8,.22) 32%,rgba(3,5,8,.9) 74%,#05070a 100%),
+      linear-gradient(90deg,rgba(3,5,8,.5) 0%,rgba(3,5,8,.08) 78%);
   }
-
-  .home-hero__content {
-    padding-top: 46svh;
-    padding-bottom: 38px;
-  }
-
-  .home-hero h1 {
-    font-size: clamp(3rem, 16vw, 4.7rem);
-  }
-
-  .home-hero__text {
-    margin-top: 20px;
-    margin-bottom: 26px;
-    font-size: .98rem;
-  }
-
-  .home-hero .actions {
-    flex-direction: column;
-  }
-
-  .home-hero .btn {
-    width: 100%;
-  }
+  .atrium__content{padding-top:42svh;padding-bottom:86px}
+  .atrium h1{font-size:clamp(2.5rem,14vw,3.6rem)}
+  .atrium__text{margin-top:16px;margin-bottom:22px;font-size:.96rem}
+  .atrium .actions{flex-direction:column}
+  .atrium .btn{width:100%}
 }
 
-@media (min-width: 900px) {
-  .home-hero__scroll { display: flex; }
+@media (min-width:720px){
+  .floors-toggle{display:none}
 }
 
-@media (min-width: 1200px) {
-  .home-hero__content {
-    padding-bottom: 92px;
-  }
+/* ---------- tablet a výš: skutečný výtah panel ---------- */
+@media (min-width:900px){
+  .elevator{display:block}
+  .floors-toggle{display:none}
+}
 
-  .home-hero__copy {
-    max-width: 720px;
+@media (min-width:1200px){
+  .atrium__content{padding-bottom:88px}
+  .atrium__copy{max-width:680px}
+  .elevator{right:calc(var(--gutter) + 6px)}
+}
+
+/* ---------- redukovaný pohyb ---------- */
+@media (prefers-reduced-motion:reduce){
+  .atrium,body.is-leaving .atrium,.floor,.floors-sheet__panel{
+    transition:none!important;animation:none!important;
+    transform:none!important;filter:none!important;opacity:1!important;
   }
 }

@@ -21,6 +21,7 @@
   <link rel="canonical" href="https://tradelink.cz/recepce">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+  <noscript><style>.reception[data-enter]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
   <header class="nav">
@@ -44,7 +45,7 @@
       data-depth="0" architektura (fotka), "2" panely a text.
       Panely jsou <a> odkazy — vedou na výběr odvětví podle role.
     -->
-    <section class="reception" data-scene="reception" data-camera="reception">
+    <section class="reception" data-scene="reception" data-camera="reception" data-enter>
       <div class="reception__media" data-depth="0">
         <img src="recepce.jpeg" width="1600" height="900" fetchpriority="high"
              alt="Recepce TradeLinku — mramorový pult, teplé podsvícení a logo TradeLink na stěně z černého mramoru.">
@@ -138,6 +139,7 @@
 
   <script src="supabase-config.js"></script>
   <script src="app.js" defer></script>
+  <script src="transition.js" defer></script>
   <script type="module">import { paintNav } from './auth.js'; paintNav();</script>
 </body>
 </html>
