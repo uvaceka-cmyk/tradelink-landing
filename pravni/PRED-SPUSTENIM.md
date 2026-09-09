@@ -15,16 +15,22 @@ a datum účinnosti.
 Bez nich web spustit nelze — správce osobních údajů musí být jmenovaný a údaje
 o podnikateli musí být na webu uvedené.
 
-## 2. Uzavřít smlouvy o zpracování osobních údajů
+## 2. Smlouvy o zpracování osobních údajů — netřeba nic podepisovat
 
-Data uživatelů zpracovávají za vás dvě firmy. S oběma musíte mít **smlouvu
-o zpracování** (čl. 28 GDPR) — obě ji nabízejí jako standardní dokument
-k odsouhlasení v nastavení účtu:
+Data uživatelů za vás zpracovávají dvě firmy a s oběma musíte mít smlouvu
+o zpracování (čl. 28 GDPR). **Obě ji ale mají zahrnutou ve svých podmínkách**,
+se kterými jste souhlasili při registraci — nic dalšího se nepodepisuje:
 
-- **Supabase** — databáze a účty (Supabase → Organization → Legal / DPA)
-- **Cloudflare** — provoz webu (Cloudflare → Manage Account → Configurations)
+- **Supabase** — v nastavení organizace (Legal Documents) výslovně uvádí, že
+  Dodatek o zpracování dat je součástí podmínek služby a platí automaticky
+  pro všechny organizace. Samostatně podepsaná DPA není potřeba.
+- **Cloudflare** — jejich Customer DPA je podle jejího vlastního textu součástí
+  hlavní smlouvy (*„forms part of the Main Agreement"*), tedy i samoobslužných
+  podmínek, které jste přijali při založení účtu.
 
-Bez nich zpracováváte údaje přes zpracovatele bez právního základu.
+Doporučení: **uložte si obě znění ke dni spuštění** (Supabase → Legal Documents →
+Zobrazit DPA; Cloudflare → cloudflare.com/cloudflare-customer-dpa). Kdyby se na to
+úřad ptal za dva roky, doložíte, co v té době platilo.
 
 ## 3. Založit záznamy o činnostech zpracování
 
