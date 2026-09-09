@@ -68,6 +68,15 @@ None — current work is in a stable state.
   `gen_random_bytes`, hodnota žije jen v Supabase (`private.app_secrets`) a v Cloudflare.
 - **Dělba práce:** obory (rozšíření na ~30), fotky a animace dělá kamarád uživatele.
   Doménu zařizuje uživatel později.
+- **Na projektu pracují dva lidé pod jedním účtem Claude**, z různých počítačů a terminálů.
+  Sessions se tedy mohou střídat i překrývat a **nemají mezi sebou paměť** — jediné, co
+  přetrvává, je repozitář, git historie a tento soubor. Proto:
+  - před prací vždy `git pull` a přečíst tento soubor
+  - kdo dělá větší kus práce, ať si založí vlastní větev a do `main` ji slučuje hotovou;
+    `CLAUDE_HANDOFF.md` je jediný soubor, do kterého píší obě strany, a při souběžných
+    zápisech do `main` se v něm konflikty řeší nejhůř
+  - když si nová instrukce od uživatele odporuje s tímto souborem, platí instrukce
+    a soubor se opraví
 
 ## Known Issues
 
@@ -137,3 +146,6 @@ odstranění klíče ze zdrojáků. Otestován celý řetězec: platná registra
 i starým klíčem podepsaný pokus databáze odmítne.
 
 Poslední commit: `7644ab2`
+
+Doplněno: na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů —
+sessions nemají společnou paměť, kontext drží jen repozitář a tento soubor.
