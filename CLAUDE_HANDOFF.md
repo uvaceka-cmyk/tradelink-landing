@@ -44,6 +44,14 @@ Web je celý česky. Vlastní doména zatím není.
 - jednorázové schránky (mailinator, yopmail a spol.) se odmítají — seznam je
   v `private.blokovane_domeny`, kontrola běží v triggeru, formulář ji jen předběhne
 
+**Profily** (`site/profil.html`, migrace `006`)
+- uživatel vyplňuje popis, odvětví a obor, lokalitu; firmy navíc web a telefon
+- údaje z ARES jsou u firem jen ke čtení, profil je nepřepíše
+- profil je ve výchozím stavu **skrytý**, zveřejní se zaškrtnutím; zveřejnit jde jen profil
+  s popisem a odvětvím (hlídá omezení v databázi, ne formulář)
+- ostatním se ukazuje přes pohled `public.verejne_profily` — bez e-mailu, telefon a sídlo
+  jen u firem
+
 **Právní texty** — GDPR zásady a podmínky užití, odkazované z patičky všech stránek
 a od souhlasu při registraci.
 
@@ -89,6 +97,12 @@ None — current work is in a stable state.
 
 ## Known Issues
 
+- **Profil nebyl vyzkoušený s přihlášeným účtem.** Databáze i pohled ověřené dotazy, ale
+  celý formulář (načtení, uložení, zveřejnění) zatím neprošel reálným průchodem — došel
+  limit na odesílání e-mailů, takže nešlo založit testovací účet. Ověřit při dalším sezení.
+- **Pravidla zápisu do `profiles` nejsou ověřená na skutečném řádku.** Tabulka je prázdná,
+  takže pokus o zápis bez přihlášení vrací „nic nezměněno" — což vypadá stejně jako by
+  vypadal zablokovaný zápis. Až bude existovat profil, zkusit ho přepsat cizím účtem.
 - **Rozhraní Supabase i Cloudflare padá pod překladačem Chromu.** Supabase to hlásí přímo
   chybovou stránkou. Uživatel má překlad zapnutý — než se vypne, dělat zásahy raději přes
   SQL editor (ten přežívá) nebo přes API.
@@ -117,10 +131,13 @@ None — current work is in a stable state.
 
 ## Next Steps
 
-1. Postavit vlastní obsah platformy — profily firem a lidí, inzeráty a poptávky, výpis
-   po výběru podoboru. Do té doby je web jen brožura. Začít profily.
-2. K inzerátům přidat ochranu proti falešnému obsahu: inzerát smí zadat jen ověřená firma,
-   limit na účet, nahlášení, fronta na kontrolu.
+1. Vyzkoušet profil s reálným přihlášeným účtem (uložení, zveřejnění, kontrola pohledu).
+   Nešlo to hned kvůli limitu e-mailů — viz Known Issues.
+2. Inzeráty a poptávky: zadat, upravit, smazat; typ podle účtu (nabídka práce / poptávka
+   po zakázce). Vázat je na `obor` a `podobor` ze stejného číselníku jako profily.
+3. Výpis po výběru podoboru — dnes končí placeholderem „zatím připravujeme".
+4. Ochrana proti falešnému obsahu: inzerát smí zadat jen ověřená firma, limit na účet,
+   nahlášení, fronta na kontrolu.
 3. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
 4. Nastavit redirect URL v Supabase a doménu, až bude k dispozici (kvůli doručitelnosti e-mailů).
 
@@ -128,8 +145,10 @@ None — current work is in a stable state.
 
 - `site/index.html` — homepage, pořadí sekcí a celý vstupní text
 - `site/recepce.html` — 4 volby typu návštěvníka, vstup do celého flow
-- `site/obory.html` + `site/app.js` — výběr odvětví a podoboru; **data odvětví jsou
-  v `app.js` v konstantě `INDUSTRIES`**, role v `ROLES`
+- `site/obory-data.js` — **číselník odvětví a podoborů, jediný zdroj pravdy.** Sem patří
+  rozšíření na ~30 odvětví. `id` u existujícího odvětví neměnit, ukládá se do profilů.
+- `site/obory.html` + `site/app.js` — výběr odvětví a podoboru; role v `ROLES`
+- `site/profil.html` — formulář profilu, zveřejnění, výběr odvětví z číselníku
 - `site/auth.js` — Supabase klient, mapování rolí na typ účtu, překlad chybových hlášek
 - `site/supabase-config.js` — adresa projektu a veřejný publishable klíč (patří do prohlížeče)
 - `site/style.css` — celý designový systém, mobile-first, breakpointy 600/900/1100/1500 px
@@ -153,12 +172,13 @@ None — current work is in a stable state.
 zesílení ověřování podpisu, odstranění klíče ze zdrojáků, otestování celého řetězce.
 Založen tento handoff. Přidáno odmítání jednorázových e-mailových schránek při registraci.
 
+Přidány profily lidí i firem, číselník odvětví přesunut do `obory-data.js`.
 Klíč je v Cloudflare uložený jako Secret (zašifrovaný), testovací účet smazán.
 Ověření celého řetězce po změně typu klíče se nedokončilo — Supabase odmítl poslat
 potvrzovací e-mail kvůli limitu 2 zpráv za hodinu. Podpis se vydává, k databázi se
 dotaz nedostal. **Zopakovat registraci firmy, až limit vyprší.**
 
-Poslední commit: `9e802c1`
+Poslední commit: `3b9f4f8`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
