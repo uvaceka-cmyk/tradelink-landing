@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Profil firmy na TradeLinku — čím se zabývá, kde působí a jak ji hodnotí ostatní.">
+  <title>Profil firmy — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="registrace.html">Založit účet</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="journey shell">
+    <p class="form__status" id="gate" hidden></p>
+
+    <article id="profil" hidden>
+      <p class="journey__role" id="stitek">Firma</p>
+      <h1 id="jmeno"></h1>
+      <div class="firma__meta" id="meta"></div>
+
+      <div class="firma__skore" id="skore"></div>
+
+      <p class="journey__lead" id="popis"></p>
+
+      <dl class="detail" id="udaje"></dl>
+
+      <h2 style="font-size:var(--step-2);margin:44px 0 18px">Hodnocení</h2>
+      <div id="hodnoceni"></div>
+
+      <div id="moje-hodnoceni" style="margin-top:32px"></div>
+    </article>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span class="foot__links">
+      <a href="podminky.html">Podmínky užití</a>
+      <a href="soukromi.html">Ochrana údajů</a>
+    </span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="obory-data.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">
+    import { supabase, status, configured, czechError, paintNav } from './auth.js';
+
+    var id = new URLSearchParams(location.search).get('id');
+    var gate = document.getElementById('gate');
+    var mojeId = null;
+    var mojeHodnoceni = null;
+
+    function hvezdy(kolik, velke) {
+      var plne = Math.round(kolik || 0);
+      var out = '';
+      for (var i = 1; i <= 5; i++) {
+        out += '<span class="hvezda' + (i <= plne ? ' je-plna' : '') + '">★</span>';
+      }
+      return '<span class="hvezdy' + (velke ? ' hvezdy--velke' : '') + '">' + out + '</span>';
+    }
+
+    function nazevOboru(kod) {
+      var o = (window.TRADELINK_OBORY || []).filter(function (x) { return x.id === kod; })[0];
+      return o ? o.name : kod;
+    }
+
+    function datum(iso) {
+      return new Date(iso).toLocaleDateString('cs-CZ', { year: 'numeric', month: 'long' });
+    }
+
+    function esc(t) {
+      return String(t == null ? '' : t).replace(/[<>&"]/g, function (c) {
+        return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c];
+      });
+    }
+
+    /* ---------- výpis hodnocení ---------- */
+    async function nactiHodnoceni() {
+      var res = await supabase.from('verejna_hodnoceni')
+        .select('*').eq('firma', id).order('created_at', { ascending: false });
+
+      var box = document.getElementById('hodnoceni');
+      if (res.error) return status(gate, czechError(res.error), 'error');
+
+      if (!res.data.length) {
+        box.innerHTML = '<p class="journey__lead">Tuhle firmu zatím nikdo nehodnotil.</p>';
+        return;
+      }
+
+      box.innerHTML = res.data.map(function (h) {
+        return '<article class="recenze">' +
+          '<div class="recenze__hlava">' + hvezdy(h.hvezdicky) +
+            '<span class="recenze__autor">' +
+              (h.autor_jmeno ? esc(h.autor_jmeno) : 'Ověřený uživatel') +
+              ' · ' + datum(h.created_at) +
+            '</span>' +
+          '</div>' +
+          (h.text ? '<p>' + esc(h.text) + '</p>' : '') +
+        '</article>';
+      }).join('');
+    }
+
+    /* ---------- vlastní hodnocení ---------- */
+    function formularHodnoceni() {
+      var box = document.getElementById('moje-hodnoceni');
+
+      if (!mojeId) {
+        box.innerHTML = '<div class="card"><h3>Hodnotili jste tuhle firmu?</h3>' +
+          '<p>Hodnotit může jen přihlášený účet s potvrzeným e-mailem.</p>' +
+          '<div class="actions" style="margin-top:16px">' +
+          '<a class="btn" href="prihlaseni.html">Přihlásit se</a></div></div>';
+        return;
+      }
+      if (mojeId === id) {
+        box.innerHTML = '<p class="journey__lead">Tohle je váš profil — vlastní firmu hodnotit nelze.</p>';
+        return;
+      }
+
+      var h = mojeHodnoceni;
+      box.innerHTML =
+        '<form class="form card" id="form-h">' +
+          '<h3>' + (h ? 'Vaše hodnocení' : 'Ohodnotit firmu') + '</h3>' +
+          '<div class="field"><label for="hv">Známka</label>' +
+            '<select id="hv">' +
+              [5, 4, 3, 2, 1].map(function (n) {
+                return '<option value="' + n + '"' + (h && h.hvezdicky === n ? ' selected' : '') + '>' +
+                  n + ' — ' + ['', 'špatné', 'slabší', 'průměrné', 'dobré', 'výborné'][n] + '</option>';
+              }).join('') +
+            '</select></div>' +
+          '<div class="field"><label for="txt">Zkušenost <span class="field__hint">nepovinné, 20–2000 znaků</span></label>' +
+            '<textarea id="txt" rows="5" maxlength="2000">' + esc(h && h.text ? h.text : '') + '</textarea></div>' +
+          '<p class="field__hint">Pište jen o tom, co jste sami zažili. Nepravdivé hodnocení můžeme odstranit.</p>' +
+          '<p class="form__status" id="stav-h" hidden></p>' +
+          '<div class="actions">' +
+            '<button class="btn" type="submit">' + (h ? 'Uložit změnu' : 'Odeslat hodnocení') + '</button>' +
+            (h ? '<button class="btn btn--ghost" type="button" id="smazat-h">Smazat</button>' : '') +
+          '</div>' +
+        '</form>';
+
+      document.getElementById('form-h').addEventListener('submit', ulozHodnoceni);
+      var sm = document.getElementById('smazat-h');
+      if (sm) sm.addEventListener('click', smazHodnoceni);
+    }
+
+    async function ulozHodnoceni(e) {
+      e.preventDefault();
+      var stav = document.getElementById('stav-h');
+      var txt = document.getElementById('txt').value.trim();
+
+      if (txt && txt.length < 20) {
+        return status(stav, 'Buď napište aspoň pár vět (20 znaků), nebo pole nechte prázdné.', 'error');
+      }
+
+      var data = { firma: id, autor: mojeId, hvezdicky: Number(document.getElementById('hv').value), text: txt || null };
+      var res = mojeHodnoceni
+        ? await supabase.from('hodnoceni').update(data).eq('id', mojeHodnoceni.id)
+        : await supabase.from('hodnoceni').insert(data);
+
+      if (res.error) return status(stav, czechError(res.error), 'error');
+
+      await nactiMoje();
+      await nactiHodnoceni();
+      await nactiProfil();
+      status(document.getElementById('stav-h'), 'Hodnocení uloženo.', 'ok');
+    }
+
+    async function smazHodnoceni() {
+      if (!window.confirm('Opravdu hodnocení smazat?')) return;
+      var res = await supabase.from('hodnoceni').delete().eq('id', mojeHodnoceni.id);
+      if (res.error) return status(document.getElementById('stav-h'), czechError(res.error), 'error');
+      mojeHodnoceni = null;
+      formularHodnoceni();
+      await nactiHodnoceni();
+      await nactiProfil();
+    }
+
+    async function nactiMoje() {
+      if (!mojeId) return;
+      var res = await supabase.from('hodnoceni').select('*').eq('firma', id).eq('autor', mojeId).maybeSingle();
+      mojeHodnoceni = res.data || null;
+      formularHodnoceni();
+    }
+
+    /* ---------- profil firmy ---------- */
+    async function nactiProfil() {
+      var res = await supabase.from('verejne_profily').select('*').eq('id', id).maybeSingle();
+      if (res.error) { status(gate, czechError(res.error), 'error'); return false; }
+      if (!res.data) {
+        status(gate, 'Takový profil tu není, nebo není zveřejněný.', 'error');
+        return false;
+      }
+
+      var p = res.data;
+      document.title = p.jmeno + ' — TradeLink';
+      document.getElementById('stitek').textContent = p.account_type === 'firma' ? 'Firma' : 'Profil';
+      document.getElementById('jmeno').textContent = p.jmeno;
+      document.getElementById('popis').textContent = p.popis || '';
+
+      document.getElementById('meta').innerHTML =
+        (p.overena_firma ? '<span class="tag tag--free">Ověřeno v ARES</span>' : '') +
+        (p.obor ? '<span class="tag">' + esc(nazevOboru(p.obor)) + (p.podobor ? ' → ' + esc(p.podobor) : '') + '</span>' : '') +
+        (p.lokalita ? '<span class="tag">' + esc(p.lokalita) + '</span>' : '');
+
+      document.getElementById('skore').innerHTML = p.hodnoceni_pocet
+        ? hvezdy(p.hodnoceni_prumer, true) +
+          '<strong>' + p.hodnoceni_prumer + '</strong>' +
+          '<span class="skore__pocet">' + p.hodnoceni_pocet +
+          (p.hodnoceni_pocet === 1 ? ' hodnocení' : (p.hodnoceni_pocet < 5 ? ' hodnocení' : ' hodnocení')) + '</span>'
+        : '<span class="skore__pocet">Zatím bez hodnocení</span>';
+
+      var radky = [];
+      if (p.ico) radky.push(['IČO', p.ico]);
+      if (p.sidlo) radky.push(['Sídlo', p.sidlo]);
+      if (p.web) radky.push(['Web', '<a href="' + esc(p.web) + '" target="_blank" rel="noopener nofollow">' + esc(p.web) + '</a>']);
+      if (p.telefon) radky.push(['Telefon', esc(p.telefon)]);
+      document.getElementById('udaje').innerHTML = radky.map(function (r) {
+        return '<div class="detail__row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
+      }).join('');
+
+      document.getElementById('profil').hidden = false;
+      return true;
+    }
+
+    /* ---------- start ---------- */
+    (async function () {
+      if (!configured) return status(gate, 'Účty zatím nejsou připojené k databázi.', 'error');
+      if (!id) return status(gate, 'Chybí adresa profilu.', 'error');
+
+      var session = await paintNav();
+      mojeId = session ? session.user.id : null;
+
+      if (!(await nactiProfil())) return;
+      await nactiHodnoceni();
+      await nactiMoje();
+      if (!mojeId) formularHodnoceni();
+    })();
+  </script>
+</body>
+</html>
