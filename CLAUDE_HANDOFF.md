@@ -12,6 +12,10 @@ takže se uživatelé k inzerátům dostanou jen přes přímý odkaz. Výpis st
 pohledem `public.verejne_inzeraty` a odkazuje na `inzerat.html?id=` a `firma.html?id=`.
 
 **Živě:** https://tradelink-landing.pages.dev
+**Doména:** `tradelink.cz` — koupená u Wedosu, 9. 9. 2026 odeslán požadavek na přepnutí
+jmenných serverů na Cloudflare (`ken.ns.cloudflare.com`, `paislee.ns.cloudflare.com`).
+Wedos požadavek přijal; propagace trvá **nejméně 6 hodin**. Než doběhne, web běží
+jen na pages.dev a čeká na ni i pošta, Seznam, Search Console a odesílání e-mailů.
 **Repo:** https://github.com/uvaceka-cmyk/tradelink-landing (veřejné, větev `main`)
 **Nasazení:** Cloudflare Pages, automaticky z `main`, build output directory = `site`, bez build příkazu
 **Databáze:** Supabase projekt `tradelink`, ref `hgjajfkaotflkmyrryak`, region eu-central-1 (Frankfurt)
@@ -97,6 +101,10 @@ Web je celý česky. Vlastní doména zatím není.
   (aby se tentýž obsah nepočítal dvakrát)
 - popisky pro sdílení na veřejných stránkách, `noindex` na soukromých
 - kanonická adresa se dopočítá v `app.js` podle toho, kde web běží
+- `/robots.txt` a `/llms.txt` generují funkce, aby adresy odpovídaly doméně, na které
+  web běží — statický robots.txt byl neplatný, mapa webu se musí uvádět celou adresou
+- Lighthouse na mobilu: přístupnost, osvědčené postupy, SEO i přístupnost pro AI
+  agenty **100/100**, 47 kontrol prošlo, žádná neselhala
 
 **Právní povinnosti platformy** (migrace `013`, složka `pravni/`)
 - **hodnocení**: web i podmínky uvádějí, že neověřujeme, zda autor s firmou opravdu
@@ -197,11 +205,14 @@ None — current work is in a stable state.
 - **Redirect URL allow-list v Supabase není nastavený.** Obchází to směrovač v `app.js`,
   který odkazy z e-mailů přesměruje z úvodní stránky, kam patří. Správně tam patří
   `https://tradelink-landing.pages.dev/**`.
-- **Doména `tradelink.cz` je koupená u Wedosu a přidaná do Cloudflare** (zóna
-  `3c2c776363aa922f8773259560ddc32e`, stav `pending`). Čeká na to, až uživatel ve Wedosu
-  přepne jmenné servery na `ken.ns.cloudflare.com` a `paislee.ns.cloudflare.com`.
-  Do té doby web běží jen na pages.dev. Po aktivaci: připojit doménu k Pages projektu,
-  přesměrovat pages.dev na tradelink.cz, změnit Site URL v Supabase.
+- **Doména `tradelink.cz` čeká na propagaci.** Zóna v Cloudflare
+  (`3c2c776363aa922f8773259560ddc32e`) je ve stavu `pending`; požadavek na změnu
+  jmenných serverů byl ve Wedosu odeslán 9. 9. 2026 večer. Až doména začne odpovídat
+  z Cloudflare, zbývá: připojit ji k Pages projektu (i `www`), přesměrovat pages.dev
+  na tradelink.cz kvůli dvojímu obsahu, zprovoznit `info@tradelink.cz` přes Cloudflare
+  Email Routing, přenastavit Site URL a redirect allow-list v Supabase, přepsat
+  absolutní adresu náhledového obrázku (`og:image` v `site/*.html` ukazuje na pages.dev)
+  a založit odesílání e-mailů.
 - **Supabase zdarma pošle jen 2 e-maily za hodinu**, což omezuje i testování registrací.
   Zruší se to vlastním odesílatelem (custom SMTP), ten ale bez domény funguje jen na půl.
   Uživatel se rozhodl pořídit doménu a udělat to rovnou pořádně — **koupí ji po výplatě**.
@@ -234,6 +245,28 @@ None — current work is in a stable state.
    limit v Auth → Rate Limits (i s vlastním SMTP je výchozí 30/hodinu). Pak teprve padne
    limit 2 zprávy za hodinu. Zároveň nastavit novou doménu jako Site URL a přidat ji do
    redirect allow-listu, a napojit ji na Cloudflare Pages.
+
+## Pro druhou stranu (kamarád a jeho AI)
+
+Rozdělení práce je v *Decisions Made*. Ve zkratce, co je čí:
+
+**Kamarádovo:** výpis inzerátů po výběru podoboru, rozšíření odvětví
+(`site/obory-data.js`), fotka do lobby, animace přechodů, účty a videa na sítích.
+
+**Claudovo:** účty, profily, inzeráty, odpovědi, hodnocení, nahlašování, správa,
+právní texty, viditelnost ve vyhledávačích, doména a infrastruktura.
+
+K výpisu: staví se nad pohledem `public.verejne_inzeraty` (filtr `typ` + `obor` +
+`podobor`, na to je index). Do tabulky `inzeraty` se zvenčí nedostanete — brání tomu
+pravidla přístupu, a je to tak schválně. Detail inzerátu má vlastní adresu
+`/nabidka/<id>`, profil firmy `firma.html?id=<id>` — na ty odkazujte.
+
+V databázi jsou **testovací data** (firma Alza.cz a.s. s inzeráty), aby bylo na čem
+stavět. Před spuštěním se smažou, viz Known Issues.
+
+**Nesahat bez domluvy:** migrace v `supabase/` běží v pořadí a už jsou spuštěné —
+nové změny dělejte novým souborem, ne úpravou starého. Funkce v `functions/`
+obsluhují viditelnost ve vyhledávačích a ověřování firem.
 
 ## Important Files
 
@@ -278,16 +311,16 @@ None — current work is in a stable state.
 
 **9. 9. 2026** — Profily, inzeráty, odpovědi, hodnocení firem, nahlašování s frontou
 pro správce, zpětná vazba, viditelnost ve vyhledávačích a právní povinnosti platformy.
+Lighthouse 100/100 ve všech čtyřech kategoriích.
 
-Ověřeno proti živé databázi: zrušení účtu smaže i hodnocení a odpovědi a přihlásit se
-už nelze; skrytí obsahu uloží důvod, který autor vidí, a vrácení zpět ho smaže.
-Dříve ověřeno ze dvou účtů: cizí data nejdou číst, měnit ani mazat.
+Ověřeno proti živé databázi ze dvou účtů: cizí data nejdou číst, měnit ani mazat;
+zrušení účtu smaže i hodnocení a odpovědi; skrytí obsahu uloží důvod, který autor vidí.
 
-Doména tradelink.cz je zaregistrovaná a přidaná do Cloudflare, ale **v registru pořád
-má nameservery Wedosu** — čeká na uživatele. Blokuje to připojení domény, e-mail
-info@tradelink.cz, účty u Seznamu a Googlu i vlastní odesílání e-mailů.
+**Odeslán požadavek na přepnutí domény `tradelink.cz` z Wedosu na Cloudflare.**
+Wedos ho přijal, propagace trvá nejméně 6 hodin. Až doběhne, pokračuje se domenou,
+poštou, Seznamem a odesíláním e-mailů — postup je v Known Issues a Next Steps.
 
-Poslední commit: `4985f45`
+Poslední commit: `1960d62`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
