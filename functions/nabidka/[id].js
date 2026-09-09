@@ -180,7 +180,7 @@ export async function onRequestGet({ params, request }) {
   <dl class="detail">
     <div class="detail__row"><dt>Zadal</dt><dd>${
       i.autor_typ === 'firma'
-        ? '<a href="/firma.html?id=' + esc(i.autor_id) + '">' + esc(i.autor_jmeno) + '</a>'
+        ? '<a href="/firma/' + esc(i.autor_id) + '">' + esc(i.autor_jmeno) + '</a>'
         : esc(i.autor_jmeno)
     }</dd></div>
     ${i.odmena ? '<div class="detail__row"><dt>' + (jePrace ? 'Mzda' : 'Rozpočet') + '</dt><dd>' + esc(i.odmena) + '</dd></div>' : ''}
