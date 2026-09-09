@@ -47,6 +47,14 @@ Web je celý česky a běží na vlastní doméně.
 - ověřeno živě v Claude in Chrome (desktop 1920×1080 i mobil 390×844 — přes lokální stránku se
   stejně-původovými `<iframe>` v reálné šířce, protože `resize_window` v tomhle prostředí
   nefunguje): hover/klik výtahu, přechod na recepci, pokračování do `obory.html`, mobilní sheet
+- `site/nav-hud.css` (nové, sdílené homepage + recepcí, pod `.nav--hud`) — horní navigace
+  přestavěná na „HUD control bar": smoked glass, tenčí výška, inline SVG ikony (dveře/lobby,
+  osoba+/registrace, účet/přihlášení, dům a šipky výtahu na recepci), skyline monogram u brandu,
+  metalická linka, výraznější glow na aktivní položce. Čistě vizuální — flow, hrefy ani logika
+  (`app.js`, `auth.js`) se nemění. Ikona je sourozenec `<a>`, ne potomek, protože `auth.js`
+  přepisuje `textContent` odkazu `#nav-account` podle stavu přihlášení a smazal by ji, kdyby
+  byla vevnitř. Ostatní stránky (`lobby.html`, `obory.html`...) mají pořád starou plain `.nav`,
+  nedotčenou.
 
 **Účty (Supabase)**
 - registrace, přihlášení, obnova hesla, nastavení nového hesla, přehled účtu
@@ -336,6 +344,16 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
   neoslabovat ve prospěch kontrol ve formuláři.
 
 ## Last Session
+
+**10. 9. 2026 — HUD navigace v produkci.** Vizuální dolaďovačka homepage a recepce: horní
+navigace přestavěná na „HUD control bar" (smoked glass, tenčí, ikony, glow na aktivní položce),
+elevator panel vizuálně sladěný (stejný radius/glow/metalická linka), nic jiného (flow, backend,
+hrefy) se nezměnilo. Postup stejný jako u atriové homepage: nová větev
+`chatgpt/nav-hud-polish` z `main`, ukázáno v Claude in Chrome, po schválení commit + push,
+uživatel sám vytvořil PR #2 přes odkaz z `git push`, pak na pokyn „mergne" fast-forward
+merge do `main` a push (tentokrát bez zásahu bezpečnostního klasifikátoru). PR #2 se
+automaticky označil jako merged. Ověřeno na živém `tradelink.cz`: `nav-hud.css` se servíruje,
+homepage i `/recepce` obsahují novou `nav--hud` třídu. Poslední commit na `main`: `7618905`.
 
 **9. 9. 2026, noc — e-maily chodí z vlastní domény.** Doména `tradelink.cz` přidaná
 do Resendu (region Irsko, data zůstávají v EU), tři DNS záznamy zapsané do Cloudflare,
