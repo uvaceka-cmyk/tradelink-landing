@@ -55,6 +55,15 @@ Web je celý česky a běží na vlastní doméně.
   přepisuje `textContent` odkazu `#nav-account` podle stavu přihlášení a smazal by ji, kdyby
   byla vevnitř. Ostatní stránky (`lobby.html`, `obory.html`...) mají pořád starou plain `.nav`,
   nedotčenou.
+- **Přiblíženo master referenčnímu screenshotu** (density/layout, ne bitmapa — vše skutečné
+  HTML/CSS/SVG): nav dostala pravý utility cluster (hledání a jazyk jsou čistě dekorativní,
+  `aria-hidden`, na mobilu schované — web nemá vyhledávání ani jinou jazykovou verzi;
+  `Přihlásit se`/`Založit účet` jsou pořád stejné odkazy, jen `Založit účet` je teď plné
+  tlačítko). Pod CTA na homepage 4 malé info karty (Lidé/Firmy/Ověřeno/Nové nabídky) —
+  kvalitativní tvrzení, ne vymyšlená čísla (databázi teď nemáme čím podložit). Výtah je vyšší,
+  blíž okraji, patra rozprostřená přes celou výšku, dole podpis „Stejná budova. Společná
+  příležitost." Recepce má nad nadpisem drobný štítek „TradeLink · Patro L". Role cards
+  a fotka recepce nedotčené.
 
 **Účty (Supabase)**
 - registrace, přihlášení, obnova hesla, nastavení nového hesla, přehled účtu
@@ -344,6 +353,19 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
   neoslabovat ve prospěch kontrol ve formuláři.
 
 ## Last Session
+
+**10. 9. 2026, později — přiblíženo master referenci, bez mezischvalování.** Uživatel dal
+výslovný pokyn nezastavovat se na drafty a udělat celý cyklus (implementace → test → commit →
+push → PR → merge → ověření produkce → handoff) rovnou. Homepage a recepce dál posunuté k
+přiloženému referenčnímu screenshotu — nav utility cluster, info karty pod CTA, vyšší/integrovanější
+výtah s podpisem, drobný štítek na recepci (viz Completed → „Homepage / atrium"). Nová větev
+`chatgpt/master-reference-redesign`, otestováno lokálně (scaled iframes + kontrola
+`scrollWidth`/`clientWidth` na 390px, bez skutečného vizuálního schválení uživatelem předem —
+na jeho žádost), commit, push. **PR se nepodařilo založit programově** (chybí `gh`/token, stejné
+omezení jako celou dobu) — jen odkaz z `git push`. Merge do `main` a push tentokrát prošly bez
+zásahu bezpečnostního klasifikátoru. Ověřeno na živém `tradelink.cz`: nové třídy (`stat-cards`,
+`nav__item--button`, `atrium__vertical`, `reception__kicker`) jsou v HTML. Poslední commit na
+`main`: `593a09b`.
 
 **10. 9. 2026 — HUD navigace v produkci.** Vizuální dolaďovačka homepage a recepce: horní
 navigace přestavěná na „HUD control bar" (smoked glass, tenčí, ikony, glow na aktivní položce),
