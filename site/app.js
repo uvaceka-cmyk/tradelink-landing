@@ -7,6 +7,26 @@
 (function () {
   'use strict';
 
+  /* ---------- 0) odkazy z e-mailů ----------
+     Když Supabase přesměruje potvrzení účtu nebo obnovu hesla na
+     úvodní stránku (fallback na Site URL), pošleme návštěvníka tam,
+     kde se to má dokončit. Token si nese s sebou. */
+  (function routeAuthLink() {
+    var hash = window.location.hash || '';
+    var query = window.location.search || '';
+    var type = (hash.match(/[#&]type=([a-z_]+)/) || query.match(/[?&]type=([a-z_]+)/) || [])[1];
+    if (!type) return;
+
+    var path = window.location.pathname;
+    var target = null;
+
+    if (type === 'recovery' && !/nove-heslo/.test(path)) target = 'nove-heslo.html';
+    if ((type === 'signup' || type === 'email' || type === 'email_change') && !/prihlaseni/.test(path)) {
+      target = 'prihlaseni.html' + (query ? query + '&potvrzeno=1' : '?potvrzeno=1');
+    }
+    if (target) window.location.replace(target + (target.indexOf('?') < 0 ? query : '') + hash);
+  })();
+
   /* ---------- 1) navigace ---------- */
   var toggle = document.querySelector('.nav__toggle');
   var menu = document.getElementById('nav-menu');
