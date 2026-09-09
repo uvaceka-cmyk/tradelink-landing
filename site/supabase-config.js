@@ -10,6 +10,6 @@
    Kde je vzít: Supabase → projekt → Project Settings → API
    ========================================================= */
 window.TRADELINK_SUPABASE = {
-  url: '',
-  anonKey: ''
+  url: 'https://hgjajfkaotflkmyrryak.supabase.co',
+  anonKey: 'sb_publishable_uAKMzAdb_30eR7VJd39v5Q_bi8wwyY0'
 };
