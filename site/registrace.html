@@ -173,7 +173,7 @@
           }
         }
 
-        firma = { ico: data.ico, nazev: data.nazev, sidlo: data.sidlo };
+        firma = { ico: data.ico, nazev: data.nazev, sidlo: data.sidlo, token: data.token };
         status(aresEl, 'Ověřeno v ARES: ' + data.nazev + (data.sidlo ? ' — ' + data.sidlo : ''), 'ok');
       } catch (e) {
         resetFirma();
@@ -222,7 +222,8 @@
             company_name: firma ? firma.nazev : null,
             ico: firma ? firma.ico : null,
             ares_nazev: firma ? firma.nazev : null,
-            ares_sidlo: firma ? firma.sidlo : null
+            ares_sidlo: firma ? firma.sidlo : null,
+            ares_token: firma ? firma.token : null
           }
         }
       });

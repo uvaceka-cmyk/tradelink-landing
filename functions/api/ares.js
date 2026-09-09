@@ -5,11 +5,18 @@
    Běží jako Cloudflare Pages Function, protože ARES nepovoluje
    volání přímo z prohlížeče.
 
-   Vrací jen to, co je veřejné v obchodním rejstříku:
-   název, sídlo, právní formu a jestli subjekt ještě existuje.
+   Kromě údajů z registru vrací podpis (HMAC-SHA256). Ten pak
+   putuje s registrací do databáze, která si ho ověří sama —
+   proto si nikdo nemůže vymyslet firmu, která neexistuje.
+   Podpis platí hodinu.
+
+   Klíč k podpisu je v proměnné prostředí ARES_SECRET
+   (Cloudflare → projekt → Settings → Environment variables)
+   a musí se shodovat s klíčem uloženým v databázi.
    ========================================================= */
 
 const ARES = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/';
+const PLATNOST_SEKUND = 3600;
 
 /* Kontrolní číslice IČO (modulo 11). Odchytí překlepy dřív,
    než se vůbec někam sáhne. */
@@ -22,17 +29,26 @@ export function icoChecksum(ico) {
   return check === Number(ico[7]);
 }
 
+async function podepsat(zprava, tajemstvi) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode(tajemstvi), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(zprava));
+  return [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 function json(data, statusCode) {
   return new Response(JSON.stringify(data), {
     status: statusCode || 200,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'public, max-age=86400'
+      'Cache-Control': 'no-store'
     }
   });
 }
 
-export async function onRequestGet({ request }) {
+export async function onRequestGet({ request, env }) {
   const ico = (new URL(request.url).searchParams.get('ico') || '').replace(/\s/g, '');
 
   if (!/^\d{8}$/.test(ico)) {
@@ -70,12 +86,26 @@ export async function onRequestGet({ request }) {
     }, 409);
   }
 
-  return json({
+  const odpoved = {
     ok: true,
     ico: data.ico,
     nazev: data.obchodniJmeno,
     sidlo: data.sidlo ? data.sidlo.textovaAdresa : null,
     pravniForma: data.pravniForma || null,
     vznik: data.datumVzniku || null
-  });
+  };
+
+  /* Podpis pro databázi. Bez klíče projde ověření jen v prohlížeči
+     a databáze registraci firmy odmítne — to je zamýšlené chování,
+     ne tiché selhání. */
+  if (env && env.ARES_SECRET) {
+    const platiDo = Math.floor(Date.now() / 1000) + PLATNOST_SEKUND;
+    const podpis = await podepsat(
+      odpoved.ico + ':' + odpoved.nazev + ':' + platiDo,
+      env.ARES_SECRET
+    );
+    odpoved.token = platiDo + '.' + podpis;
+  }
+
+  return json(odpoved);
 }
