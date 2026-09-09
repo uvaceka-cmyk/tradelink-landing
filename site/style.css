@@ -484,3 +484,6 @@ p{margin:0}
 .field__row{display:flex;gap:10px;align-items:stretch}
 .field__row input{flex:1;min-width:0}
 .btn--inline{width:auto;min-height:50px;padding:0 20px;font-size:.92rem;flex:none;border-radius:11px}
+
+/* výběr typu účtu při registraci */
+.tiles--stack{grid-template-columns:1fr !important;margin-bottom:6px}

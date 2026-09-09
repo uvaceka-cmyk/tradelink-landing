@@ -82,29 +82,25 @@
       title: 'Hledám zaměstnance',
       lead: 'Vyberte odvětví, ve kterém potřebujete nové lidi.',
       subLead: 'Zvolte konkrétní obor, ať vidíte jen relevantní pracovníky.',
-      result: 'Tady se po spuštění zobrazí pracovníci, kteří v tomto oboru hledají práci.',
-      billing: 'Pro firmy: první 3 měsíce zdarma, potom nízký měsíční poplatek.'
+      result: 'Tady se po spuštění zobrazí pracovníci, kteří v tomto oboru hledají práci.'
     },
     'hledam-praci': {
       title: 'Hledám práci',
       lead: 'Vyberte odvětví, ve kterém chcete pracovat.',
       subLead: 'Zvolte konkrétní obor, ať vidíte jen nabídky, které vám sedí.',
-      result: 'Tady se po spuštění zobrazí nabídky práce v tomto oboru.',
-      billing: 'Pro lidi zdarma navždy.'
+      result: 'Tady se po spuštění zobrazí nabídky práce v tomto oboru.'
     },
     'hledam-zakazky': {
       title: 'Hledám zakázky',
       lead: 'Vyberte odvětví, ve kterém sháníte zakázky.',
       subLead: 'Zvolte konkrétní obor, ať vidíte jen poptávky, které umíte obsloužit.',
-      result: 'Tady se po spuštění zobrazí poptávky a zakázky v tomto oboru.',
-      billing: 'Pro firmy a živnostníky: první 3 měsíce zdarma, potom nízký měsíční poplatek.'
+      result: 'Tady se po spuštění zobrazí poptávky a zakázky v tomto oboru.'
     },
     'chci-zadat-zakazku': {
       title: 'Chci zadat zakázku',
       lead: 'Vyberte odvětví, ve kterém potřebujete práci provést.',
       subLead: 'Zvolte konkrétní obor, ať vidíte jen firmy, které to dělají.',
-      result: 'Tady se po spuštění zobrazí firmy a živnostníci, kteří tuto práci provedou.',
-      billing: 'Zadání zakázky je pro soukromé osoby zdarma.'
+      result: 'Tady se po spuštění zobrazí firmy a živnostníci, kteří tuto práci provedou.'
     }
   };
 
@@ -242,7 +238,7 @@
         '<div class="result">' +
           '<h2>Zatím připravujeme</h2>' +
           '<p>' + role.result + '</p>' +
-          '<p class="result__meta">' + industry.name + ' → ' + state.sub + '<br>' + role.billing + '</p>' +
+          '<p class="result__meta">' + industry.name + ' → ' + state.sub + '</p>' +
         '</div>' +
         '<div class="actions" style="margin-top:26px">' +
           '<a class="btn" href="registrace.html?role=' + state.role + '">Založit účet</a>' +

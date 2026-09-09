@@ -10,26 +10,22 @@ export const ROLES = {
   'hledam-zamestnance': {
     title: 'Hledám zaměstnance',
     account: 'firma',
-    accountLabel: 'Firemní účet',
-    billing: 'První 3 měsíce zdarma, potom nízký měsíční poplatek.'
+    accountLabel: 'Firemní účet'
   },
   'hledam-zakazky': {
     title: 'Hledám zakázky',
     account: 'firma',
-    accountLabel: 'Účet firmy nebo živnostníka',
-    billing: 'První 3 měsíce zdarma, potom nízký měsíční poplatek.'
+    accountLabel: 'Účet firmy nebo živnostníka'
   },
   'hledam-praci': {
     title: 'Hledám práci',
     account: 'osoba',
-    accountLabel: 'Osobní účet',
-    billing: 'Zdarma navždy.'
+    accountLabel: 'Osobní účet'
   },
   'chci-zadat-zakazku': {
     title: 'Chci zadat zakázku',
     account: 'osoba',
-    accountLabel: 'Osobní účet',
-    billing: 'Zadání zakázky je zdarma.'
+    accountLabel: 'Osobní účet'
   }
 };
 

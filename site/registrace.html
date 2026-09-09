@@ -21,13 +21,28 @@
     <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
       <a href="./">Hlavní stránka</a>
       <a href="recepce.html">Recepce</a>
-      <a href="./#cena">Cena</a>
+      <a href="registrace.html">Založit účet</a>
       <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
     </nav>
   </header>
 
   <main class="auth shell">
     <div class="auth__card">
+
+      <div id="role-choice" hidden>
+        <p class="auth__kicker">Registrace</p>
+        <h1>Zakládám účet jako</h1>
+        <p class="auth__lead">Vyberte, co na TradeLinku hledáte. Podle toho se liší, co po vás budeme chtít.</p>
+        <div class="tiles tiles--stack">
+          <a class="tile" href="registrace.html?role=hledam-zamestnance"><span class="tile__body"><span class="tile__title">Hledám zaměstnance</span><span class="tile__desc">Jsem firma a potřebuji nové lidi.</span></span></a>
+          <a class="tile" href="registrace.html?role=hledam-praci"><span class="tile__body"><span class="tile__title">Hledám práci</span><span class="tile__desc">Chci najít práci nebo pracovní příležitost.</span></span></a>
+          <a class="tile" href="registrace.html?role=hledam-zakazky"><span class="tile__body"><span class="tile__title">Hledám zakázky</span><span class="tile__desc">Jsem firma nebo živnostník a hledám nové zakázky.</span></span></a>
+          <a class="tile" href="registrace.html?role=chci-zadat-zakazku"><span class="tile__body"><span class="tile__title">Chci zadat zakázku</span><span class="tile__desc">Hledám firmu nebo živnostníka, který práci provede.</span></span></a>
+        </div>
+        <p class="auth__alt">Už tu účet máte? <a href="prihlaseni.html">Přihlaste se</a>.</p>
+      </div>
+
+      <div id="role-form">
       <p class="auth__kicker" id="role-tag">Registrace</p>
       <h1>Založit účet</h1>
       <p class="auth__lead" id="account-lead">Vyplňte údaje a potvrďte e-mail, který vám přijde.</p>
@@ -72,7 +87,7 @@
       <p class="auth__alt">
         Už tu účet máte? <a href="prihlaseni.html">Přihlaste se</a>.
       </p>
-      <p class="auth__billing" id="billing"></p>
+      </div>
     </div>
   </main>
 
@@ -87,12 +102,17 @@
   <script type="module">
     import { supabase, ROLES, roleFromUrl, status, busy, requireConfig, czechError, paintNav, configured } from './auth.js';
 
+    var maRoli = ROLES[new URLSearchParams(location.search).get('role')] !== undefined;
+    if (!maRoli) {
+      document.getElementById('role-choice').hidden = false;
+      document.getElementById('role-form').hidden = true;
+    }
+
     var role = roleFromUrl();
     var meta = ROLES[role];
     var isCompany = meta.account === 'firma';
 
     document.getElementById('role-tag').textContent = meta.accountLabel;
-    document.getElementById('billing').textContent = meta.billing;
     document.getElementById('account-lead').textContent =
       meta.title + ' — vyplňte údaje a potvrďte e-mail, který vám přijde.';
 

@@ -21,7 +21,7 @@
     <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
       <a href="./">Hlavní stránka</a>
       <a href="recepce.html">Recepce</a>
-      <a href="./#cena">Cena</a>
+      <a href="registrace.html">Založit účet</a>
       <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
     </nav>
   </header>
@@ -82,7 +82,6 @@
         if (meta.company_name) rows.push(['Firma', meta.company_name]);
         if (meta.ico) rows.push(['IČO', meta.ico]);
         if (meta.full_name) rows.push(['Kontaktní osoba', meta.full_name]);
-        if (role) rows.push(['Cena', role.billing]);
 
         var detail = document.getElementById('detail');
         detail.innerHTML = rows.map(function (r) {
