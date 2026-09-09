@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080c0f">
+  <meta name="description" content="Recepce TradeLinku — vyberte si, co hledáte: zaměstnance, práci, zakázky, nebo firmu na zakázku.">
+  <title>Recepce — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="nav__brand" href="./">TradeLink</a>
+    <div class="nav__links">
+      <a href="lobby.html">Lobby</a>
+      <a href="./">Hlavní stránka</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="reception__head">
+      <h1>Recepce</h1>
+      <p>Řekněte nám, co hledáte. Podle vaší volby se vám pak zobrazí jen relevantní obory a podobory.</p>
+    </div>
+
+    <div class="reception">
+      <img class="reception__bg" src="recepce.jpeg" width="1600" height="900" alt="Recepce TradeLinku — osvětlený mramorový pult s nápisem TradeLink a panelem výtahu.">
+
+      <div class="choices">
+        <button class="choice choice--1" type="button" aria-pressed="false"
+                data-note="Hledáte zaměstnance. Po spuštění se vám tu zobrazí obory a podobory, ve kterých můžete lidi oslovit.">
+          <h3>Hledám zaměstnance</h3>
+          <p>Jsem firma a potřebuji nové lidi.</p>
+          <span class="tag tag--trial">3 měsíce zdarma</span>
+        </button>
+
+        <button class="choice choice--2" type="button" aria-pressed="false"
+                data-note="Hledáte práci. Po spuštění se vám tu zobrazí obory a podobory s nabídkami práce.">
+          <h3>Hledám práci</h3>
+          <p>Chci najít práci nebo pracovní příležitost.</p>
+          <span class="tag tag--free">Zdarma navždy</span>
+        </button>
+
+        <button class="choice choice--3" type="button" aria-pressed="false"
+                data-note="Hledáte zakázky. Po spuštění se vám tu zobrazí obory a podobory s poptávkami.">
+          <h3>Hledám zakázky</h3>
+          <p>Jsem firma nebo živnostník a hledám nové zakázky.</p>
+          <span class="tag tag--trial">3 měsíce zdarma</span>
+        </button>
+
+        <button class="choice choice--4" type="button" aria-pressed="false"
+                data-note="Chcete zadat zakázku. Po spuštění si tu vyberete obor a najdete firmu nebo živnostníka.">
+          <h3>Chci zadat zakázku</h3>
+          <p>Hledám firmu nebo živnostníka, který práci provede.</p>
+          <span class="tag tag--free">Zdarma navždy</span>
+        </button>
+      </div>
+    </div>
+
+    <p class="reception__status" id="status" role="status">
+      Vyberte jednu ze čtyř možností. Obory a podobory se otevřou po spuštění platformy.
+    </p>
+
+    <div class="reception__foot">
+      <a class="btn btn--ghost" href="lobby.html">Zpět do lobby</a>
+    </div>
+  </main>
+
+  <footer>
+    <a href="./" aria-label="Domovská stránka TradeLink">TradeLink</a>
+    <span>Lidé. Obory. Příležitosti.</span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script>
+    var choices = document.querySelectorAll('.choice');
+    var status = document.getElementById('status');
+    choices.forEach(function (choice) {
+      choice.addEventListener('click', function () {
+        choices.forEach(function (other) { other.setAttribute('aria-pressed', 'false'); });
+        choice.setAttribute('aria-pressed', 'true');
+        status.textContent = choice.dataset.note;
+      });
+    });
+  </script>
+</body>
+</html>
