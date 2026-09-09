@@ -1,0 +1,188 @@
+/* TradeLink homepage visual override — isolated from the rest of the app. */
+
+.home-hero {
+  position: relative;
+  min-height: calc(100svh - 72px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+  border-bottom: 1px solid var(--line);
+  background: #05070a;
+}
+
+.home-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+}
+
+.home-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% center;
+  transform: scale(1.01);
+}
+
+.home-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(2,4,7,.94) 0%, rgba(2,4,7,.77) 27%, rgba(2,4,7,.28) 53%, rgba(2,4,7,.08) 72%, rgba(2,4,7,.22) 100%),
+    linear-gradient(180deg, rgba(2,4,7,.08) 0%, rgba(2,4,7,.05) 45%, rgba(2,4,7,.82) 100%);
+}
+
+.home-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at 62% 56%, rgba(231,200,154,.08), transparent 38%);
+}
+
+.home-hero__content {
+  width: var(--shell);
+  margin-inline: auto;
+  padding: 84px var(--gutter) 72px;
+}
+
+.home-hero__copy {
+  max-width: 640px;
+}
+
+.home-hero__eyebrow {
+  margin-bottom: 18px;
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: #d9c09b;
+}
+
+.home-hero h1 {
+  font-size: clamp(3rem, 8vw, 6.6rem);
+  line-height: .93;
+  letter-spacing: -.055em;
+  text-wrap: balance;
+  text-shadow: 0 10px 50px #000;
+}
+
+.home-hero__claim {
+  display: block;
+  margin-top: 14px;
+  font-size: clamp(1.35rem, 3vw, 2.2rem);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -.035em;
+  color: rgba(238,241,244,.82);
+}
+
+.home-hero__text {
+  max-width: 52ch;
+  margin: 26px 0 32px;
+  font-size: clamp(1rem, 1.6vw, 1.16rem);
+  line-height: 1.7;
+  color: rgba(238,241,244,.78);
+  text-shadow: 0 4px 24px #000;
+}
+
+.home-hero .actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.home-hero .btn {
+  width: auto;
+  min-width: 180px;
+}
+
+.home-hero__enter {
+  background: rgba(238,241,244,.96);
+  color: #05070a;
+  box-shadow: 0 14px 40px rgba(0,0,0,.32);
+}
+
+.home-hero__secondary {
+  background: rgba(5,7,10,.4);
+  border-color: rgba(255,255,255,.25);
+  backdrop-filter: blur(12px);
+}
+
+.home-hero__scroll {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 26px;
+  display: none;
+  gap: 10px;
+  align-items: center;
+  font-size: .66rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(238,241,244,.56);
+}
+
+.home-hero__scroll::before {
+  content: "";
+  width: 42px;
+  height: 1px;
+  background: rgba(255,255,255,.32);
+}
+
+@media (max-width: 720px) {
+  .home-hero {
+    min-height: calc(100svh - 64px);
+    align-items: flex-end;
+  }
+
+  .home-hero__media img {
+    object-position: 63% center;
+  }
+
+  .home-hero::before {
+    background:
+      linear-gradient(180deg, rgba(3,5,8,.16) 0%, rgba(3,5,8,.18) 34%, rgba(3,5,8,.88) 72%, #05070a 100%),
+      linear-gradient(90deg, rgba(3,5,8,.44) 0%, rgba(3,5,8,.05) 75%);
+  }
+
+  .home-hero__content {
+    padding-top: 46svh;
+    padding-bottom: 38px;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(3rem, 16vw, 4.7rem);
+  }
+
+  .home-hero__text {
+    margin-top: 20px;
+    margin-bottom: 26px;
+    font-size: .98rem;
+  }
+
+  .home-hero .actions {
+    flex-direction: column;
+  }
+
+  .home-hero .btn {
+    width: 100%;
+  }
+}
+
+@media (min-width: 900px) {
+  .home-hero__scroll { display: flex; }
+}
+
+@media (min-width: 1200px) {
+  .home-hero__content {
+    padding-bottom: 92px;
+  }
+
+  .home-hero__copy {
+    max-width: 720px;
+  }
+}
