@@ -3,158 +3,192 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080c0f">
-  <meta name="description" content="TradeLink — Kde se propojuje byznys. Propojujeme firmy, pracovníky a zakázky na jednom místě. Pro lidi zdarma navždy, firmy první 3 měsíce zdarma.">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="TradeLink — Kde se propojuje byznys. Firmy, pracovníci a zakázky na jednom místě. Pro lidi zdarma navždy, firmy první 3 měsíce zdarma.">
   <title>TradeLink — Kde se propojuje byznys.</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav class="nav">
-    <a class="nav__brand" href="./">TradeLink</a>
-    <div class="nav__links">
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
       <a href="#o-tradelinku">O TradeLinku</a>
       <a href="#jak-to-funguje">Jak to funguje</a>
-      <a href="#proc">Proč TradeLink</a>
-      <a href="#cenik">Cena</a>
+      <a href="#vyhody">Výhody</a>
+      <a href="#cena">Cena</a>
       <a class="is-cta" href="lobby.html">Vstoupit do lobby</a>
-    </div>
-  </nav>
+    </nav>
+  </header>
 
   <main>
-    <section class="hero" aria-label="Úvodní obrázek TradeLink">
-      <img src="tradelink.jpeg" width="1600" height="900" fetchpriority="high" alt="TradeLink — Kde se propojuje byznys. Osvětlená kancelářská věž spojující IT, administrativu, gastronomii, logistiku, stavebnictví a výrobu.">
-    </section>
-
-    <section class="intro" aria-labelledby="headline">
-      <div class="copy">
-        <p class="eyebrow">Silnější zítřek</p>
-        <h1 id="headline">TradeLink<span>Kde se propojuje byznys.</span></h1>
-        <p class="description">Propojte firmy, pracovníky a příležitosti na jednom místě.</p>
+    <!-- SCÉNA 1 — hero -->
+    <section class="hero" data-scene="hero">
+      <div class="hero__media" data-depth="1">
+        <img src="tradelink.jpeg" width="1600" height="900" fetchpriority="high"
+             alt="Osvětlená kancelářská věž TradeLink v noci.">
       </div>
-      <div class="launch">
-        <span class="label">Již brzy</span>
-        <p>Vzniká propojenější svět podnikání.</p>
-        <p class="note">Pro lidi zdarma navždy. Firmy mají první 3 měsíce zdarma.</p>
-        <a class="btn" href="lobby.html">Vstoupit do lobby</a>
-      </div>
-    </section>
-
-    <section class="section" id="o-tradelinku">
-      <h2>O TradeLinku</h2>
-      <p class="section__lead">
-        TradeLink je jedno místo, kde se potkávají čtyři strany trhu práce a zakázek:
-        firmy, které hledají lidi, lidé, kteří hledají práci, firmy a živnostníci,
-        kteří hledají zakázky, a lidé, kteří mají zakázku k zadání.
-        Místo dalšího inzertního serveru stavíme prostor, kde je hned od začátku jasné,
-        kdo jste a co hledáte — a podle toho se vám zobrazí jen to, co dává smysl.
-      </p>
-      <div class="grid grid--3">
-        <div class="card">
-          <h3>Čtyři cesty, jeden vchod</h3>
-          <p>Nejdřív si vyberete, kdo jste. Teprve pak přijdou obory a podobory — ne naopak.</p>
+      <div class="hero__copy shell" data-depth="2">
+        <p class="hero__eyebrow">Silnější zítřek</p>
+        <h1>TradeLink<span class="hero__claim">Kde se propojuje byznys.</span></h1>
+        <p class="hero__text">
+          Jedno místo, kde se potkávají firmy, pracovníci a zakázky. Nejdřív řeknete,
+          kdo jste a co hledáte — teprve potom se vám otevřou obory a nabídky, které
+          vám dávají smysl.
+        </p>
+        <div class="actions">
+          <a class="btn" href="lobby.html">Vstoupit do lobby</a>
+          <a class="btn btn--ghost" href="#o-tradelinku">Co je TradeLink</a>
         </div>
-        <div class="card">
-          <h3>Lidé i zakázky</h3>
-          <p>Práce a poptávky po řemesle či službě na jednom místě, ne ve dvou oddělených světech.</p>
-        </div>
-        <div class="card">
-          <h3>Bez rizika na začátku</h3>
-          <p>Lidé neplatí nikdy. Firmy si vše vyzkouší tři měsíce zdarma, než se rozhodnou.</p>
-        </div>
+        <p class="hero__note">Pro lidi zdarma. Firmy první 3 měsíce zdarma.</p>
       </div>
     </section>
 
-    <section class="section" id="jak-to-funguje">
-      <h2>Jak to funguje</h2>
-      <p class="section__lead">Čtyři kroky od vstupu po domluvenou spolupráci.</p>
-      <div class="grid grid--4">
-        <div class="card">
-          <span class="card__step">Krok 01</span>
-          <h3>Vstoupíte do lobby</h3>
-          <p>Přijdete na TradeLink a projdete do recepce.</p>
-        </div>
-        <div class="card">
-          <span class="card__step">Krok 02</span>
-          <h3>Řeknete, co hledáte</h3>
-          <p>Na recepci si vyberete jednu ze čtyř cest podle toho, kdo jste.</p>
-        </div>
-        <div class="card">
-          <span class="card__step">Krok 03</span>
-          <h3>Zvolíte obor</h3>
-          <p>Zobrazí se obory a podobory, které se k vaší volbě opravdu hodí.</p>
-        </div>
-        <div class="card">
-          <span class="card__step">Krok 04</span>
-          <h3>Propojíte se</h3>
-          <p>Najdete druhou stranu a domluvíte si spolupráci napřímo.</p>
+    <!-- SCÉNA 2 — o TradeLinku -->
+    <section class="scene" id="o-tradelinku" data-scene="about">
+      <div class="shell">
+        <p class="scene__kicker">O TradeLinku</p>
+        <h2>Čtyři strany trhu pod jednou střechou</h2>
+        <p class="scene__lead">
+          Firmy, které hledají lidi. Lidé, kteří hledají práci. Firmy a živnostníci,
+          kteří shánějí zakázky. A lidé, kteří mají zakázku k zadání. Místo dalšího
+          inzertního serveru stavíme budovu, ve které každý ví, kam jde.
+        </p>
+        <div class="grid grid--3">
+          <article class="card">
+            <h3>Jeden vchod, čtyři cesty</h3>
+            <p>Na recepci si vyberete, kdo jste. Obory přijdou až potom — ne naopak.</p>
+          </article>
+          <article class="card">
+            <h3>Lidé i zakázky</h3>
+            <p>Práce i poptávky po řemesle a službách na jednom místě, ne ve dvou oddělených světech.</p>
+          </article>
+          <article class="card">
+            <h3>Bez rizika na začátku</h3>
+            <p>Lidé neplatí nikdy. Firmy si vše vyzkouší tři měsíce zdarma, než se rozhodnou.</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="section" id="proc">
-      <h2>Proč TradeLink</h2>
-      <p class="section__lead">Tři věci, na kterých celou platformu stavíme.</p>
-      <div class="grid grid--3">
-        <div class="card">
-          <h3>Jednoduchost</h3>
-          <p>Žádné složité registrace před tím, než vůbec uvidíte, co platforma nabízí. Nejdřív se rozhlédnete, pak se rozhodnete.</p>
+    <!-- SCÉNA 3 — jak to funguje -->
+    <section class="scene" id="jak-to-funguje" data-scene="how">
+      <div class="shell">
+        <p class="scene__kicker">Jak to funguje</p>
+        <h2>Od vstupu k domluvené spolupráci</h2>
+        <p class="scene__lead">Pět kroků, které na sebe navazují.</p>
+        <div class="grid grid--4">
+          <article class="card">
+            <span class="card__index">01</span>
+            <h3>Projdete lobby</h3>
+            <p>Ze vstupní haly se dostanete hlouběji do budovy až k recepci.</p>
+          </article>
+          <article class="card">
+            <span class="card__index">02</span>
+            <h3>Řeknete, co hledáte</h3>
+            <p>Na recepci si vyberete jednu ze čtyř cest podle toho, kdo jste.</p>
+          </article>
+          <article class="card">
+            <span class="card__index">03</span>
+            <h3>Zvolíte odvětví</h3>
+            <p>Zobrazí se jen odvětví, která k vaší volbě opravdu patří.</p>
+          </article>
+          <article class="card">
+            <span class="card__index">04</span>
+            <h3>Upřesníte obor</h3>
+            <p>Z odvětví se propadnete do konkrétního oboru a podoboru.</p>
+          </article>
         </div>
-        <div class="card">
-          <h3>Férová cena</h3>
-          <p>Lidé zdarma navždy — bez hvězdiček a bez skrytých limitů. Firmy platí až ve chvíli, kdy jim TradeLink něco přinesl.</p>
-        </div>
-        <div class="card">
-          <h3>Napříč obory</h3>
-          <p>IT, administrativa, gastronomie, logistika, stavebnictví i výroba pod jednou střechou.</p>
+        <div class="grid" style="margin-top:14px">
+          <article class="card">
+            <span class="card__index">05</span>
+            <h3>Propojíte se</h3>
+            <p>Uvidíte konkrétní nabídky, poptávky, firmy nebo lidi — a domluvíte se napřímo.</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="section" id="cenik">
-      <h2>Cena</h2>
-      <p class="pricing__claim">
-        <strong>Pro lidi zdarma.</strong> Firmy první <strong>3 měsíce zdarma</strong>.
-      </p>
-      <div class="grid grid--4">
-        <div class="card">
-          <span class="tag tag--free">Zdarma navždy</span>
-          <h3>Hledám práci</h3>
-          <p>Hledáte zaměstnání nebo pracovní příležitost. Neplatíte nic — ani teď, ani později.</p>
-        </div>
-        <div class="card">
-          <span class="tag tag--free">Zdarma navždy</span>
-          <h3>Chci zadat zakázku</h3>
-          <p>Jako soukromá osoba hledáte firmu nebo živnostníka, který práci provede. Zdarma.</p>
-        </div>
-        <div class="card">
-          <span class="tag tag--trial">3 měsíce zdarma</span>
-          <h3>Hledám zaměstnance</h3>
-          <p>Jste firma a potřebujete nové lidi. Po zkušební době nízké měsíční předplatné.</p>
-        </div>
-        <div class="card">
-          <span class="tag tag--trial">3 měsíce zdarma</span>
-          <h3>Hledám zakázky</h3>
-          <p>Jste firma nebo živnostník a sháníte práci. Po zkušební době nízké měsíční předplatné.</p>
+    <!-- SCÉNA 4 — výhody -->
+    <section class="scene" id="vyhody" data-scene="benefits">
+      <div class="shell">
+        <p class="scene__kicker">Výhody</p>
+        <h2>Proč TradeLink</h2>
+        <p class="scene__lead">Tři věci, na kterých celou platformu stavíme.</p>
+        <div class="grid grid--3">
+          <article class="card">
+            <h3>Jednoduchost</h3>
+            <p>Žádná registrace dřív, než vůbec uvidíte, co platforma nabízí. Nejdřív se rozhlédnete, pak se rozhodnete.</p>
+          </article>
+          <article class="card">
+            <h3>Férová cena</h3>
+            <p>Lidé zdarma navždy, bez hvězdiček a skrytých limitů. Firmy platí až ve chvíli, kdy jim TradeLink něco přinesl.</p>
+          </article>
+          <article class="card">
+            <h3>Napříč obory</h3>
+            <p>Stavebnictví, výroba, logistika, gastro, administrativa i IT — všechno pod jednou střechou.</p>
+          </article>
         </div>
       </div>
-      <p class="pricing__note">
-        Konkrétní výši předplatného pro firmy zveřejníme před spuštěním. Cílem je držet ji nízko,
-        aby byl vstup na TradeLink pro firmy co nejméně rizikový.
-      </p>
     </section>
 
-    <section class="cta">
-      <h2>Pojďte dál</h2>
-      <p>Projděte lobby až na recepci a řekněte nám, co hledáte.</p>
-      <a class="btn" href="lobby.html">Vstoupit do lobby</a>
+    <!-- SCÉNA 5 — cena -->
+    <section class="scene" id="cena" data-scene="pricing">
+      <div class="shell">
+        <p class="scene__kicker">Cena</p>
+        <p class="pricing__claim"><strong>Pro lidi zdarma.</strong> Firmy první <strong>3 měsíce zdarma</strong>.</p>
+        <div class="grid grid--4">
+          <article class="card">
+            <span class="tag tag--free">Zdarma navždy</span>
+            <h3>Hledám práci</h3>
+            <p>Hledáte zaměstnání nebo pracovní příležitost. Neplatíte nic — ani teď, ani později.</p>
+          </article>
+          <article class="card">
+            <span class="tag tag--free">Zdarma</span>
+            <h3>Chci zadat zakázku</h3>
+            <p>Jako soukromá osoba sháníte firmu nebo živnostníka, který práci provede.</p>
+          </article>
+          <article class="card">
+            <span class="tag tag--trial">3 měsíce zdarma</span>
+            <h3>Hledám zaměstnance</h3>
+            <p>Jste firma a potřebujete nové lidi. Po zkušební době nízký měsíční poplatek.</p>
+          </article>
+          <article class="card">
+            <span class="tag tag--trial">3 měsíce zdarma</span>
+            <h3>Hledám zakázky</h3>
+            <p>Jste firma nebo živnostník a sháníte práci. Po zkušební době nízký měsíční poplatek.</p>
+          </article>
+        </div>
+        <p class="pricing__note">
+          Konkrétní výši měsíčního poplatku pro firmy zveřejníme před spuštěním. Držíme ji záměrně nízko,
+          aby byl vstup na TradeLink co nejméně rizikový.
+        </p>
+      </div>
+    </section>
+
+    <!-- SCÉNA 6 — vstup do budovy -->
+    <section class="scene closing" data-scene="enter">
+      <div class="shell">
+        <h2>Pojďte dál</h2>
+        <p>Projděte lobby až na recepci a řekněte nám, co hledáte.</p>
+        <div class="actions">
+          <a class="btn" href="lobby.html">Vstoupit do lobby</a>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <a href="./" aria-label="Domovská stránka TradeLink">TradeLink</a>
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
     <span>Lidé. Obory. Příležitosti.</span>
     <small>© 2026 TradeLink</small>
   </footer>
+
+  <script src="app.js" defer></script>
 </body>
 </html>
