@@ -42,6 +42,7 @@
         <a class="btn" href="profil.html">Upravit profil</a>
         <a class="btn btn--ghost" href="moje-inzeraty.html">Moje inzeráty</a>
         <a class="btn btn--ghost" href="moje-odpovedi.html">Moje odpovědi</a>
+        <button class="btn btn--ghost" type="button" id="stahnout-data">Stáhnout moje údaje</button>
         <a class="btn btn--ghost" href="recepce.html">Zpět na recepci</a>
         <button class="btn btn--ghost" type="button" id="signout">Odhlásit se</button>
       </div>
@@ -117,6 +118,35 @@
         document.getElementById('actions').hidden = false;
       })();
     }
+
+    /* Právo na přenositelnost údajů — vše, co o uživateli vedeme,
+       v strojově čitelné podobě. */
+    document.getElementById('stahnout-data').addEventListener('click', async function () {
+      var session = (await supabase.auth.getSession()).data.session;
+      if (!session) return;
+
+      var vysledky = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', session.user.id),
+        supabase.from('inzeraty').select('*'),
+        supabase.from('odpovedi').select('*').eq('autor', session.user.id),
+        supabase.from('hodnoceni').select('*').eq('autor', session.user.id)
+      ]);
+
+      var data = {
+        vyexportovano: new Date().toISOString(),
+        ucet: { email: session.user.email, zalozen: session.user.created_at },
+        profil: (vysledky[0].data || [])[0] || null,
+        inzeraty: vysledky[1].data || [],
+        odpovedi: vysledky[2].data || [],
+        hodnoceni: vysledky[3].data || []
+      };
+
+      var odkaz = document.createElement('a');
+      odkaz.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+      odkaz.download = 'tradelink-moje-udaje.json';
+      odkaz.click();
+      URL.revokeObjectURL(odkaz.href);
+    });
 
     document.getElementById('zrusit-ucet').addEventListener('click', async function () {
       var stav = document.getElementById('stav-zruseni');

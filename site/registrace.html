@@ -75,6 +75,11 @@
         </div>
 
         <label class="check">
+          <input type="checkbox" id="vek" required>
+          <span>Je mi 18 let, nebo mám souhlas zákonného zástupce.</span>
+        </label>
+
+        <label class="check">
           <input type="checkbox" id="consent" required>
           <span>Souhlasím s <a href="podminky.html" target="_blank">podmínkami užití</a> a beru na vědomí <a href="soukromi.html" target="_blank">zpracování osobních údajů</a>.</span>
         </label>
@@ -200,6 +205,9 @@
 
       if (isCompany && !firma) {
         return status(statusEl, 'Nejdřív prosím ověřte IČO své firmy.', 'error');
+      }
+      if (!document.getElementById('vek').checked) {
+        return status(statusEl, 'Účet si smí založit osoba starší 18 let, nebo mladší se souhlasem zákonného zástupce.', 'error');
       }
       if (!document.getElementById('consent').checked) {
         return status(statusEl, 'Bez souhlasu se zpracováním údajů účet založit nelze.', 'error');
