@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Výběr odvětví a oboru na TradeLinku — zobrazí se až podle toho, kdo jste a co hledáte.">
+  <meta name="robots" content="noindex">
+  <title>Výběr oboru — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="./#cena">Cena</a>
+    </nav>
+  </header>
+
+  <main>
+    <!--
+      SCÉNA VÝBĚRU OBORU
+      Obsah vykresluje app.js podle ?role=&obor=&podobor=
+      Kroky: odvětví → obor/podobor → výsledek. Stav drží URL,
+      takže tlačítko zpět v prohlížeči funguje.
+    -->
+    <section class="journey shell" id="journey" data-scene="journey">
+      <nav class="crumbs" id="crumbs" aria-label="Drobečková navigace"></nav>
+      <p class="journey__role" id="role-tag"></p>
+      <h1 id="journey-heading"></h1>
+      <p class="journey__lead" id="journey-lead"></p>
+      <div id="journey-body"></div>
+
+      <noscript>
+        <p class="journey__lead">
+          Výběr oboru potřebuje zapnutý JavaScript. Zpět na
+          <a href="recepce.html">recepci</a>.
+        </p>
+      </noscript>
+    </section>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span>Lidé. Obory. Příležitosti.</span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
