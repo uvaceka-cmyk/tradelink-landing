@@ -98,6 +98,19 @@ Web je celý česky. Vlastní doména zatím není.
 - popisky pro sdílení na veřejných stránkách, `noindex` na soukromých
 - kanonická adresa se dopočítá v `app.js` podle toho, kde web běží
 
+**Právní povinnosti platformy** (migrace `013`, složka `pravni/`)
+- **hodnocení**: web i podmínky uvádějí, že neověřujeme, zda autor s firmou opravdu
+  spolupracoval. Zákon o ochraně spotřebitele to vyžaduje; za nepravdivé tvrzení hrozí
+  pokuta až 4 % ročního obratu. **Netvrdit opak, dokud nebude v systému záznam
+  o proběhlé spolupráci.**
+- **zásahy do obsahu (DSA)**: skrytí ukládá důvod (`skryto_duvod`, `skryto_at`) a autor
+  ho vidí u svého inzerátu; platí i pro automatické skrytí po třech hlášeních
+- **kontaktní místo** pro uživatele i úřady v podmínkách, bod 6
+- **právo na výmaz**: `zrusit_muj_ucet()` maže účet přihlášeného i s obsahem;
+  tlačítko je v `site/ucet.html`
+- upřesněno, že web jen zveřejňuje nabídky a nevybírá uchazeče — proto nejde
+  o zprostředkování zaměstnání a povolení MPSV není potřeba
+
 **Právní texty** — GDPR zásady a podmínky užití, odkazované z patičky všech stránek
 a od souhlasu při registraci.
 
@@ -178,7 +191,7 @@ None — current work is in a stable state.
 - **Rozhraní Supabase i Cloudflare padá pod překladačem Chromu.** Supabase to hlásí přímo
   chybovou stránkou. Uživatel má překlad zapnutý — než se vypne, dělat zásahy raději přes
   SQL editor (ten přežívá) nebo přes API.
-- **Právní texty mají 6 nevyplněných míst** v každém dokumentu (označené `class="todo"`):
+- **Právní texty mají nevyplněná místa** (nově osm, přibylo kontaktní místo) (označené `class="todo"`):
   provozovatel, IČO, sídlo, kontaktní e-mail, datum účinnosti. Uživatel je doplní, až
   založí firmu. Bez nich nelze web spustit naostro. Texty by měl před spuštěním vidět právník.
 - **Redirect URL allow-list v Supabase není nastavený.** Obchází to směrovač v `app.js`,
@@ -236,6 +249,10 @@ None — current work is in a stable state.
 - `functions/nabidka/[id].js` — inzerát vykreslený na serveru pro vyhledávače
 - `functions/sitemap.xml.js` — mapa webu z databáze
 - `site/robots.txt` — co smí vyhledávače procházet
+- `pravni/PRED-SPUSTENIM.md` — co vyřídit před veřejným spuštěním (smlouvy se
+  zpracovateli, údaje o provozovateli, na co si dát pozor při dalším vývoji)
+- `pravni/zaznamy-o-zpracovani.md` — záznamy podle čl. 30 GDPR, nikam se neposílají,
+  ale úřad si o ně může říct
 - `site/firma.html` — veřejný profil firmy, hodnocení
 - `site/sprava.html` — zpětná vazba a fronta nahlášeného obsahu (jen pro správce)
 - `site/zpetna-vazba.html` — formulář zpětné vazby
@@ -260,13 +277,17 @@ None — current work is in a stable state.
 ## Last Session
 
 **9. 9. 2026** — Profily, inzeráty, odpovědi, hodnocení firem, nahlašování s frontou
-pro správce, zpětná vazba a viditelnost ve vyhledávačích. Ověřeno ze dvou účtů proti
-živé databázi: co má fungovat funguje, co má selhat selhává (podrobnosti výš).
+pro správce, zpětná vazba, viditelnost ve vyhledávačích a právní povinnosti platformy.
 
-Doména tradelink.cz koupená a přidaná do Cloudflare, čeká na přepnutí jmenných serverů
-ve Wedosu. Server teď posílá inzeráty jako hotové HTML se strukturovanými daty.
+Ověřeno proti živé databázi: zrušení účtu smaže i hodnocení a odpovědi a přihlásit se
+už nelze; skrytí obsahu uloží důvod, který autor vidí, a vrácení zpět ho smaže.
+Dříve ověřeno ze dvou účtů: cizí data nejdou číst, měnit ani mazat.
 
-Poslední commit: `74da76c`
+Doména tradelink.cz je zaregistrovaná a přidaná do Cloudflare, ale **v registru pořád
+má nameservery Wedosu** — čeká na uživatele. Blokuje to připojení domény, e-mail
+info@tradelink.cz, účty u Seznamu a Googlu i vlastní odesílání e-mailů.
+
+Poslední commit: `4985f45`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
