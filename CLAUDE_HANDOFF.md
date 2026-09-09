@@ -69,6 +69,8 @@ Web je celý česky. Vlastní doména zatím není.
 - odpověď vidí jen zadavatel a její autor; na vlastní, skrytý ani prošlý inzerát
   odpovědět nelze, jedna odpověď na inzerát od účtu, denní strop 30
 - zadavatel vidí u svých inzerátů počet odpovědí včetně nepřečtených
+- odesílatel má přehled svých odpovědí na `site/moje-odpovedi.html` včetně toho,
+  jestli si je zadavatel přečetl
 
 **Hodnocení firem a živnostníků** (`site/firma.html`, migrace `008`)
 - jeden účet hodnotí jednu firmu jednou, jen s potvrzeným e-mailem, vlastní firmu ne
@@ -139,14 +141,20 @@ None — current work is in a stable state.
 
 ## Known Issues
 
-- **V databázi jsou testovací data — před spuštěním smazat.** Účet
-  `uvacek.a+tlfirma@gmail.com` (heslo `TestHeslo12345`) vystupuje jako Alza.cz a.s.,
-  má zveřejněný profil a tři inzeráty (dva zveřejněné, jeden skrytý). Nechal jsem je
-  schválně, aby měl kamarád na čem stavět výpis. Úklid:
-  `delete from auth.users where email like 'uvacek.a+tl%';` (profil i inzeráty odejdou s ním).
-- **Cizí účet zatím nikdo nezkoušel.** Kontroly vlastnictví (RLS) jsou ověřené jen
-  z pohledu vlastníka a nepřihlášeného. Druhý testovací účet nešlo založit kvůli limitu
-  e-mailů — až půjde, zkusit z něj číst, měnit a mazat data toho prvního. **Musí selhat.**
+- **V databázi jsou testovací data — před spuštěním smazat.** Dva účty, heslo u obou
+  `TestHeslo12345`:
+  - `uvacek.a+tlfirma@gmail.com` — firma (Alza.cz a.s.), **správce**, zveřejněný profil,
+    tři inzeráty, jedno hodnocení od druhého účtu
+  - `uvacek.a+tlosoba@gmail.com` — osoba, odpověděla na inzerát a firmu ohodnotila
+
+  Nechal jsem je schválně, aby měl kamarád na čem stavět výpis. Úklid:
+  `delete from auth.users where email like 'uvacek.a+tl%';` (profily, inzeráty,
+  odpovědi i hodnocení odejdou s nimi). Zbývají ještě tři vyřízená hlášení a jedna
+  zkušební zpráva ve zpětné vazbě — ty se mažou zvlášť.
+- **Registrace naráží na limit dvou e-mailů za hodinu**, takže druhý testovací účet
+  vznikl přímo v databázi vložením do `auth.users` **a `auth.identities`** — bez toho
+  druhého se účet nepřihlásí („Database error querying schema"). Hodí se to vědět,
+  až bude potřeba další testovací účet, dokud není vlastní odesílatel e-mailů.
 - **Uživatel ještě nemá vlastní účet.** `uvacek.a@gmail.com` je v `private.budouci_spravci`,
   takže se správcem stane sám, jakmile se zaregistruje. **Ten mechanismus zatím nikdo
   nevyzkoušel** — registraci blokoval limit e-mailů. Po registraci ověřit, že `spravce`
@@ -188,8 +196,7 @@ None — current work is in a stable state.
    placeholder „zatím připravujeme". V databázi jsou testovací inzeráty, na kterých to jde
    rovnou vidět. Filtr: `typ` + `obor` + `podobor` (na to je index).
 2. **[Uživatel]** Nastavit si účet jako správce, jinak je fronta nahlášení nepřístupná.
-3. **[Claude]** Ověřit z druhého účtu: kontroly vlastnictví, odpověď na cizí inzerát,
-   hodnocení firmy, automatické skrytí po třech hlášeních. Blokuje limit e-mailů.
+3. **[Claude]** Doladit podle zpětné vazby, až začnou chodit první uživatelé.
 5. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
 6. **Doména a odesílání e-mailů** — až ji uživatel koupí (`tradelink.cz` byla 9. 9. volná,
    `tradelink.com` obsazená). Postup: doména → účet u odesílatele (Resend / Brevo / Mailjet)
@@ -208,6 +215,7 @@ None — current work is in a stable state.
 - `site/profil.html` — formulář profilu, zveřejnění, výběr odvětví z číselníku
 - `site/moje-inzeraty.html` — zadávání a správa inzerátů, přehled odpovědí
 - `site/inzerat.html` — veřejný detail inzerátu, odpověď, nahlášení
+- `site/moje-odpovedi.html` — přehled odeslaných odpovědí
 - `site/firma.html` — veřejný profil firmy, hodnocení
 - `site/sprava.html` — zpětná vazba a fronta nahlášeného obsahu (jen pro správce)
 - `site/zpetna-vazba.html` — formulář zpětné vazby
@@ -231,16 +239,21 @@ None — current work is in a stable state.
 
 ## Last Session
 
-**9. 9. 2026** — Výměna kompromitovaného klíče ARES, blokace jednorázových schránek,
-profily, inzeráty, hodnocení firem, odpovědi na inzeráty, nahlašování obsahu s frontou
-pro správce a sběr zpětné vazby. Číselník odvětví přesunut do `site/obory-data.js`.
+**9. 9. 2026** — Profily, inzeráty, odpovědi, hodnocení firem, nahlašování s frontou
+pro správce, zpětná vazba na platformu a přehled odeslaných odpovědí. Výměna
+kompromitovaného klíče ARES a blokace jednorázových schránek. Číselník odvětví
+přesunut do `site/obory-data.js`.
 
-Proběhl první reálný průchod s přihlášeným účtem. Ověřeno mimo jiné: registrace firmy
-přes ARES, zveřejnění profilu jen s popisem a odvětvím, zadání inzerátu formulářem,
-odmítnutí odpovědi na vlastní inzerát, hodnocení sebe sama a přístupu k cizím datům
-i k frontě správce. Opravena chyba: stránka účtu četla metadata registrace místo profilu.
+**Ověřeno ze dvou účtů proti živé databázi.** Prošlo: registrace firmy přes ARES,
+zveřejnění profilu jen s popisem a odvětvím, zadání inzerátu formulářem, odpověď na
+cizí inzerát, hodnocení cizí firmy včetně propsání průměru, automatické skrytí
+inzerátu po třech hlášeních i jeho vrácení rozhodnutím správce.
+Odmítnuto, jak má být: přepis a smazání cizích dat, čtení cizích odpovědí a profilů,
+odpověď na vlastní inzerát, hodnocení sebe sama, přístup k frontě bez práv správce.
 
-Poslední commit: `1dd48e2`
+Opravena chyba nalezená při testu: stránka účtu četla metadata registrace místo profilu.
+
+Poslední commit: `51cf354`
 
 Na projektu pracují dva lidé pod jedním účtem Claude z různých počítačů — sessions nemají
 společnou paměť, kontext drží jen repozitář, git historie a tento soubor.
