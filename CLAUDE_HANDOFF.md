@@ -137,6 +137,9 @@ None — current work is in a stable state.
   sloupec `trial_ends_at`, který se firmám plní — na webu se nikde nezobrazuje.
   Obchodní model, na kterém se domluvili: lidé zdarma navždy, firmy první 3 měsíce zdarma,
   potom nízký měsíční poplatek. Konkrétní částka není stanovená.
+  **Zpoplatnění se neřeší první měsíc až dva po spuštění** (rozhodnuto 9. 9.) — teprve pak
+  přijdou na řadu placené věci: zvýhodněné umístění inzerátu, placené ověření identity
+  jednatele a data o trhu. Délka zkušební doby zůstává tři měsíce, dokud uživatel neřekne jinak.
 - **Panely na recepci nesou jen tučný název** — popisky pod nimi byly odstraněny na přání.
 - **Registrace je dostupná z navigace** na všech stránkách („Založit účet"), ne jen na konci
   průchodu obory.
