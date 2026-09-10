@@ -3,16 +3,6 @@
    Kompozice cílí na schválený referenční screenshot: kopie vlevo nahoře,
    čistá fotka atria uprostřed, vysoký výtahový panel vpravo. */
 
-/* ---------- nav integrovaná do scény ----------
-   Vizuální skin je v nav-hud.css; tady jen to, co dělá nav součástí atria:
-   leží přímo na fotce, bez vlastního pruhu. */
-.nav--atrium{
-  position:absolute; inset-inline:0; top:0; z-index:50;
-  background:linear-gradient(180deg,rgba(4,7,10,.55),rgba(4,7,10,0));
-  border-bottom:0;
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-}
 
 /* ---------- atrium — fullscreen scéna ---------- */
 .atrium{
@@ -71,11 +61,6 @@
   font-size:clamp(1rem,1.25vw,1.3rem);line-height:1.45;
   color:rgba(238,241,244,.92);text-shadow:0 4px 24px rgba(0,0,0,.8);
 }
-.atrium__text--sub{
-  max-width:46ch;margin-top:16px;
-  font-size:clamp(.95rem,1.06vw,1.08rem);line-height:1.55;
-  color:rgba(238,241,244,.62);
-}
 
 .atrium .actions{flex-direction:row;flex-wrap:wrap;gap:14px;margin-top:34px}
 .atrium .btn{width:auto;min-width:0;min-height:46px;padding:0 24px;font-size:.98rem}
@@ -87,46 +72,33 @@
   backdrop-filter:blur(12px);color:#fff;
 }
 
-/* ---------- info karty pod CTA ---------- */
-.stat-cards{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
-  margin-top:30px;max-width:620px;
-}
-.stat-card{
-  position:relative;
-  display:flex;align-items:center;gap:9px;
-  padding:11px 12px;min-height:66px;border-radius:var(--r);
-  background:rgba(8,6,4,.58);border:1px solid rgba(230,201,143,.22);
-  backdrop-filter:blur(10px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-}
-.stat-card__icon{width:16px;height:16px;flex:none;color:var(--accent);align-self:flex-start;margin-top:3px}
-.stat-card > div{min-width:0}
-.stat-card strong{display:block;font-size:1.1rem;font-weight:600;letter-spacing:-.02em;line-height:1.1}
-.stat-card span{
-  display:block;font-size:.66rem;letter-spacing:-.01em;color:rgba(238,241,244,.62);margin-top:3px;line-height:1.3;
-}
-.stat-card--note strong{font-size:.72rem;font-weight:500;line-height:1.25;letter-spacing:-.01em}
-
-/* ---------- drobná signage na fotce ----------
-   Dva tiché textové bloky jako na referenci: podpis vlevo dole
-   a sloupek s linkou u pohovek. Jen dekorace, pro čtečky skryté. */
-.atrium__vertical{
+/* ---------- panely na stěně vzdálené recepce ----------
+   .atrium__wall má přesně box fotky vykreslené jako object-fit:cover
+   (56 % vodorovně, střed svisle) — proto sedí k logu a recepční. */
+.atrium__wall{
   display:none;
-  position:absolute;left:3.2vw;bottom:34px;z-index:2;
-  font-size:.56rem;line-height:1.7;letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(238,241,244,.4);
+  position:absolute;z-index:1;
+  left:56%;top:50%;
+  width:max(100%,179.15svh);aspect-ratio:2200/1228;
+  transform:translate(-56%,-50%);
+  pointer-events:none;
 }
-.atrium__signage{
-  display:none;
-  margin:clamp(28px,6svh,64px) 0 0 19.1vw;
-  font-size:.58rem;line-height:1.6;letter-spacing:.18em;text-transform:uppercase;
-  color:rgba(238,241,244,.58);
+.wall-choice{
+  position:absolute;left:var(--x);top:var(--y);
+  width:7.3%;height:3.7%;
+  display:flex;align-items:center;gap:.45em;padding:0 .7em;
+  box-sizing:border-box;
+  font-size:clamp(5px,.52vw,9px);font-weight:500;letter-spacing:.01em;line-height:1;
+  color:#f7efdf;text-decoration:none;white-space:nowrap;overflow:hidden;
+  border:1px solid rgba(241,220,174,.85);border-radius:2px;
+  background:rgba(5,4,2,.55);
+  box-shadow:0 0 6px rgba(230,201,143,.4);
+  pointer-events:auto;
+  transition:box-shadow .2s var(--ease),background-color .2s var(--ease);
 }
-.atrium__signage::before{
-  content:"";display:block;width:72px;height:1px;margin-bottom:16px;
-  background:linear-gradient(90deg,rgba(255,255,255,.55),transparent);
-}
+.wall-choice svg{width:1.4em;height:1.4em;flex:none;color:var(--accent)}
+.wall-choice:hover{background:rgba(20,14,6,.7);box-shadow:0 0 12px rgba(230,201,143,.7)}
+@media (min-width:900px){ .atrium__wall{display:block} }
 
 /* ---------- přechod do recepce ----------
    Kamera „přijede" k pultu: fotka atria se přiblíží k recepci, kopie
@@ -155,11 +127,11 @@ body.is-leaving.is-video .atrium__media img{transform:none}
 body.is-leaving.is-video .atrium__next{opacity:1;transition:opacity .2s ease}
 body.is-leaving.is-video .atrium__next img{display:none}
 body.is-leaving.is-video .atrium__next video{opacity:1}
-.atrium__content,.atrium__vertical,.atrium__signage{transition:opacity .45s var(--ease)}
+.atrium__content,.atrium__wall{transition:opacity .45s var(--ease)}
 body.is-leaving .atrium__media img{transform:scale(2.4)}
 body.is-leaving .atrium__next{opacity:1}
 body.is-leaving .atrium__next img{transform:scale(1)}
-body.is-leaving .atrium__content,body.is-leaving .atrium__vertical,body.is-leaving .atrium__signage{opacity:0}
+body.is-leaving .atrium__content,body.is-leaving .atrium__wall{opacity:0}
 body.is-leaving .atrium::after{opacity:0}
 
 /* ---------- mobilní spouštěč výtahu ---------- */
@@ -216,7 +188,6 @@ body.is-leaving .atrium::after{opacity:0}
   .atrium h1{font-size:clamp(2.6rem,13vw,3.6rem)}
   .atrium__claim{font-size:clamp(1.35rem,6.4vw,1.8rem)}
   .atrium__text{margin-top:18px;font-size:1.02rem}
-  .atrium__text--sub{margin-top:10px;font-size:.9rem}
   .atrium .actions{flex-direction:column;gap:10px;margin-top:24px}
   .atrium .btn{width:100%;min-height:50px}
   .stat-cards{grid-template-columns:1fr 1fr;gap:8px;max-width:none;margin-top:20px}
@@ -231,10 +202,9 @@ body.is-leaving .atrium::after{opacity:0}
 /* ---------- tablet a výš: skutečný výtah panel ---------- */
 @media (min-width:900px){
   .atrium{align-items:flex-start}
-  .atrium__content{padding:clamp(112px,15.5svh,172px) 4.4vw 64px}
+  .atrium__content{padding:clamp(150px,23svh,250px) 4.4vw 64px}
   .elevator{display:block}
   .floors-toggle{display:none}
-  .atrium__vertical{display:block}
   /* kopie nesmí vjet pod výtah */
   .atrium__copy{max-width:min(600px,calc(100vw - 196px - 4.4vw - 2.4vw - 80px))}
 }

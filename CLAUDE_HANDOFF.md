@@ -704,6 +704,21 @@ nejsou a nikdo je po uživateli nechce.
 
 ## Last Session
 
+**11. 9. 2026 — shoda obou stránek s návrhy (statický vzhled), animace pozastavená.**
+- **Příčina posunu výtahu o 80 px na recepci:** homepage má nav `position:absolute` přes scénu,
+  recepce ji měla v toku, takže scéna začínala o výšku lišty níž a přetékala. Teď má recepce
+  taky `nav--atrium` (pravidlo přesunuté do `nav-hud.css`); pod 1100 px dostane `.reception`
+  `padding-top:72px`, aby lišta nezakrývala neon, a výtah se tam nezobrazuje (stacked layout).
+- Výtah zapuštěný do sloupu: `top:15svh; height:82svh; width:clamp(196px,13.2vw,236px)`,
+  radius 4 px, tenký svítící zlatý rám, bez plovoucího stínu. Stejné na obou stránkách.
+- Z homepage odstraněné statistické karty, texty „Lidé / Obory…", „Firmy / Lidé…" a druhý
+  odstavec — v návrhu nejsou. Kopie začíná na ~23 % výšky jako v návrhu.
+- Na stěně vzdálené recepce jsou čtyři miniaturní panely `.wall-choice` v kontejneru
+  `.atrium__wall`, který má přesně box fotky (cover, 56 % vodorovně) — proto sedí k logu
+  a recepční při každém poměru stran. Vedou na recepci (role se volí až tam, viz Do Not Change),
+  `tabindex="-1"`, `aria-hidden` — pro klávesnici stačí hlavní CTA.
+- Higgsfield i videopřechod se v této session nepoužívaly; video zůstává v repu a ve skriptu.
+
 **10. 9. 2026, noc — zlatá homepage a recepce podle návrhů, přechod „příjezd k pultu".**
 - **Čisté podklady** obou scén vznikly v Higgsfieldu (Nano Banana 2, editace přiložených návrhů,
   16:9, odstraněné vypálené UI): `site/homepage-master.webp` (atrium, teplá zlatá verze) a

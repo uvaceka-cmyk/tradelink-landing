@@ -338,6 +338,9 @@ a.floor:active{transform:translateX(4px) scale(.98)}
 .reception__media img{width:100%;height:clamp(260px,44svh,420px);object-fit:cover;object-position:center 40%}
 /* neonové logo ve fotce vede domů — jen na desktopu, kde je fotka celá scéna */
 .reception__logo{display:none}
+/* nav leží přes scénu (kvůli shodné poloze výtahu s homepage); pod desktopem
+   začíná fotka až pod lištou, aby nezakrývala neon */
+@media (max-width:1099.98px){ .reception{padding-top:72px} .reception .elevator{display:none} }
 .reception__media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#05070a1a 0%,#05070a73 62%,var(--ink) 100%)}
 .reception__intro{position:relative;padding:26px var(--gutter) 0;text-align:center}
 .reception__kicker{font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}

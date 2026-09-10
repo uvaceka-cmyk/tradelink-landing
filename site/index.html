@@ -90,7 +90,19 @@
         <video src="prechod-recepce.mp4" muted playsinline preload="none" tabindex="-1"></video>
       </div>
 
-      <p class="atrium__vertical" aria-hidden="true">Lidé<br>Obory<br>Příležitosti<br>Společně výš</p>
+      <!-- Čtyři panely na stěně recepce, stejné jako v detailu. Kotvené k boxu
+           fotky (cover), takže sedí k logu a recepční při každém poměru stran.
+           Vedou na recepci; pro klávesnici a čtečky stačí hlavní CTA. -->
+      <div class="atrium__wall" aria-hidden="true">
+        <a class="wall-choice" href="recepce.html" data-transition tabindex="-1" style="--x:48.2%;--y:66.4%">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 19.5c0-3.3 2.8-5.5 6.2-5.5s6.2 2.2 6.2 5.5"/><path d="M16.5 5.4a3 3 0 0 1 0 5.4"/><path d="M18 14.4c2 .8 3.2 2.5 3.2 5.1"/></svg>Hledám zaměstnance</a>
+        <a class="wall-choice" href="recepce.html" data-transition tabindex="-1" style="--x:60.7%;--y:66.4%">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="7.2" width="18.4" height="12.6" rx="2"/><path d="M9 7.2V5.6a1.8 1.8 0 0 1 1.8-1.8h2.4A1.8 1.8 0 0 1 15 5.6v1.6M2.8 12.4h18.4"/></svg>Hledám zakázky</a>
+        <a class="wall-choice" href="recepce.html" data-transition tabindex="-1" style="--x:48.2%;--y:71.2%">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 19.6c0-3.5 3-5.8 7-5.8s7 2.3 7 5.8"/></svg>Hledám práci</a>
+        <a class="wall-choice" href="recepce.html" data-transition tabindex="-1" style="--x:60.7%;--y:71.2%">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.6 3.8h9.2l4.6 4.6v11.8a1.8 1.8 0 0 1-1.8 1.8H5.6a1.8 1.8 0 0 1-1.8-1.8V5.6a1.8 1.8 0 0 1 1.8-1.8z"/><path d="M8 12h8M8 16h5"/></svg>Chci zadat zakázku</a>
+      </div>
 
       <div class="atrium__content">
         <div class="atrium__copy" data-depth="2">
@@ -99,35 +111,11 @@
           <p class="atrium__text">
             Propojte firmy, pracovníky a příležitosti na jednom místě.
           </p>
-          <p class="atrium__text atrium__text--sub">
-            Najděte kvalifikované pracovníky, obchodní partnery, subdodavatele, služby a nové příležitosti napříč obory.
-          </p>
           <div class="actions">
             <a class="btn atrium__enter" href="recepce.html" data-transition>Prozkoumat TradeLink <span aria-hidden="true">→</span></a>
             <a class="btn btn--ghost atrium__secondary" href="registrace.html">Přidat příležitost</a>
           </div>
 
-          <div class="stat-cards" id="statistiky" hidden>
-            <a class="stat-card" data-karta="lide" href="obory.html?role=hledam-zamestnance">
-              <svg class="stat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 19.5c0-3.3 2.8-5.5 6.2-5.5s6.2 2.2 6.2 5.5"/><path d="M16.5 5.4a3 3 0 0 1 0 5.4"/><path d="M18 14.4c2 .8 3.2 2.5 3.2 5.1"/></svg>
-              <div><strong data-stat="lide">0</strong><span>pracovníků k dispozici</span></div>
-            </a>
-            <a class="stat-card" data-karta="poptavky" href="nabidky?typ=zakazka">
-              <svg class="stat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg>
-              <div><strong data-stat="poptavky">0</strong><span>aktivních poptávek</span></div>
-            </a>
-            <a class="stat-card" data-karta="firmy" href="nabidky?typ=prace">
-              <svg class="stat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="7.2" width="18.4" height="12.6" rx="2"/><path d="M9 7.2V5.6a1.8 1.8 0 0 1 1.8-1.8h2.4A1.8 1.8 0 0 1 15 5.6v1.6M2.8 12.4h18.4"/></svg>
-              <div><strong data-stat="firmy">0</strong><span>firem nabírá</span></div>
-            </a>
-            <a class="stat-card stat-card--note" data-karta="posledni" href="nabidky">
-              <svg class="stat-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4c-3.6 0-6 2.7-6 6.2 0 3.8-1.2 5.3-1.2 5.3h14.4S18 14 18 10.2C18 6.7 15.6 4 12 4Z"/><path d="M9.6 19a2.5 2.5 0 0 0 4.8 0"/></svg>
-              <div><strong>Nová příležitost</strong><span data-stat="posledni">právě teď</span></div>
-            </a>
-          </div>
-
-          <!-- tichý podpis pod kartami — v toku, aby nikdy nepřekryl karty -->
-          <p class="atrium__signage" aria-hidden="true">Firmy<br>Lidé<br>Obory<br>Lepší<br>zítřek</p>
         </div>
       </div>
 
