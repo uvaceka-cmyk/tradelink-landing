@@ -89,6 +89,7 @@ ${telo}
 <footer class="foot shell">
   <a class="foot__brand" href="/">TradeLink</a>
   <span class="foot__links">
+    <a href="/faq">Časté otázky</a>
     <a href="/podminky">Podmínky užití</a>
     <a href="/soukromi">Ochrana údajů</a>
     <a href="/zpetna-vazba">Zpětná vazba</a>

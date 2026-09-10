@@ -35,6 +35,9 @@ Web je celý česky a běží na vlastní doméně.
   vstupní fade animace při příchodu z atria
 - `obory.html` — výběr odvětví → podoboru, stav drží URL (`?role=&obor=&podobor=`)
 - `registrace.html`, `prihlaseni.html`, `obnova-hesla.html`, `nove-heslo.html`, `ucet.html`
+- `faq.html` — časté otázky (ceny, IČO, co znamená ověřená firma, kdo vidí profil,
+  hodnocení, nahlašování, zrušení účtu). Odkazovaná z patičky všech stránek včetně
+  serverem vykreslených, je v mapě webu.
 - `podminky.html`, `soukromi.html` — právní texty
 
 **Homepage / atrium** (`site/homepage.css`, `site/transition.js`, `site/homepage.js` — nové)
@@ -208,10 +211,11 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
   i patra výtahu vedou přímo na `recepce.html` — mezikrok `lobby.html` z hlavního flow vypadl,
   ale soubor zůstává v repu nesmazaný jako legacy stránka (uživatel to výslovně chtěl
   takhle, ne smazat).
-- **Ceny jsou z webu úmyslně odstraněné** (uživatel to výslovně chtěl). V databázi zůstal
-  sloupec `trial_ends_at`, který se firmám plní — na webu se nikde nezobrazuje.
-  Obchodní model, na kterém se domluvili: lidé zdarma navždy, firmy první 3 měsíce zdarma,
-  potom nízký měsíční poplatek. Konkrétní částka není stanovená.
+- **Ceny jsou na webu jen ve `faq.html`** (změněno 10. 9. 2026; předtím byly odstraněné úplně).
+  Obchodní model: lidé zdarma navždy, firmy **první dva měsíce zdarma, potom 199 Kč měsíčně**.
+  Uživatel to sám označil za neuzavřené („zatím je nevíme… asi"), takže FAQ o tom mluví
+  jako o záměru, ne o platném ceníku, a slibuje oznámení dopředu a nikdy ne zpětně.
+  **Než se cena zveřejní jako závazná, musí sedět s databází** — viz Known Issues.
   **Zpoplatnění se neřeší první měsíc až dva po spuštění** (rozhodnuto 9. 9.) — teprve pak
   přijdou na řadu placené věci: zvýhodněné umístění inzerátu, placené ověření identity
   jednatele a data o trhu. Délka zkušební doby zůstává tři měsíce, dokud uživatel neřekne jinak.
@@ -274,6 +278,11 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 - **Šablony e-mailů v Supabase jsou anglicky.** Web je celý česky, ale zpráva o obnově
   hesla dorazí jako „Reset your password". Přeložit v Supabase → Authentication →
   Email Templates (potvrzení registrace, obnova hesla, změna e-mailu).
+- **Zkušební doba na webu (2 měsíce) nesedí s databází (3 měsíce).** `faq.html` mluví
+  o dvou měsících zdarma, ale trigger `handle_new_user` plní `trial_ends_at`
+  hodnotou `now() + interval '3 months'` (naposledy v `012-budouci-spravci.sql`).
+  Dnes to nikoho nepoškozuje — firmy dostanou víc, než web slibuje — ale až se začne
+  účtovat, musí to sedět. Sjednotit novou migrací, nebo opravit číslo ve FAQ.
 - **Neexistující adresa vrací homepage se stavem 200.** V `site/` chybí `404.html`,
   takže Cloudflare Pages na cokoli nenalezeného servíruje homepage jako platnou stránku
   (ověřeno na `/seznam-verification.html`). Pro vyhledávače je to nekonečně mnoho
@@ -374,6 +383,7 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
   zpracovateli, údaje o provozovateli, na co si dát pozor při dalším vývoji)
 - `pravni/zaznamy-o-zpracovani.md` — záznamy podle čl. 30 GDPR, nikam se neposílají,
   ale úřad si o ně může říct
+- `site/faq.html` — časté otázky; **jediné místo na webu, kde smí být ceny**
 - `site/firma.html` — veřejný profil firmy, hodnocení
 - `site/sprava.html` — zpětná vazba a fronta nahlášeného obsahu (jen pro správce)
 - `site/zpetna-vazba.html` — formulář zpětné vazby
@@ -390,8 +400,9 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
 - Pořadí flow: role/obor/podobor musí přijít až po recepci, ne na homepage. Aktuálně
   `homepage/atrium → recepce → volba → obor → podobor`. `lobby.html` v hlavním flow není
   mezikrok, zůstává v repu jen jako nepoužívaná legacy stránka — nemazat.
-- Zmínky o cenách na webu. Byly odstraněny na výslovné přání a mají zůstat pryč,
-  dokud uživatel neřekne jinak.
+- **Ceny patří jen na `faq.html`, nikam jinam.** Uživatel je 10. 9. 2026 povolil
+  výhradně tam („ceny dáme pouze tam"). Na homepage, recepci, u voleb ani u inzerátů
+  se cena neobjevuje — ta část původního zákazu platí dál.
 - Popisky pod názvy voleb na recepci — odstraněny záměrně.
 - Klíč `ARES_SECRET` nikdy nezapisovat do repozitáře ani do SQL migrace.
 - Kontroly v databázi (povinné IČO u firem, unikátní index, ověření podpisu v triggeru)
