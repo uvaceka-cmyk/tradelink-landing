@@ -189,6 +189,25 @@ Web je celý česky a běží na vlastní doméně.
   Ověřeno dvakrát: přímé odeslání přes Resend i potvrzovací e-mail z registrace
   na Supabase, obojí *Delivered*.
 
+**Upozornění e-mailem a hlídání předplatného** (migrace `020`, `021`)
+- **Nová odpověď → e-mail zadavateli** (název inzerátu, začátek zprávy, odkaz).
+  Posílá se přímo z databáze rozšířením `pg_net` přes Resend, takže není potřeba
+  nasazovat žádnou funkci navíc. **Klíč k Resendu je v `private.app_secrets`**
+  (`resend_api_key`, jen s právem odesílat) — v repozitáři není a nikdy nebude.
+  Kdo o upozornění nestojí, vypne si je (`profiles.upozorneni`).
+- **Okno přístupu firem.** `profiles.predplatne_do` + `trial_ends_at`, funkce
+  `pristup_do()`. Veřejné pohledy `verejne_inzeraty` i `verejne_profily` firmy mimo
+  okno **nezobrazují** — plus týden odkladu, aby nikomu nezhaslo, když se platba páruje.
+  Data zůstávají; po zaplacení se vrátí i s odpověďmi. Lidí se to netýká, mají web zdarma.
+- **Noční údržba** `denni_udrzba()` běží přes `pg_cron` každý den v 6:00 UTC
+  (úloha `tradelink-denni-udrzba`): upozorní firmy týden před koncem přístupu a v den
+  vypršení, smaže nepotvrzené poptávky starší měsíce. Dvojímu odeslání brání
+  `private.odeslana_upozorneni`.
+- **Platební brána zatím není.** `predplatne_do` se u prvních firem vyplňuje ručně.
+  Až přijde Stripe nebo Comgate, mění se jediné: kdo to datum nastaví.
+- **Pozor při psaní dalších funkcí:** `pg_net` má schéma `net`, ne `extensions` —
+  `extensions.net.http_post` skončí chybou „cross-database references are not implemented".
+
 **Nabídky jsou vidět bez registrace** (`functions/nabidky.js`, migrace `019`)
 - `/nabidky` — serverem vykreslený přehled všeho zveřejněného, s přepínačem
   Vše / Nabídky práce / Poptávky zakázek (`?typ=prace`, `?typ=zakazka`; jiná hodnota
@@ -608,6 +627,8 @@ práci, ať si to projde — jinak bude hledat v kódu něco, co v kódu není.
 | 10. 9. 2026 | Google Search Console | ruční žádost o indexování: `/recepce`, `/faq`, `/podminky`, `/soukromi` |
 | 10. 9. 2026 | Supabase → SQL Editor | spuštěná migrace `018-poptavka-bez-uctu.sql` (**znovu nepouštět**) |
 | 10. 9. 2026 | Supabase → SQL Editor | spuštěná migrace `019-zobrazeni-a-kontakt.sql` (**znovu nepouštět**) |
+| 10. 9. 2026 | Supabase → SQL Editor | spuštěné migrace `020` a `021` (**znovu nepouštět**) |
+| 10. 9. 2026 | Resend | nový klíč `tradelink-databaze-upozorneni` (jen odesílání), uložený v `private.app_secrets` |
 | 10. 9. 2026 | Seznam Webmaster | doména přidaná pod `info@tradelink.cz`, čeká na kliknutí „Ověřit doménu" po nasazení meta tagu |
 
 **Přístupy:** Supabase, Cloudflare i Seznam jedou pod účty uživatele. Hesla nikde
