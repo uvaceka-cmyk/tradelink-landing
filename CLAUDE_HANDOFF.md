@@ -8,9 +8,9 @@ výtahem; průchod homepage/atrium → recepce → role → obor → podobor je 
 firem fungují a jsou otestované. Profily lidí i firem se dají
 vyplnit a zveřejnit, inzeráty a poptávky se dají zadávat, zveřejňovat a odpovídat na ně.
 Funguje hodnocení firem, nahlašování obsahu s frontou pro správce a sběr zpětné vazby.
-**Chybí poslední článek: výpis** — po výběru podoboru se pořád zobrazí „zatím připravujeme",
-takže se uživatelé k inzerátům dostanou jen přes přímý odkaz. Výpis staví kamarád nad
-pohledem `public.verejne_inzeraty` a odkazuje na `inzerat.html?id=` a `firma.html?id=`.
+**Průchod je celý funkční včetně výpisu** — po výběru podoboru se načte, co k té volbě
+patří (nabídky práce, poptávky, lidé nebo firmy). **Zbývá ho ale vidět s reálnými daty:**
+databáze je prázdná, takže zatím vždycky vyjde prázdný stav.
 
 **Živě:** https://tradelink.cz — doména je připojená, certifikát vydaný.
 `www.tradelink.cz` i původní `tradelink-landing.pages.dev` se trvale (301) přesměrují
@@ -100,6 +100,18 @@ Web je celý česky a běží na vlastní doméně.
   nezadá nic, jeden účet smí mít naráz nejvýš **20 zveřejněných** inzerátů
 - `public.verejne_inzeraty` je rozhraní pro výpis — vynechává skryté i prošlé inzeráty
   a e-mail autora; nese jméno autora, typ účtu a příznak ověřené firmy
+
+**Výpis** (`site/obory.html` + `app.js`, funkce `vypis`)
+- poslední krok průchodu; co se ukáže, řídí volba z recepce:
+  *hledám práci* → inzeráty `typ=prace`, *hledám zakázky* → `typ=zakazka`,
+  *hledám zaměstnance* → profily lidí, *chci zadat zakázku* → profily firem
+- čte veřejné pohledy `verejne_inzeraty` a `verejne_profily` — skryté, prošlé
+  a nezveřejněné položky v nich nejsou a e-maily nenesou
+- karty odkazují na serverem vykreslené `/nabidka/<id>` a `/firma/<id>`
+- ošetřené stavy: načítání, prázdný výsledek, chyba spojení; odpověď, která doběhne
+  po prokliku jinam, se zahazuje
+- **stavěl to Claude, ne kamarád** — původně to byl jeho úkol, ale web byl mezitím
+  živý bez své hlavní funkce. Kdo na tom bude dělat dál, ať to nestaví podruhé.
 
 **Odpovědi na inzerát** (`site/inzerat.html`, migrace `010`)
 - veřejný detail inzerátu s formulářem „Ozvat se"
@@ -237,6 +249,9 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 
 ## Known Issues
 
+- **Výpis nikdo neviděl s reálnými řádky.** Dotazy odpovídají 200 a prázdný stav se
+  vykresluje správně, ale karty inzerátů a profilů se zatím testovaly jen čtením kódu.
+  Než se web pustí do světa, projít všechny čtyři role s testovacími daty.
 - **Databáze je prázdná — žádná testovací data.** Testovací účty i s profily, inzeráty,
   odpověďmi, hodnoceními, hlášeními a zpětnou vazbou byly 9. 9. večer na přání uživatele
   smazány. **Kdo bude stavět výpis, musí si testovací data vytvořit sám** — buď registrací
@@ -287,9 +302,8 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 
 ## Next Steps
 
-1. **[Kamarád]** Výpis po výběru podoboru nad pohledem `verejne_inzeraty` — dnes tam končí
-   placeholder „zatím připravujeme". Databáze je prázdná — testovací inzeráty je potřeba
-   si napřed vytvořit (recept v Known Issues). Filtr: `typ` + `obor` + `podobor` (na to je index).
+1. **Ověřit výpis s reálnými daty** — vytvořit pár testovacích profilů a inzerátů
+   a projít všechny čtyři role. Karty se zatím viděly jen v prázdném stavu.
 2. **[Uživatel]** Nastavit si účet jako správce, jinak je fronta nahlášení nepřístupná.
 3. **[Claude]** Doladit podle zpětné vazby, až začnou chodit první uživatelé.
 4. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
