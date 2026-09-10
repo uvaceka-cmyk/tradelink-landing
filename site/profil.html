@@ -23,7 +23,6 @@
       <a href="recepce.html">Recepce</a>
       <a href="moje-inzeraty.html">Moje inzeráty</a>
       <a href="moje-odpovedi.html">Moje odpovědi</a>
-      <a href="ucet.html">Můj účet</a>
       <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
     </nav>
   </header>
@@ -115,12 +114,20 @@
     var lead = document.getElementById('lead');
     var obory = window.TRADELINK_OBORY || [];
 
+    /* Text z číselníku i z registru se skládá do HTML. Bez tohohle by
+       ampersand nebo špičatá závorka v názvu rozbily nabídku i výpis. */
+    function esc(t) {
+      return String(t == null ? '' : t)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
     /* ---------- číselník odvětví ---------- */
     var selObor = document.getElementById('obor');
     var selPodobor = document.getElementById('podobor');
 
     obory.forEach(function (o) {
-      selObor.insertAdjacentHTML('beforeend', '<option value="' + o.id + '">' + o.name + '</option>');
+      selObor.insertAdjacentHTML('beforeend', '<option value="' + esc(o.id) + '">' + esc(o.name) + '</option>');
     });
 
     function naplnPodobory(idOboru, vybrany) {
@@ -130,7 +137,7 @@
       if (!o) return;
       o.subs.forEach(function (s) {
         selPodobor.insertAdjacentHTML('beforeend',
-          '<option value="' + s + '"' + (s === vybrany ? ' selected' : '') + '>' + s + '</option>');
+          '<option value="' + esc(s) + '"' + (s === vybrany ? ' selected' : '') + '>' + esc(s) + '</option>');
       });
     }
 
@@ -173,7 +180,7 @@
           if (p.ares_sidlo) radky.push(['Sídlo', p.ares_sidlo]);
           var box = document.getElementById('z-registru');
           box.innerHTML = radky.map(function (r) {
-            return '<div class="detail__row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
+            return '<div class="detail__row"><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>';
           }).join('');
           box.hidden = false;
         }

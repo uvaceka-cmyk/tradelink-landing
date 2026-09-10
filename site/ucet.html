@@ -100,6 +100,14 @@
           ? 'Váš profil je zveřejněný, takže vás ostatní najdou ve výpisu.'
           : 'Váš profil je zatím skrytý. Zveřejníte ho v úpravách profilu.';
 
+        /* Jméno, název firmy i sídlo se skládají do HTML. Špičatá závorka
+           nebo ampersand v nich by rozbily výpis. */
+        function esc(t) {
+          return String(t == null ? '' : t)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+        }
+
         var rows = [
           ['E-mail', user.email],
           ['Typ účtu', firma ? 'Firma nebo živnostník' : 'Osoba'],
@@ -188,7 +196,7 @@
 
         var detail = document.getElementById('detail');
         detail.innerHTML = rows.map(function (r) {
-          return '<div class="detail__row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
+          return '<div class="detail__row"><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>';
         }).join('');
         detail.hidden = false;
         document.getElementById('actions').hidden = false;

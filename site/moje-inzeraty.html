@@ -23,7 +23,6 @@
       <a href="recepce.html">Recepce</a>
       <a href="profil.html">Můj profil</a>
       <a href="moje-odpovedi.html">Moje odpovědi</a>
-      <a href="ucet.html">Můj účet</a>
       <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
     </nav>
   </header>
@@ -124,8 +123,17 @@
     var upravovany = null;   // id inzerátu při úpravě
     var profil = null;
 
+    /* Text z databáze se skládá do HTML. Bez tohohle by špičatá závorka
+       v názvu inzerátu nebo v odpovědi rozbila stránku — a u odpovědí,
+       které píše někdo jiný, by šlo podstrčit cizí kód. */
+    function esc(t) {
+      return String(t == null ? '' : t)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
     obory.forEach(function (o) {
-      selObor.insertAdjacentHTML('beforeend', '<option value="' + o.id + '">' + o.name + '</option>');
+      selObor.insertAdjacentHTML('beforeend', '<option value="' + esc(o.id) + '">' + esc(o.name) + '</option>');
     });
 
     function naplnPodobory(id, vybrany) {
@@ -135,7 +143,7 @@
       if (!o) return;
       o.subs.forEach(function (s) {
         selPodobor.insertAdjacentHTML('beforeend',
-          '<option value="' + s + '"' + (s === vybrany ? ' selected' : '') + '>' + s + '</option>');
+          '<option value="' + esc(s) + '"' + (s === vybrany ? ' selected' : '') + '>' + esc(s) + '</option>');
       });
     }
     selObor.addEventListener('change', function () { naplnPodobory(selObor.value, null); });
@@ -181,9 +189,9 @@
             '<div class=recenze__hlava><span class=recenze__autor>' +
               new Date(o.created_at).toLocaleString('cs-CZ') +
               (o.precteno ? '' : ' · nové') + '</span></div>' +
-            '<p style=white-space:pre-wrap>' + o.zprava.replace(/[<>&]/g, '') + '</p>' +
-            (o.kontakt ? '<p class=field__hint>Kontakt: ' + o.kontakt.replace(/[<>&]/g, '') + '</p>' : '') +
-            '<p class=field__hint><a href=firma.html?id= + o.autor + >Zobrazit profil</a></p>' +
+            '<p style="white-space:pre-wrap">' + esc(o.zprava) + '</p>' +
+            (o.kontakt ? '<p class="field__hint">Kontakt: ' + esc(o.kontakt) + '</p>' : '') +
+            '<p class="field__hint"><a href="/firma/' + encodeURIComponent(o.autor) + '">Zobrazit profil</a></p>' +
           '</article>';
         }).join('');
 
@@ -213,17 +221,17 @@
           ? '<span class="tag tag--trial">Platnost vypršela</span>' : '';
         return '<article class="card" style="margin-bottom:14px">' +
           stav + prosly +
-          '<h3>' + i.nazev + '</h3>' +
+          '<h3>' + esc(i.nazev) + '</h3>' +
           (i.skryto_duvod
             ? '<p class="form__status form__status--error" style="margin:10px 0">' +
-                'Skryto ' + new Date(i.skryto_at).toLocaleDateString('cs-CZ') + ': ' + i.skryto_duvod +
+                'Skryto ' + new Date(i.skryto_at).toLocaleDateString('cs-CZ') + ': ' + esc(i.skryto_duvod) +
                 ' Pokud s tím nesouhlasíte, napište nám.' +
               '</p>'
             : '') +
-          '<p>' + nazevOboru(i.obor) + (i.podobor ? ' → ' + i.podobor : '') +
-          (i.lokalita ? ' · ' + i.lokalita : '') + (i.odmena ? ' · ' + i.odmena : '') + '</p>' +
+          '<p>' + esc(nazevOboru(i.obor)) + (i.podobor ? ' → ' + esc(i.podobor) : '') +
+          (i.lokalita ? ' · ' + esc(i.lokalita) : '') + (i.odmena ? ' · ' + esc(i.odmena) : '') + '</p>' +
           '<div class="actions" style="margin-top:16px">' +
-            (i.zverejnen ? '<a class="btn btn--ghost" href="inzerat.html?id=' + i.id + '">Zobrazit</a>' : '') +
+            (i.zverejnen ? '<a class="btn btn--ghost" href="/inzerat?id=' + encodeURIComponent(i.id) + '">Zobrazit</a>' : '') +
             '<button class="btn btn--ghost" type="button" data-odpovedi="' + i.id + '">Odpovědi' + odpovedi(i.id) + '</button>' +
             '<button class="btn btn--ghost" type="button" data-upravit="' + i.id + '">Upravit</button>' +
             '<button class="btn btn--ghost" type="button" data-smazat="' + i.id + '">Smazat</button>' +
