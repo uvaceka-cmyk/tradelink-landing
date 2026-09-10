@@ -40,6 +40,7 @@
 
       <dl class="detail" id="udaje"></dl>
 
+      <div id="sekce-hodnoceni" hidden>
       <h2 style="font-size:var(--step-2);margin:44px 0 18px">Hodnocení</h2>
       <p class="overovani-recenzi">
         Hodnotit může jen přihlášený účet s potvrzeným e-mailem, a to každou firmu jednou.
@@ -50,6 +51,7 @@
       <div id="hodnoceni"></div>
 
       <div id="moje-hodnoceni" style="margin-top:32px"></div>
+      </div>
     </article>
   </main>
 
@@ -226,6 +228,11 @@
       var p = res.data;
       document.title = p.jmeno + ' — TradeLink';
       document.getElementById('stitek').textContent = p.account_type === 'firma' ? 'Firma' : 'Profil';
+      /* Hodnotit lze jen firmu (hlídá to databáze). U člověka se sekce
+         neukáže vůbec — nabízet tlačítko, které skončí chybou, je horší
+         než ho nemít. */
+      var jeFirma = p.account_type === 'firma';
+      document.getElementById('sekce-hodnoceni').hidden = !jeFirma;
       document.getElementById('jmeno').textContent = p.jmeno;
       document.getElementById('popis').textContent = p.popis || '';
 

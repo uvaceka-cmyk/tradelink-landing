@@ -172,7 +172,7 @@ export async function onRequestGet({ params, request }) {
     ${p.lokalita ? '<span class="tag">' + esc(p.lokalita) + '</span>' : ''}
   </div>
 
-  <div class="firma__skore">
+  <div class="firma__skore"${p.account_type === 'firma' ? '' : ' hidden'}>
     ${p.hodnoceni_pocet
       ? hvezdy(p.hodnoceni_prumer) + '<strong>' + p.hodnoceni_prumer + '</strong>' +
         '<span class="skore__pocet">' + p.hodnoceni_pocet + ' hodnocení</span>'
@@ -184,9 +184,12 @@ export async function onRequestGet({ params, request }) {
   <dl class="detail">
     ${p.ico ? '<div class="detail__row"><dt>IČO</dt><dd>' + esc(p.ico) + '</dd></div>' : ''}
     ${p.sidlo ? '<div class="detail__row"><dt>Sídlo</dt><dd>' + esc(p.sidlo) + '</dd></div>' : ''}
-    <div class="detail__row"><dt>Kontakt</dt><dd><a href="/prihlaseni">Přihlaste se</a> a uvidíte telefon i web. Firma tak pozná, že jste přišli přes TradeLink.</dd></div>
+    ${p.account_type === 'firma'
+      ? '<div class="detail__row"><dt>Kontakt</dt><dd><a href="/prihlaseni">Přihlaste se</a> a uvidíte telefon i web. Firma tak pozná, že jste přišli přes TradeLink.</dd></div>'
+      : ''}
   </dl>
 
+  ${p.account_type !== 'firma' ? '' : `
   <h2 style="font-size:var(--step-2);margin:44px 0 18px">Hodnocení</h2>
   <p class="overovani-recenzi">
     Hodnotit může jen přihlášený účet s potvrzeným e-mailem, a to každou firmu jednou.
@@ -201,7 +204,7 @@ export async function onRequestGet({ params, request }) {
         </div>
         ${h.text ? '<p>' + esc(h.text) + '</p>' : ''}
       </article>`).join('')
-    : '<p class="journey__lead">Tuhle firmu zatím nikdo nehodnotil.</p>'}
+    : '<p class="journey__lead">Tuhle firmu zatím nikdo nehodnotil.</p>'}`}
 
   <div class="actions" style="margin-top:32px">
     <a class="btn" href="/firma?id=${esc(p.id)}">Ohodnotit firmu</a>
