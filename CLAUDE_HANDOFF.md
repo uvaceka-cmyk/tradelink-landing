@@ -158,9 +158,12 @@ Web je celý česky a běží na vlastní doméně.
   náhledová nasazení `<hash>.tradelink-landing.pages.dev` zůstávají přístupná
 - Supabase Site URL i redirect allow-list ukazují na `https://tradelink.cz`
 - `og:image` na všech stránkách ukazuje na `https://tradelink.cz/tradelink.jpeg`
-- **příjem**: `info@tradelink.cz` se přeposílá do soukromé schránky provozovatele
-  (Cloudflare Email Routing, MX i SPF nastavené, ověřeno). Adresa té schránky
-  do repozitáře nepatří — je vidět v Cloudflare → Email Routing.
+- **příjem**: `info@tradelink.cz` je **skutečná schránka v Seznam Email Profi**
+  (od 10. 9. 2026). MX ukazují na `*.emailprofi.seznam.cz` (priority 10 a 20), kořenový
+  SPF je `v=spf1 include:spf.seznam.cz ~all`. Čte se na `email.seznam.cz` pod účtem
+  `info@tradelink.cz` — **heslo má jen uživatel**. Dřívější přeposílání přes Cloudflare
+  Email Routing je vypnuté a jeho DNS záznamy (3 MX + DKIM + starý kořenový SPF) smazané;
+  soukromá schránka provozovatele už v cestě pošty nefiguruje.
 - **Google Search Console** — doména ověřená záznamem TXT v Cloudflare, mapa webu
   `https://tradelink.cz/sitemap.xml` odeslaná. Ověřovací TXT záznam nemazat, jinak
   se ověření ztratí.
@@ -261,13 +264,25 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
   padl s přechodem na Resend. Dřívější obchvat (vložení do `auth.users` **a**
   `auth.identities`, bez druhého se účet nepřihlásí — „Database error querying schema")
   už není potřeba, ale hodí se ho znát, kdyby bylo potřeba účet bez e-mailu.
-- **Nikdo teď není správce, na `/sprava` se nikdo nedostane.** V `private.budouci_spravci`
-  je `info@tradelink.cz` — ta se stane správcem sama, jakmile
-  se s tou adresou zaregistrují. **Ten mechanismus zatím nikdo nevyzkoušel**, po první
-  registraci ověřit, že `spravce` je `true`.
-  Uživatel chce svůj účet na `info@tradelink.cz` — schránka poštu přijímá, odesílání
-  funguje, takže registraci nic nebrání. **Heslo si volí sám a nikde se nesdílí.**
-  **Heslo si volí sám a nikde se nesdílí** — nevymýšlet mu ho ani ho po něm nechtít.
+- **Správce existuje** (vyřešeno 10. 9. 2026). Uživatel se zaregistroval jako
+  `info@tradelink.cz` (typ *osoba*) a trigger `handle_new_user` mu podle
+  `private.budouci_spravci` sám nastavil `spravce = true` — ověřeno dotazem do
+  `public.profiles`. **Ten mechanismus je tím poprvé vyzkoušený a funguje.**
+  `/sprava` bez přihlášení odmítá a přesměruje na `/prihlaseni`.
+  **Heslo si volí uživatel sám a nikde se nesdílí** — nevymýšlet mu ho ani ho po něm chtít.
+  Pozor na záměnu: heslo k účtu na webu a heslo do schránky na Seznamu jsou dvě různé věci.
+- **Šablony e-mailů v Supabase jsou anglicky.** Web je celý česky, ale zpráva o obnově
+  hesla dorazí jako „Reset your password". Přeložit v Supabase → Authentication →
+  Email Templates (potvrzení registrace, obnova hesla, změna e-mailu).
+- **Neexistující adresa vrací homepage se stavem 200.** V `site/` chybí `404.html`,
+  takže Cloudflare Pages na cokoli nenalezeného servíruje homepage jako platnou stránku
+  (ověřeno na `/seznam-verification.html`). Pro vyhledávače je to nekonečně mnoho
+  duplicit homepage. Oprava je jeden soubor, viz Next Steps.
+- **Živnostníkovi „Hledám zakázky" nabízí web zadání nabídky práce.** `moje-inzeraty.html`
+  se rozhoduje jen podle `account_type`, takže účet typu firma dostane vždy typ `prace`
+  (`site/moje-inzeraty.html:161`). Podle domluveného návrhu ale ten, kdo hledá zakázky,
+  nemá zadávat žádný inzerát — má se ukazovat profilem. Firma navíc nemůže zadat poptávku,
+  ani když shání subdodavatele. Neblokující, ale při testu s reálnými daty to zamrzí.
 - **Automatické skrytí při třech hlášeních jde zneužít** — tři spolčené účty shodí
   konkurenci, než se k tomu správce dostane. Zatím to beru jako přijatelnou cenu za to,
   že podvod neviselo ve výpisu; při větším provozu zvážit vyšší mez nebo váhu podle
@@ -304,11 +319,19 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 
 1. **Ověřit výpis s reálnými daty** — vytvořit pár testovacích profilů a inzerátů
    a projít všechny čtyři role. Karty se zatím viděly jen v prázdném stavu.
-2. **[Uživatel]** Nastavit si účet jako správce, jinak je fronta nahlášení nepřístupná.
+2. **[Uživatel]** Přihlásit se na webu jako `info@tradelink.cz` a otevřít `/sprava` —
+   práva účet má, ale samotnou stránku ještě nikdo přihlášený neviděl.
 3. **[Claude]** Doladit podle zpětné vazby, až začnou chodit první uživatelé.
 4. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
-5. **Seznam Webmaster a zápis do Firmy.cz** — obojí potřebuje účet na Seznamu
-   pod `info@tradelink.cz`. Google Search Console je hotová.
+5. **Seznam Webmaster** — účet na Seznamu už existuje (schránka `info@tradelink.cz`
+   v Email Profi), takže zbývá přidat doménu na `reporter.seznam.cz/wm`, ověřit ji
+   (doporučeně TXT záznamem v Cloudflare, ne souborem — Pages přesměrovává `.html`
+   na bezpříponové adresy, viz Known Issues) a odeslat `https://tradelink.cz/sitemap.xml`.
+   **Zápis do Firmy.cz** počká, až bude firma — chce IČO a sídlo.
+   Google Search Console je hotová.
+6. **Přeložit šablony e-mailů v Supabase do češtiny** (viz Known Issues).
+7. **Doplnit `site/404.html`** — neexistující adresa dnes vrací homepage se stavem 200,
+   takže vyhledávačům vzniká nekonečně mnoho duplicit homepage.
 
 ## Pro druhou stranu (kamarád a jeho AI)
 
@@ -375,6 +398,35 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
   neoslabovat ve prospěch kontrol ve formuláři.
 
 ## Last Session
+
+**10. 9. 2026, odpoledne — správcovský účet funguje a pošta se přestěhovala na Seznam.**
+Dvě věci, obě odbavené přes prohlížeč (Claude in Chrome) na účtech uživatele:
+
+1. **Účet správce.** Uživatel se zaregistroval jako `info@tradelink.cz` (typ *osoba*),
+   potvrdil e-mail a trigger `handle_new_user` mu sám nastavil `spravce = true` —
+   ověřeno dotazem do `public.profiles` (1 řádek, `spravce = true`, 14:21 UTC).
+   **Mechanismus `private.budouci_spravci` je tím poprvé v provozu ověřený.**
+   `/sprava` bez přihlášení odmítá a přesměruje na `/prihlaseni`; přihlášený pohled
+   na frontu ještě nikdo neviděl (viz Next Steps).
+
+2. **Příjem pošty: Cloudflare Email Routing → Seznam Email Profi.** Uživatel si založil
+   doménu v Email Profi, protože z přeposílané adresy nešlo odpovídat. Postup: vypnutý
+   Email Routing v Cloudflare (tím se smazaly 3 zamčené MX, DKIM `cf2024-1._domainkey`
+   i kořenový SPF), pak nové MX na `5ba73c9128c9cb24.mx2/mx1.emailprofi.seznam.cz`
+   (priority 10 a 20) a kořenový SPF `v=spf1 include:spf.seznam.cz ~all`. Doména se
+   v Email Profi ověřila hned, ne za 24–48 h. Schránka `info@` založená, **heslo zná
+   jen uživatel**. Ověřeno skutečnou zprávou: obnova hesla z webu dorazila do doručené
+   pošty (ne do spamu) za dvě minuty — projde tím celý řetěz web → Supabase → Resend →
+   SPF/DKIM → MX Seznamu → schránka. Resend na `send.tradelink.cz` zůstal nedotčený,
+   odesílání z webu jede dál.
+
+**Poznámka pro příště:** zápis DNS záznamů v Cloudflare přes prohlížeč **zablokoval
+bezpečnostní klasifikátor Claude Code** (kliknutí do dialogu „Add record"). Vypnutí
+Email Routingu prošlo, přidání záznamů ne — hodnoty musel do formuláře zadat uživatel
+sám. Počítat s tím: u DNS připravit přesné hodnoty a nechat je vyplnit uživatele.
+Cloudflare navíc uživateli běží pod překladačem Chromu, který **přepisuje i obsah
+záznamů** (`v=spf1 zahrnuje:…`, priorita 45 jako „45 let") — hodnoty z takové stránky
+nikdy neopisovat.
 
 **10. 9. 2026, noc — web je přihlášený u Googlu a z repozitáře zmizela soukromá adresa.**
 Doména ověřená v Google Search Console (TXT záznam v Cloudflare), mapa webu odeslaná.
