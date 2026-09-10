@@ -349,14 +349,14 @@ html.arrive-video .reception[data-enter] .choice{
   opacity:0;transform:translateY(8px);
   /* border-color/box-shadow/background-color zůstávají v seznamu, aby jim
      hover po doběhnutí vjezdu neslehla jejich vlastní plynulost */
-  transition:opacity .3s var(--ease),transform .3s var(--ease),
+  transition:opacity .35s var(--ease),transform .35s var(--ease),
     border-color .25s var(--ease),box-shadow .25s var(--ease),background-color .25s var(--ease);
 }
 html.arrive-video .reception[data-enter].is-entered .choice{opacity:1;transform:none}
 html.arrive-video .reception[data-enter] .choices__col:nth-of-type(1) .choice:nth-of-type(1){transition-delay:0s}
-html.arrive-video .reception[data-enter] .choices__col:nth-of-type(2) .choice:nth-of-type(1){transition-delay:.12s}
-html.arrive-video .reception[data-enter] .choices__col:nth-of-type(1) .choice:nth-of-type(2){transition-delay:.24s}
-html.arrive-video .reception[data-enter] .choices__col:nth-of-type(2) .choice:nth-of-type(2){transition-delay:.36s}
+html.arrive-video .reception[data-enter] .choices__col:nth-of-type(2) .choice:nth-of-type(1){transition-delay:.28s}
+html.arrive-video .reception[data-enter] .choices__col:nth-of-type(1) .choice:nth-of-type(2){transition-delay:.56s}
+html.arrive-video .reception[data-enter] .choices__col:nth-of-type(2) .choice:nth-of-type(2){transition-delay:.84s}
 .reception__media{position:relative;isolation:isolate}
 .reception__media img{width:100%;height:clamp(260px,44svh,420px);object-fit:cover;object-position:center 40%}
 /* neonové logo ve fotce vede domů — jen na desktopu, kde je fotka celá scéna */
