@@ -454,6 +454,16 @@ odstraněn. Ověřeno, že podpisy starým klíčem databáze odmítá.
 
 ## Current Work
 
+**Rozpracované platby přes Stripe.** `supabase/022-platby-stripe.sql` a funkce
+`functions/api/stripe/checkout.js` + `webhook.js` jsou napsané, ale **migrace není
+spuštěná, klíče nejsou nastavené a nic z toho není otestované**. Chybí i tlačítko
+v `ucet.html`. Čeká to na účet u Stripu, který chce IČO.
+
+**Celý přehled stavu je v `SPUSTENI.md`** — hotové, rozpracované, blokátory
+a pořadí kroků pro ostrý start. Když se něco dodělá nebo začne, patří to tam.
+
+## Poznámky k předchozí práci
+
 None — current work is in a stable state. Atriová homepage je smergovaná do `main` a živá na
 `tradelink.cz` (viz Completed a Last Session).
 
