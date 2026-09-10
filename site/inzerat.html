@@ -215,7 +215,9 @@
         var klic = 'tl-videno-' + id;
         if (!sessionStorage.getItem(klic) && mojeId !== res.data.autor_id) {
           sessionStorage.setItem(klic, '1');
-          supabase.rpc('zapocitat_zobrazeni', { p_id: id });
+          /* Dotaz Supabase se odešle až ve chvíli, kdy na něj někdo čeká.
+             Bez .then() by se nezavolal vůbec — a počítadlo by stálo na nule. */
+          supabase.rpc('zapocitat_zobrazeni', { p_id: id }).then(function () {}, function () {});
         }
       } catch (e) { /* zakázané úložiště nesmí rozbít stránku */ }
 

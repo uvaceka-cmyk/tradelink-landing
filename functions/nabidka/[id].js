@@ -88,6 +88,26 @@ ${telo}
 <script src="/supabase-config.js"></script>
 <script src="/app.js" defer></script>
 <script type="module">import { paintNav } from '/auth.js'; paintNav();</script>
+<script>
+/* Započítání zobrazení. Většina návštěvníků z vyhledávače přistane právě
+   tady, ne na verzi pro prohlížeč — bez tohohle by se jejich návštěvy
+   nikde neprojevily. Jednou za návštěvu; roboti JavaScript nespouštějí. */
+(function () {
+  var id = location.pathname.split('/').pop();
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return;
+  try {
+    if (sessionStorage.getItem('tl-videno-' + id)) return;
+    sessionStorage.setItem('tl-videno-' + id, '1');
+  } catch (e) { /* zakázané úložiště: raději nepočítat než spadnout */ return; }
+  var cfg = window.TRADELINK_SUPABASE || {};
+  if (!cfg.url || !cfg.anonKey) return;
+  fetch(cfg.url + '/rest/v1/rpc/zapocitat_zobrazeni', {
+    method: 'POST',
+    headers: { apikey: cfg.anonKey, Authorization: 'Bearer ' + cfg.anonKey, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_id: id })
+  }).catch(function () {});
+})();
+</script>
 </body>
 </html>`;
 }
