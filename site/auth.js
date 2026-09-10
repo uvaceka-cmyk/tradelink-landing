@@ -98,7 +98,13 @@ export function czechError(error) {
    nulu a nic to nestojí. Chybu schválně nikde neukazujeme — je to práce
    na pozadí, která nesmí rozbít stránku. */
 function prevzitPoptavky() {
-  supabase.rpc('prevzit_poptavky').catch(function () {});
+  /* Pozor: supabase.rpc() nevrací obyčejný slib — má .then(), ale nemá
+     .catch(). Volání .catch() na něm shodí celý paintNav a s ním každou
+     stránku, která na něj čeká. Chyba se proto odchytává druhým
+     parametrem .then(). */
+  try {
+    supabase.rpc('prevzit_poptavky').then(function () {}, function () {});
+  } catch (e) { /* práce na pozadí nesmí rozbít stránku */ }
 }
 
 /* ---------- stav přihlášení v navigaci ---------- */
