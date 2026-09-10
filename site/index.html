@@ -90,12 +90,9 @@
         <video src="prechod-recepce.mp4" poster="recepce-master.webp" muted playsinline preload="none" tabindex="-1"></video>
       </div>
 
-      <!-- Čtyři panely na stěně recepce, stejné jako v detailu. Kotvené k boxu
-           fotky (cover), takže sedí k logu a recepční při každém poměru stran.
-           Vedou na recepci; pro klávesnici a čtečky stačí hlavní CTA. -->
-      <!-- Výtah je kotvený k boxu fotky: jeho rám je součástí schváleného snímku
-           (perspektivní zlatý rám ve sloupu), HTML dodává jen ovládání uvnitř. -->
-      <div class="photo-box photo-box--atrium">
+      <!-- Výtah je kotvený přímo k viewportu scény (ne k fotce), takže zůstává
+           celý viditelný a stejně odsazený od okrajů při libovolném poměru
+           stran; rám i pozadí kreslí vlastní CSS (nav-hud.css). -->
       <aside class="elevator" aria-label="Výtah — patra budovy">
         <div class="floors">
           <p class="floors__head">Zvolte patro
@@ -110,24 +107,8 @@
             <a class="floor" href="recepce.html" data-transition aria-label="Patro 02 — Výroba"><span class="floor__num">02</span> Výroba</a>
             <a class="floor is-here" href="recepce.html" data-transition aria-label="Recepce — jste tady, pokračovat na recepci"><span class="floor__num">L</span> Recepce</a>
           </div>
-          <div class="floors__tagline">
-            <p>Stejná budova.<br>Lepší<br>zítřek.</p>
-            <small>TradeLink<br>Zal. 2026<br>Příležitosti bez hranic<br>Skutečný dopad</small>
-          </div>
         </div>
       </aside>
-      </div>
-
-      <div class="atrium__wall photo-box photo-box--atrium" aria-hidden="true">
-        <a class="wall-choice" href="recepce.html" data-transition tabindex="-1" style="--x:47.7%;--y:66.5%">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.8 19.5c0-3.3 2.8-5.5 6.2-5.5s6.2 2.2 6.2 5.5"/><path d="M16.5 5.4a3 3 0 0 1 0 5.4"/><path d="M18 14.4c2 .8 3.2 2.5 3.2 5.1"/></svg>Hledám zaměstnance</a>
-        <a class="wall-choice" href="recepce.html" data-transition tabindex="-1" style="--x:60.4%;--y:66.5%">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.8" y="7.2" width="18.4" height="12.6" rx="2"/><path d="M9 7.2V5.6a1.8 1.8 0 0 1 1.8-1.8h2.4A1.8 1.8 0 0 1 15 5.6v1.6M2.8 12.4h18.4"/></svg>Hledám zakázky</a>
-        <a class="wall-choice" href="recepce.html" data-transition tabindex="-1" style="--x:47.7%;--y:71.2%">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 19.6c0-3.5 3-5.8 7-5.8s7 2.3 7 5.8"/></svg>Hledám práci</a>
-        <a class="wall-choice" href="recepce.html" data-transition tabindex="-1" style="--x:60.4%;--y:71.2%">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.6 3.8h9.2l4.6 4.6v11.8a1.8 1.8 0 0 1-1.8 1.8H5.6a1.8 1.8 0 0 1-1.8-1.8V5.6a1.8 1.8 0 0 1 1.8-1.8z"/><path d="M8 12h8M8 16h5"/></svg>Chci zadat zakázku</a>
-      </div>
 
       <div class="atrium__content">
         <div class="atrium__copy" data-depth="2">

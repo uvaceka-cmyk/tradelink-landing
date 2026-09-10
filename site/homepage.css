@@ -72,29 +72,6 @@
   backdrop-filter:blur(12px);color:#fff;
 }
 
-/* ---------- panely na stěně vzdálené recepce ----------
-   .atrium__wall má přesně box fotky vykreslené jako object-fit:cover
-   (56 % vodorovně, střed svisle) — proto sedí k logu a recepční. */
-.atrium__wall{display:none}
-/* čistý podklad bez vypáleného rámu — výtah kreslí vlastní zlatý rám (nav-hud.css) */
-.wall-choice{
-  position:absolute;left:var(--x);top:var(--y);
-  width:7.6%;height:3.8%;
-  display:flex;align-items:center;gap:.45em;padding:0 .7em;
-  box-sizing:border-box;
-  font-size:clamp(5px,.52vw,9px);font-weight:500;letter-spacing:.01em;line-height:1;
-  color:#f7efdf;text-decoration:none;white-space:nowrap;overflow:hidden;
-  border:1px solid rgba(241,220,174,.85);border-radius:2px;
-  background:rgba(5,4,2,.55);
-  box-shadow:0 0 6px rgba(230,201,143,.4);
-  pointer-events:auto;
-  transition:box-shadow .2s var(--ease),background-color .2s var(--ease);
-}
-.wall-choice svg{width:1.4em;height:1.4em;flex:none;color:var(--accent)}
-.wall-choice:hover{background:rgba(20,14,6,.7);box-shadow:0 0 12px rgba(230,201,143,.7)}
-@media (min-width:900px){ .atrium__wall{display:block} }
-@media (max-width:899.98px){ .photo-box--atrium:not(.atrium__wall){display:none} }
-
 /* ---------- přechod do recepce ----------
    Kamera „přijede" k pultu: fotka atria se přiblíží k recepci, kopie
    zhasne a přes ni se prolne fotka recepce. Nav i výtah stojí mimo
@@ -122,11 +99,11 @@ body.is-leaving.is-video .atrium__media img{transform:none}
 body.is-leaving.is-video .atrium__next{opacity:1;transition:opacity .2s ease}
 body.is-leaving.is-video .atrium__next img{display:none}
 body.is-leaving.is-video .atrium__next video{opacity:1}
-.atrium__content,.atrium__wall{transition:opacity .45s var(--ease)}
+.atrium__content{transition:opacity .45s var(--ease)}
 body.is-leaving .atrium__media img{transform:scale(2.4)}
 body.is-leaving .atrium__next{opacity:1}
 body.is-leaving .atrium__next img{transform:scale(1)}
-body.is-leaving .atrium__content,body.is-leaving .atrium__wall{opacity:0}
+body.is-leaving .atrium__content{opacity:0}
 body.is-leaving .atrium::after{opacity:0}
 
 /* ---------- mobilní spouštěč výtahu ---------- */
@@ -201,7 +178,7 @@ body.is-leaving .atrium::after{opacity:0}
   .elevator{display:block}
   .floors-toggle{display:none}
   /* kopie nesmí vjet pod výtah */
-  .atrium__copy{max-width:min(600px,calc(100vw - 196px - 4.4vw - 2.4vw - 80px))}
+  .atrium__copy{max-width:min(600px,calc(100vw - 380px))}
 }
 
 @media (min-width:1200px) and (min-height:760px){

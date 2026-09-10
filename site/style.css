@@ -334,8 +334,11 @@ a.floor:active{transform:translateX(4px) scale(.98)}
 .reception[data-enter] .reception__media img{transform:scale(1.07);transition:transform 1s var(--ease)}
 .reception[data-enter].is-entered{opacity:1}
 .reception[data-enter].is-entered .reception__media img{transform:none}
-/* po videu z homepage: žádný vjezd ani prolnutí, rovnou klidový stav */
-html.arrive-video .reception[data-enter]{opacity:1;transition:none}
+/* po videu z homepage: fotka se už nepřibližuje (video ji odvezlo), ale
+   krátké prolnutí zůstává — poslední snímek videa a statická fotka recepce
+   nejsou nikdy úplně stejný odstín, prolnutí ten skok schová */
+html.arrive-video .reception[data-enter]{opacity:0;transition:opacity .4s var(--ease)}
+html.arrive-video .reception[data-enter].is-entered{opacity:1}
 html.arrive-video .reception[data-enter] .reception__media img{transform:none;transition:none}
 .reception__media{position:relative;isolation:isolate}
 .reception__media img{width:100%;height:clamp(260px,44svh,420px);object-fit:cover;object-position:center 40%}

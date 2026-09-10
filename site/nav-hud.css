@@ -148,29 +148,27 @@
 
 /* ---------- výtah (desktop/tablet) ----------
    Sdílený homepage + recepce. Zapuštěný černý panel s tenkým zlatým
-   obrysem u pravého okraje, patra přes celou výšku, aktivní patro zlaté. */
+   obrysem u pravého okraje, patra přes celou výšku, aktivní patro zlaté.
+   Kotvený přímo k viewportu scény (top/right/bottom), ne k ploše fotky —
+   díky tomu zůstává celý panel vždy vevnitř, se stejným odstupem od
+   okrajů při libovolném poměru stran, a nikdy ho neusekne okraj scény. */
 .elevator{
   display:none;
   position:absolute;
-  left:85.2%;top:11.5%;width:12.4%;height:84.5%;
+  top:clamp(64px,10svh,120px);
+  right:clamp(20px,2.6vw,48px);
+  width:clamp(200px,13vw,256px);
+  /* panel sedí jen tak vysoko, kolik potřebuje obsah — strop drží stejný
+     odstup od horního i dolního okraje scény jako dřív */
+  max-height:calc(100% - clamp(64px,10svh,120px) - clamp(16px,3.4svh,56px));
   z-index:3;
   pointer-events:auto;
 }
-/* box se stejnou geometrií jako fotka vykreslená přes object-fit:cover —
-   všechno uvnitř sedí na fotku při libovolném poměru stran */
-.photo-box{
-  position:absolute;z-index:1;pointer-events:none;
-  left:var(--ox,50%);top:var(--oy,50%);
-  width:max(100%,calc(100svh * var(--ar,1.7768)));aspect-ratio:var(--ar,1.7768);
-  transform:translate(calc(-1 * var(--ox,50%)),calc(-1 * var(--oy,50%)));
-}
-.photo-box--atrium{--ox:56%;--oy:50%;--ar:1.7768}
-.photo-box--reception{--ox:56%;--oy:50%;--ar:1.7768}
 .elevator .floors{
   position:relative;
   display:flex;flex-direction:column;
-  height:100%;
-  margin-top:0;padding:clamp(16px,3.2svh,30px) clamp(12px,1.2vw,22px) clamp(14px,2.6svh,24px);
+  max-height:100%;
+  margin-top:0;padding:clamp(14px,3svh,28px) clamp(12px,1.2vw,22px) clamp(14px,2.4svh,22px);
   width:100%;
   border-radius:4px;
   border:1px solid rgba(241,220,174,.85);
@@ -181,7 +179,12 @@
     0 0 1px rgba(255,238,200,.9),
     inset 0 0 0 1px rgba(0,0,0,.6),
     inset 0 0 24px rgba(0,0,0,.7);
+  /* pojistka pro extrémně nízké okno — obsah radši potichu scrolluje,
+     než aby vizuálně přetekl přes okraj panelu */
+  overflow-y:auto;
+  scrollbar-width:none;
 }
+.elevator .floors::-webkit-scrollbar{display:none}
 .elevator .floors::before{content:none}
 .elevator .floors__head{
   display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none;
@@ -191,7 +194,7 @@
 }
 .elevator .floors__head svg{width:12px;height:12px;flex:none;color:rgba(241,220,174,.9)}
 .elevator .floors__list{
-  flex:1;display:flex;flex-direction:column;justify-content:space-evenly;
+  display:flex;flex-direction:column;gap:8px;
   padding-block:4px;
 }
 .elevator .floor{
@@ -211,23 +214,6 @@
   box-shadow:0 0 0 3px rgba(230,201,143,.2),0 0 18px 3px rgba(230,201,143,.5);
 }
 
-.elevator .floors__tagline{
-  flex:none;margin-top:12px;padding-top:16px;border-top:1px solid rgba(230,201,143,.2);
-}
-.elevator .floors__tagline p{
-  font-size:.64rem;line-height:1.65;letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(243,238,228,.88);
-}
-.elevator .floors__tagline small{
-  display:block;margin-top:18px;padding-top:14px;
-  font-size:.56rem;line-height:1.7;letter-spacing:.16em;
-  text-transform:uppercase;color:rgba(230,201,143,.7);
-  position:relative;
-}
-.elevator .floors__tagline small::before{
-  content:"";position:absolute;left:0;top:0;width:22px;height:1px;
-  background:rgba(230,201,143,.6);
-}
 
 /* ---------- výtah spuštěný / stisknutý patro ---------- */
 .floor.is-pressed{background:var(--accent-bg);border-color:var(--accent-dim);transform:translateX(4px) scale(.98)}
