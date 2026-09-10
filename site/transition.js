@@ -23,13 +23,19 @@
     try { video.load(); } catch (e) { wantVideo = false; }
   }
 
-  var VIDEO_RATE = 2;      /* 5 s klip přehraný za ~2,5 s */
-  var VIDEO_MAX_MS = 3200; /* pojistka, kdyby 'ended' nepřišlo */
+  var VIDEO_RATE = 1;      /* klip má ~3 s, hraje se jednou v reálném čase */
+  var VIDEO_MAX_MS = 3800; /* pojistka, kdyby 'ended' nepřišlo */
 
   function leaveWithVideo(href) {
     document.body.classList.add('is-video');
     var done = false;
-    function go() { if (done) return; done = true; window.location.href = href; }
+    function go() {
+      if (done) return; done = true;
+      /* recepce se podle toho vykreslí hned v klidové poloze — poslední snímek
+         klipu je její pozadí, takže bez prolnutí a bez skoku */
+      try { sessionStorage.setItem('tl-arrive-video', '1'); } catch (e) {}
+      window.location.href = href;
+    }
     video.addEventListener('ended', go, { once: true });
     video.addEventListener('error', go, { once: true });
     window.setTimeout(go, VIDEO_MAX_MS);

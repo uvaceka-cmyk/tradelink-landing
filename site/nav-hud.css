@@ -165,7 +165,7 @@
   transform:translate(calc(-1 * var(--ox,50%)),calc(-1 * var(--oy,50%)));
 }
 .photo-box--atrium{--ox:56%;--oy:50%;--ar:1.7768}
-.photo-box--reception{--ox:50%;--oy:45%;--ar:1.7915}
+.photo-box--reception{--ox:56%;--oy:50%;--ar:1.7778}
 .elevator .floors{
   position:relative;
   display:flex;flex-direction:column;

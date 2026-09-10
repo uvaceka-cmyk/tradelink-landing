@@ -741,6 +741,20 @@ klidně předělej. `hidden` tam patří schválně: **dokud není co ukázat, k
 
 ## Last Session
 
+**11. 9. 2026 — přechod homepage → recepce jako příjezd kamery (Seedance, klik).**
+- `site/prechod-recepce.mp4`: Seedance 2.0, start = `homepage-master.webp` (schválený snímek bez
+  UI), konec = `recepce-master.webp` (pozadí recepce) — proto začátek i dojezd sedí na skutečná
+  pozadí stránek. Vygenerováno 4 s / 1080p (Seedance nepovolí méně než 4 s), v ffmpeg zrychleno
+  na ~2,7 s (setpts), bez zvuku, H.264. Jeden pokus na 4 s; první pokus na 3 s API odmítlo.
+- Klik na `[data-transition]` na desktopu (≥900 px, bez `saveData`, bez reduced motion): video
+  se přehraje jednou v reálném čase přes fotku atria, nav i výtah zůstávají HTML nad ním; po
+  `ended` navigace. Před navigací se nastaví `sessionStorage['tl-arrive-video']`; inline skript
+  v `<head>` recepce podle něj přidá `html.arrive-video` a scéna se vykreslí rovnou v klidu (bez
+  vjezdu, bez prolnutí). Poster videa je fotka recepce. Bez videa (mobil, nestažené) zůstává
+  CSS přiblížení s prolnutím.
+- Ořez sjednocený: video, vrstva prolnutí i fotka recepce mají `object-position:56% 50%` jako
+  fotka atria, aby při jiném poměru stran neskočil začátek ani konec.
+
 **11. 9. 2026 — homepage na schválený snímek (přesná kompozice), bez kreditů.**
 - **Chybějící podklad:** čistá verze schváleného snímku (`Downloads/2eb0bb2c-….png`, 1672×941)
   bez vypálené navigace, hero textu, výtahového panelu a čtyř panelů na stěně neexistuje.

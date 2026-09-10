@@ -114,11 +114,11 @@
   opacity:0;transition:opacity .55s ease .55s;
 }
 .atrium__next img{
-  width:100%;height:100%;object-fit:cover;object-position:center 45%;
+  width:100%;height:100%;object-fit:cover;object-position:56% 50%;
   transform:scale(1.12);transition:transform 1.15s cubic-bezier(.4,0,.2,1);
 }
 .atrium__next video{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%;
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:56% 50%;
   opacity:0;
 }
 /* varianta s videem: fotka se nepřibližuje, video ji hned nahradí (první snímek = atrium) */

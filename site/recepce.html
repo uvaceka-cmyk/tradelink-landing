@@ -24,6 +24,11 @@
   <link rel="stylesheet" href="nav-hud.css">
   <link rel="preload" as="image" href="recepce-master.webp" fetchpriority="high">
   <noscript><style>.reception[data-enter]{opacity:1!important;transform:none!important}</style></noscript>
+  <script>
+    /* Příchod z videa na homepage: scéna se vykreslí rovnou v klidu (bez vjezdu),
+       protože poslední snímek klipu je tahle fotka. Musí běžet před vykreslením. */
+    try { if (sessionStorage.getItem('tl-arrive-video')) { sessionStorage.removeItem('tl-arrive-video'); document.documentElement.classList.add('arrive-video'); } } catch (e) {}
+  </script>
 </head>
 <body>
   <header class="nav nav--atrium nav--hud">
@@ -76,7 +81,7 @@
     -->
     <section class="reception" data-scene="reception" data-camera="reception" data-enter>
       <div class="reception__media" data-depth="0">
-        <img src="recepce-master.webp" width="2200" height="1228" fetchpriority="high"
+        <img src="recepce-master.webp" width="1920" height="1080" fetchpriority="high"
              alt="Recepce TradeLinku — recepční za mramorovým pultem, svítící logo TradeLink na stěně z černého mramoru se zlatými žilkami.">
       </div>
       <a class="reception__logo" href="./" aria-label="TradeLink — hlavní stránka"></a>
