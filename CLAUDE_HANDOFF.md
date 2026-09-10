@@ -725,7 +725,13 @@ nejsou a nikdo je po uživateli nechce.
   navigace. Recepce přijede ze `scale(1.07)` do klidu. Nav a výtah jsou mimo animované vrstvy.
   `prefers-reduced-motion` → okamžitá navigace, bez JS fungují odkazy hned.
   **Geometrie návrhů není totožná**, takže během prolnutí se krátce potkají dvě loga — je to
-  přiblížení s prolnutím, ne bezešvý průlet. Seedance test (start/end frame) viz níže.
+  přiblížení s prolnutím, ne bezešvý průlet.
+- **Video příjezdu** `site/prechod-recepce.mp4` (Seedance 2.0, start = atrium, konec = recepce,
+  5 s, 720p, ~1,3 MB, bez zvuku): první a poslední snímek sedí na podklady, recepční i neon
+  drží identitu, pult se v poslední sekundě protáhne z oblého na rovný — snesitelné, ne
+  dokonalé. Na desktopu (≥900 px, bez `saveData`) se předběžně stáhne a při kliknutí se
+  přehraje 2× rychle (~2,5 s), pak navigace; když není stažené, jede CSS přiblížení. Jedna
+  generace, žádné varianty. Klip v plné kvalitě: `Desktop/TradeLink/screenshots/transition-test-seedance.mp4`.
 
 **10. 9. 2026, pozdě večer — homepage česky a oprava překryvu.** Na pokyn uživatele je celý
 frontend zase česky: homepage (nav, hero „Místo, kde se propojuje byznys.", CTA „Prozkoumat

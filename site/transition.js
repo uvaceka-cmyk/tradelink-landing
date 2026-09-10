@@ -10,6 +10,34 @@
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var EXIT_MS = 1150;
 
+  /* ---------- video příjezdu k pultu ----------
+     Jen na desktopu a bez úsporného režimu dat; jinak zůstává CSS
+     přiblížení. Když video není připravené nebo se nespustí, použije
+     se CSS varianta — přechod nikdy nečeká na síť. */
+  var video = document.querySelector('.atrium__next video');
+  var conn = navigator.connection || {};
+  var wantVideo = Boolean(video) && !reduced &&
+    window.matchMedia('(min-width: 900px)').matches && !conn.saveData;
+  if (wantVideo) {
+    video.preload = 'auto';
+    try { video.load(); } catch (e) { wantVideo = false; }
+  }
+
+  var VIDEO_RATE = 2;      /* 5 s klip přehraný za ~2,5 s */
+  var VIDEO_MAX_MS = 3200; /* pojistka, kdyby 'ended' nepřišlo */
+
+  function leaveWithVideo(href) {
+    document.body.classList.add('is-video');
+    var done = false;
+    function go() { if (done) return; done = true; window.location.href = href; }
+    video.addEventListener('ended', go, { once: true });
+    video.addEventListener('error', go, { once: true });
+    window.setTimeout(go, VIDEO_MAX_MS);
+    video.playbackRate = VIDEO_RATE;
+    var p = video.play();
+    if (p && p.catch) p.catch(go);
+  }
+
   /* ---------- příchod na scénu ---------- */
   var enter = document.querySelector('[data-enter]');
   if (enter) {
@@ -40,9 +68,14 @@
       }
 
       link.classList.add('is-pressed');
-      /* kamera přijede k pultu; fotka recepce se prolne přes atrium.
-         Nav a výtah stojí mimo animované vrstvy a dál reagují. */
+      /* kamera přijede k pultu: video, když je stažené; jinak se fotka
+         atria přiblíží a prolne do fotky recepce. Nav a výtah stojí mimo
+         animované vrstvy a dál reagují. */
       document.body.classList.add('is-leaving');
+      if (wantVideo && video.readyState >= 3) {
+        leaveWithVideo(href);
+        return;
+      }
       window.setTimeout(function () { window.location.href = href; }, EXIT_MS);
     });
   });
