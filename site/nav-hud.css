@@ -1,35 +1,46 @@
 /* TradeLink — HUD navigace, sdílená homepage (atrium) a recepce.
    Izolované pod .nav--hud — plain .nav na ostatních stránkách
    (lobby.html, obory.html, účet...) zůstává úplně beze změny.
-   Barvy/radiusy přebírá z výtahu (.floor / .floor__num v style.css),
-   aby nav a výtah působily jako jeden systém. */
+   Vzhled cílí na luxusní, téměř průhlednou lištu položenou přímo
+   přes fotografii — žádný výrazný samostatný pruh. */
 
 .nav--hud{
-  position: sticky;
-  background: linear-gradient(180deg, rgba(7,10,14,.88), rgba(7,10,14,.72));
-  backdrop-filter: blur(18px) saturate(1.15);
-  border-bottom: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset;
+  display:flex;
+  align-items:center;
+  min-height:80px;
+  padding-inline:5vw;
+  background:linear-gradient(180deg, rgba(4,7,10,.72), rgba(4,7,10,.34));
+  backdrop-filter:blur(16px) saturate(1.15);
+  border-bottom:1px solid rgba(255,255,255,.07);
 }
-.nav--hud::after{
-  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.32),transparent);
-  pointer-events:none;
+
+.nav--hud .nav__bar{
+  width:auto; max-width:none; margin:0; padding:0;
+  flex:none;
 }
-.nav--hud .nav__bar{ padding-block: 10px; }
 
 .nav--hud .nav__brand{
-  display:inline-flex; align-items:center; gap:9px;
-  font-size:1.02rem; font-weight:600; letter-spacing:-.01em;
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:1.05rem; font-weight:700; letter-spacing:-.01em;
 }
 .nav--hud .nav__brand-mark{
-  width:19px; height:19px; flex:none; color:var(--fg-dim);
+  width:19px; height:19px; flex:none; color:#fff;
 }
 
 .nav--hud .nav__toggle{
   width:38px; height:38px; border-radius:10px;
-  background:rgba(255,255,255,.03);
+  background:rgba(255,255,255,.03); border-color:rgba(255,255,255,.16);
 }
+
+/* ---------- odkazy hlavní navigace (Příležitosti, Pracovníci...) ---------- */
+.nav--hud .nav__link{
+  font-size:.86rem; letter-spacing:.01em; font-weight:450;
+  color:rgba(238,241,244,.76); white-space:nowrap;
+  text-decoration:none;
+  transition:color .2s var(--ease);
+}
+.nav--hud .nav__link:hover,
+.nav--hud .nav__link:focus-visible{ color:#fff; }
 
 /* ikona + odkaz jako jedna položka. Ikona je SOUROZENEC <a>, ne její
    potomek — u #nav-account totiž auth.js přepisuje textContent
@@ -40,48 +51,64 @@
   display:flex; align-items:center; gap:12px;
 }
 .nav--hud .nav__icon{
-  width:18px; height:18px; flex:none; color:var(--muted);
-  transition:color .2s var(--ease), filter .2s var(--ease);
+  width:17px; height:17px; flex:none; color:rgba(238,241,244,.7);
 }
-.nav--hud .nav__menu a{
+.nav--hud .nav__item > a{
   flex:1; display:flex; align-items:center;
   padding:13px 0; font-size:.92rem; letter-spacing:.03em;
   color:var(--fg-dim); border-bottom:1px solid var(--line);
+  text-decoration:none;
   transition:color .2s var(--ease);
 }
 /* odkaz jako celý řádek klikatelný, i přes ikonu vedle sebe */
-.nav--hud .nav__menu a::before{
+.nav--hud .nav__item > a::before{
   content:""; position:absolute; inset:0;
 }
-.nav--hud .nav__item:last-child a{ border-bottom:0; }
+.nav--hud .nav__item:last-child > a{ border-bottom:0; }
+.nav--hud .nav__link:last-child{ border-bottom:0; }
 
-.nav--hud .nav__item:hover .nav__icon,
-.nav--hud .nav__item:focus-within .nav__icon{
-  color:var(--accent); filter:drop-shadow(0 0 6px var(--accent-dim));
-}
-.nav--hud .nav__menu a:hover,
-.nav--hud .nav__menu a:focus-visible{ color:var(--fg); }
+.nav--hud .nav__item > a:hover,
+.nav--hud .nav__item > a:focus-visible{ color:var(--fg); }
 
-.nav--hud .nav__item:has(a.is-cta) .nav__icon{
-  color:var(--accent); filter:drop-shadow(0 0 6px var(--accent-dim));
+/* ---------- Přihlásit se — tenký transparentní button ---------- */
+.nav--hud .nav__item--ghost a{
+  flex:none; padding:9px 18px; border-radius:9px;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.02);
+  font-size:.84rem; font-weight:500; color:rgba(238,241,244,.92);
 }
+.nav--hud .nav__item--ghost a:hover,
+.nav--hud .nav__item--ghost a:focus-visible{
+  background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.32); color:#fff;
+}
+
+/* ---------- Začít — hlavní CTA, světlé tlačítko ---------- */
+.nav--hud .nav__item--button a{
+  flex:none; padding:9px 20px; border-radius:9px;
+  background:rgba(238,241,244,.97); color:#05070a; font-weight:600; font-size:.84rem;
+}
+.nav--hud .nav__item--button a:hover,
+.nav--hud .nav__item--button a:focus-visible{ background:#fff; color:#05070a; }
 
 @media (min-width:1100px){
-  .nav--hud .nav__menu{ gap:4px; }
-  .nav--hud .nav__item{
-    gap:9px; padding:9px 14px; border-radius:10px;
-    border:1px solid transparent;
+  .nav--hud{ min-height:92px; }
+
+  .nav--hud .nav__menu{
+    flex:1; gap:30px; margin-left:44px;
+  }
+
+  /* plain ikona+odkaz položky (např. "Hlavní stránka" / "Lobby" na recepci) —
+     ghost/button/decorative mají vlastní vzhled, sem nepatří */
+  .nav--hud .nav__item:not(.nav__item--ghost):not(.nav__item--button):not(.nav__item--decorative){
+    gap:8px; padding:9px 12px; border-radius:8px; border:1px solid transparent;
     transition:background-color .2s var(--ease), border-color .2s var(--ease);
   }
-  .nav--hud .nav__item:hover,
-  .nav--hud .nav__item:focus-within{
+  .nav--hud .nav__item:not(.nav__item--ghost):not(.nav__item--button):not(.nav__item--decorative):hover,
+  .nav--hud .nav__item:not(.nav__item--ghost):not(.nav__item--button):not(.nav__item--decorative):focus-within{
     background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.14);
   }
-  .nav--hud .nav__item:has(a.is-cta){
-    background:var(--accent-bg); border-color:var(--accent-dim);
-  }
-  .nav--hud .nav__menu a{
-    flex:none; padding:0; border-bottom:0; font-size:.82rem; letter-spacing:.08em;
+  .nav--hud .nav__item:not(.nav__item--ghost):not(.nav__item--button) > a{
+    flex:none; padding:0; border-bottom:0; font-size:.82rem; letter-spacing:.05em;
   }
 }
 
@@ -89,34 +116,51 @@
    Search a jazyk jsou čistě dekorativní doplňky bez funkce (web
    nemá vyhledávání ani jinou jazykovou verzi) — proto aria-hidden
    a mimo tab-pořadí, a na mobilu schované, aby v rozbalovacím menu
-   nezůstávaly neaktivní řádky. Přihlásit se / Založit účet jsou
-   pořád ty samé skutečné odkazy, jen na desktopu vizuálně odsazené
-   doprava a "Založit účet" jako plné tlačítko (styl "Get started"
-   z reference). */
+   nezůstávaly neaktivní řádky. */
 .nav--hud .nav__item--decorative{ display:none; }
 
 @media (min-width:1100px){
   .nav--hud .nav__item--decorative{
-    display:inline-flex; align-items:center; padding:8px; border-radius:10px;
+    display:inline-flex; align-items:center; padding:8px; border-radius:8px;
+    transition:background-color .2s var(--ease);
   }
+  .nav--hud .nav__item--decorative:hover{ background:rgba(255,255,255,.05); }
   .nav--hud .nav__item--util-first{ margin-left:auto; }
-  .nav--hud .nav__locale{ gap:6px; padding-inline:10px; }
-  .nav--hud .nav__locale span{
-    font-size:.72rem; font-weight:600; letter-spacing:.06em; color:var(--muted);
-  }
 
-  .nav--hud .nav__item--button{ padding:0; }
-  .nav--hud .nav__item--button:hover,
-  .nav--hud .nav__item--button:focus-within{ background:none; border-color:transparent; }
-  .nav--hud .nav__item--button .nav__icon{ display:none; }
-  .nav--hud .nav__item--button a{
-    padding:9px 20px; border-radius:999px;
-    background:rgba(238,241,244,.96); color:#05070a; font-weight:600;
+  .nav--hud .nav__locale{ gap:6px; padding-inline:8px; }
+  .nav--hud .nav__locale span{
+    font-size:.74rem; font-weight:600; letter-spacing:.05em; color:rgba(238,241,244,.85);
   }
-  .nav--hud .nav__item--button a:hover,
-  .nav--hud .nav__item--button a:focus-visible{ background:#fff; color:#05070a; }
+  .nav--hud .nav__chevron{ width:12px; height:12px; color:rgba(238,241,244,.55); }
+}
+
+/* ---------- mobil: fullscreen smoked-glass menu ---------- */
+@media (max-width:1099.98px){
+  .nav--hud .nav__menu.is-open{
+    /* nav--hud má backdrop-filter, takže je containing blockem pro
+       position:fixed potomky — bottom:0 by se počítalo vůči jeho
+       (nízké) výšce, ne vůči viewportu. height v vh tomu obchází. */
+    position:fixed; top:80px; left:0; right:0; height:calc(100vh - 80px);
+    display:flex;
+    flex-direction:column; align-items:stretch; gap:0;
+    padding:8px 5vw 24px;
+    background:rgba(4,6,9,.97);
+    backdrop-filter:blur(40px) saturate(1.2);
+    border-top:1px solid rgba(255,255,255,.08);
+    overflow-y:auto;
+  }
+  .nav--hud .nav__link{
+    display:block; padding:16px 0; font-size:1rem;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .nav--hud .nav__item--ghost,
+  .nav--hud .nav__item--button{ margin-top:14px; }
+  .nav--hud .nav__item--ghost a,
+  .nav--hud .nav__item--button a{
+    flex:1; justify-content:center; padding:13px 0;
+  }
 }
 
 @media (prefers-reduced-motion:reduce){
-  .nav--hud .nav__icon,.nav--hud .nav__item{ transition:none!important; }
+  .nav--hud .nav__icon,.nav--hud .nav__item,.nav--hud .nav__link{ transition:none!important; }
 }
