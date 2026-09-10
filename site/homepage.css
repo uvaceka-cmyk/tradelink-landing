@@ -76,11 +76,7 @@
    .atrium__wall má přesně box fotky vykreslené jako object-fit:cover
    (56 % vodorovně, střed svisle) — proto sedí k logu a recepční. */
 .atrium__wall{display:none}
-/* rám výtahu je součástí schválené fotky — HTML panel nesmí kreslit vlastní */
-.atrium .elevator .floors{
-  background:none;border:0;box-shadow:none;backdrop-filter:none;border-radius:0;
-  padding-top:clamp(34px,7svh,64px);
-}
+/* čistý podklad bez vypáleného rámu — výtah kreslí vlastní zlatý rám (nav-hud.css) */
 .wall-choice{
   position:absolute;left:var(--x);top:var(--y);
   width:7.6%;height:3.8%;

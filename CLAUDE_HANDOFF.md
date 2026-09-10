@@ -741,6 +741,19 @@ klidně předělej. `hidden` tam patří schválně: **dokud není co ukázat, k
 
 ## Last Session
 
+**11. 9. 2026 — čisté podklady od uživatele a přechod 2,0 s.**
+- Uživatel dodal čisté snímky bez UI: `Downloads/STARTFRAME.png` (atrium) a `ENDFRAME.png`
+  (recepce s širokým pultem a rostlinami), obojí 1672×941. Jsou teď přímo pozadím stránek:
+  `homepage-master.webp` = START, `recepce-master.webp` = END. Pravý sloup je ve START čistý,
+  takže HTML výtah zase kreslí vlastní zlatý rám i na homepage (override v `homepage.css` pryč).
+  Odkaz přes neon na recepci: `left:35%;top:17%;width:30%;height:15%`; sloupce voleb
+  `padding:34svh 20% 0 20%`.
+- Přechod: Seedance 2.0, start = START, konec = END, 4 s / 1080p (minimum API), v ffmpeg
+  zrychleno na přesně 2,0 s. Přehrává se jednou po kliknutí, nav i výtah zůstávají HTML
+  nad videem, po skončení navigace a recepce se vykreslí rovnou v klidu (viz předchozí zápis).
+- MID snímky ve složce `Desktop/TradeLink/tradelink animation` (mid1–mid10) mají vypálené UI
+  a jsou to re-rendery — do generování nešly, sloužily jen jako vodítko k promptu.
+
 **11. 9. 2026 — přechod homepage → recepce jako příjezd kamery (Seedance, klik).**
 - `site/prechod-recepce.mp4`: Seedance 2.0, start = `homepage-master.webp` (schválený snímek bez
   UI), konec = `recepce-master.webp` (pozadí recepce) — proto začátek i dojezd sedí na skutečná
