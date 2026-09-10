@@ -241,7 +241,10 @@
         (p.obor ? '<span class="tag">' + esc(nazevOboru(p.obor)) + (p.podobor ? ' → ' + esc(p.podobor) : '') + '</span>' : '') +
         (p.lokalita ? '<span class="tag">' + esc(p.lokalita) + '</span>' : '');
 
-      document.getElementById('skore').innerHTML = p.hodnoceni_pocet
+      /* Skóre patří jen k firmám — člověka hodnotit nejde, takže by
+         u něj „Zatím bez hodnocení" jen mátlo. */
+      document.getElementById('skore').innerHTML = !jeFirma ? ''
+        : p.hodnoceni_pocet
         ? hvezdy(p.hodnoceni_prumer, true) +
           '<strong>' + p.hodnoceni_prumer + '</strong>' +
           '<span class="skore__pocet">' + p.hodnoceni_pocet +

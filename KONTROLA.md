@@ -61,6 +61,11 @@ databáze hodnocení člověka odmítá („Hodnotit lze jen firmu"). Kdo by to
 zkusil, dostal by chybu. Sekce i skóre se teď u lidí neukážou —
 v prohlížečové i v serverem vykreslené verzi.
 
+### 🟡 U člověka svítilo „Zatím bez hodnocení" (10. 9.)
+Sekci hodnocení jsem u lidí skryl atributem `hidden`, jenže `.firma__skore` má ve
+stylech `display:flex`, který `hidden` přebije. Blok se proto u lidí vůbec nevykresluje.
+**Poučení:** `hidden` neplatí, když CSS nastaví `display` — spolehlivé je prvek nevypsat.
+
 ### 🔴 Přihlášenému se nevykreslila žádná stránka (10. 9.)
 `supabase.rpc()` nemá `.catch()`; volání ho shazovalo uvnitř `paintNav`.
 Opraveno druhým parametrem `.then()`.

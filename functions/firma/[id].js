@@ -172,12 +172,13 @@ export async function onRequestGet({ params, request }) {
     ${p.lokalita ? '<span class="tag">' + esc(p.lokalita) + '</span>' : ''}
   </div>
 
-  <div class="firma__skore"${p.account_type === 'firma' ? '' : ' hidden'}>
+  ${p.account_type !== 'firma' ? '' : `
+  <div class="firma__skore">
     ${p.hodnoceni_pocet
       ? hvezdy(p.hodnoceni_prumer) + '<strong>' + p.hodnoceni_prumer + '</strong>' +
         '<span class="skore__pocet">' + p.hodnoceni_pocet + ' hodnocení</span>'
       : '<span class="skore__pocet">Zatím bez hodnocení</span>'}
-  </div>
+  </div>`}
 
   <p class="journey__lead">${esc(p.popis || '')}</p>
 
