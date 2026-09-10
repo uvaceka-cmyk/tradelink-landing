@@ -133,12 +133,6 @@
   .nav--hud .nav__item--util-first .nav__icon{ width:18px; height:18px; color:rgba(238,241,244,.85); }
 
   .nav--hud .nav__item--button{ margin-left:2px; }
-  .nav--hud .nav__locale{ gap:6px; padding-inline:8px; margin-left:8px; }
-  .nav--hud .nav__locale .nav__icon{ color:rgba(238,241,244,.85); }
-  .nav--hud .nav__locale span{
-    font-size:.76rem; font-weight:600; letter-spacing:.05em; color:rgba(238,241,244,.88);
-  }
-  .nav--hud .nav__chevron{ width:12px; height:12px; color:rgba(238,241,244,.55); }
 }
 
 /* ---------- výtah (desktop/tablet) ----------
