@@ -21,7 +21,7 @@ Naposledy aktualizováno: **10. 9. 2026**
 
 | # | Co | Kde | Co zbývá |
 |---|---|---|---|
-| 2.1 | **Platby přes Stripe** | `supabase/022-platby-stripe.sql`, `functions/api/stripe/checkout.js`, `functions/api/stripe/webhook.js` | migrace **nespuštěná**; chybí tlačítko v `ucet.html`; chybí účet u Stripu (chce IČO) a klíče v Cloudflare: `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_SERVICE_KEY`; **neotestováno** |
+| 2.1 | **Platby přes Stripe** | `supabase/022-platby-stripe.sql`, `functions/api/stripe/checkout.js`, `functions/api/stripe/webhook.js`, tlačítko v `ucet.html` | migrace **spuštěná**, kód i tlačítko hotové. Zbývá **účet u Stripu** (chce IČO), tarif `price_…` a klíče v Cloudflare: `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`, `SUPABASE_SERVICE_KEY`. Do té doby tlačítko poctivě hlásí, že platby neběží. **Neotestováno se skutečnou platbou.** |
 | 2.2 | **Výměna klíče k Resendu** | `private.app_secrets` | klíč se 10. 9. objevil v textu konverzace → vyměnit za nový a starý v Resendu zrušit |
 | 2.3 | **Profilové fotky a loga** | — | jen návrh, nezačato: úložiště, ořez v prohlížeči, monogram místo chybějící fotky, napojení na nahlašování a na mazání účtu |
 | 2.4 | **Jazykové verze** | `nav-hud.css` | přepínač „CZ" v navigaci je **atrapa** (`aria-hidden`, nikam nevede). Buď odstranit, nebo udělat doopravdy. Kamarád ví. |
