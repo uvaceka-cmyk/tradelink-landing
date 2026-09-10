@@ -646,6 +646,33 @@ práci, ať si to projde — jinak bude hledat v kódu něco, co v kódu není.
 **Přístupy:** Supabase, Cloudflare i Seznam jedou pod účty uživatele. Hesla nikde
 nejsou a nikdo je po uživateli nechce.
 
+## Karty s čísly na homepage — co do nich patří
+
+Karty byly 10. 9. odstraněny při sladění homepage s návrhy. **Uživatel je chce zpátky**
+a mají se vrátit v novém zlatém vzhledu. Data na ně už jsou hotová a čekají:
+`functions/api/statistiky.js` (skutečná čísla, mezipaměť 30 minut) a blok na konci
+`site/homepage.js`, který je do stránky doplní a po půl hodině obnoví.
+
+**Aby se napojily samy, musí mít značky přesně tahle jména:**
+
+```html
+<div class="stat-cards" id="statistiky" hidden>
+  <a class="stat-card" data-karta="lide"     href="obory.html?role=hledam-zamestnance">
+    …<strong data-stat="lide">0</strong><span>pracovníků k dispozici</span></a>
+  <a class="stat-card" data-karta="poptavky" href="nabidky?typ=zakazka">
+    …<strong data-stat="poptavky">0</strong><span>aktivních poptávek</span></a>
+  <a class="stat-card" data-karta="firmy"    href="nabidky?typ=prace">
+    …<strong data-stat="firmy">0</strong><span>firem nabírá</span></a>
+  <a class="stat-card stat-card--note" data-karta="posledni" href="nabidky">
+    …<strong>Nová příležitost</strong><span data-stat="posledni">právě teď</span></a>
+</div>
+```
+
+Podstatné je jen `id="statistiky"`, `hidden`, `data-karta` a `data-stat`. Vzhled si
+klidně předělej. `hidden` tam patří schválně: **dokud není co ukázat, karty se neobjeví**
+(skript je odkryje sám). Prázdné karty s nulami vypadají hůř než žádné a vymyšlená čísla
+— původní 124 / 38 / 21 — na web, který slibuje ověřené firmy, nepatří vůbec.
+
 ## Important Files
 
 - `site/index.html` — homepage/atrium, hero text, výtah; `site/homepage.css`/`.js`,
