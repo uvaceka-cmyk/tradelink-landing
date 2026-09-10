@@ -335,11 +335,24 @@ a.floor:active{transform:translateX(4px) scale(.98)}
 .reception[data-enter].is-entered{opacity:1}
 .reception[data-enter].is-entered .reception__media img{transform:none}
 /* po videu z homepage: fotka se už nepřibližuje (video ji odvezlo), ale
-   krátké prolnutí zůstává — poslední snímek videa a statická fotka recepce
-   nejsou nikdy úplně stejný odstín, prolnutí ten skok schová */
-html.arrive-video .reception[data-enter]{opacity:0;transition:opacity .4s var(--ease)}
-html.arrive-video .reception[data-enter].is-entered{opacity:1}
+   prolnutí zůstává — poslední snímek videa a statická fotka recepce nejsou
+   nikdy úplně stejný odstín, prolnutí ten skok schová. Bloky (nadpis, karty,
+   výtah) naskakují se zpožděním po fotce, ne všechno najednou. */
+html.arrive-video .reception[data-enter]{opacity:1;transition:none}
+html.arrive-video .reception[data-enter] .reception__media{opacity:0;transition:opacity .5s var(--ease)}
+html.arrive-video .reception[data-enter].is-entered .reception__media{opacity:1}
 html.arrive-video .reception[data-enter] .reception__media img{transform:none;transition:none}
+html.arrive-video .reception[data-enter] .reception__intro,
+html.arrive-video .reception[data-enter] .choices,
+html.arrive-video .reception[data-enter] .elevator{
+  opacity:0;transform:translateY(6px);
+  transition:opacity .45s var(--ease) .18s,transform .45s var(--ease) .18s;
+}
+html.arrive-video .reception[data-enter].is-entered .reception__intro,
+html.arrive-video .reception[data-enter].is-entered .choices,
+html.arrive-video .reception[data-enter].is-entered .elevator{
+  opacity:1;transform:none;
+}
 .reception__media{position:relative;isolation:isolate}
 .reception__media img{width:100%;height:clamp(260px,44svh,420px);object-fit:cover;object-position:center 40%}
 /* neonové logo ve fotce vede domů — jen na desktopu, kde je fotka celá scéna */
