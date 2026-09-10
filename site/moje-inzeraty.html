@@ -233,6 +233,12 @@
             : '') +
           '<p>' + esc(nazevOboru(i.obor)) + (i.podobor ? ' → ' + esc(i.podobor) : '') +
           (i.lokalita ? ' · ' + esc(i.lokalita) : '') + (i.odmena ? ' · ' + esc(i.odmena) : '') + '</p>' +
+          /* Kolikrát si inzerát někdo otevřel. Bez čísla nemá zadavatel
+             jak poznat, jestli mu web něco přinesl. */
+          (i.zverejnen
+            ? '<p class="field__hint">Zobrazeno ' + esc(i.zobrazeni || 0) + '×' +
+              (pocty[i.id] ? ' · odpovědí ' + esc(pocty[i.id].pocet) : '') + '</p>'
+            : '') +
           '<div class="actions" style="margin-top:16px">' +
             (i.zverejnen ? '<a class="btn btn--ghost" href="/inzerat?id=' + encodeURIComponent(i.id) + '">Zobrazit</a>' : '') +
             '<button class="btn btn--ghost" type="button" data-odpovedi="' + i.id + '">Odpovědi' + odpovedi(i.id) + '</button>' +

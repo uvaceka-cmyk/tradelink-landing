@@ -189,6 +189,215 @@ Web je celý česky a běží na vlastní doméně.
   Ověřeno dvakrát: přímé odeslání přes Resend i potvrzovací e-mail z registrace
   na Supabase, obojí *Delivered*.
 
+**Nabídky jsou vidět bez registrace** (`functions/nabidky.js`, migrace `019`)
+- `/nabidky` — serverem vykreslený přehled všeho zveřejněného, s přepínačem
+  Vše / Nabídky práce / Poptávky zakázek (`?typ=prace`, `?typ=zakazka`; jiná hodnota
+  se ignoruje). Prohlížet jde bez přihlášení i bez účtu.
+- **Odpovídat jde jen s účtem** — tak zadavatel ví, s kým mluví, a pozná, že člověk
+  přišel přes TradeLink.
+- **Telefon a web firmy vidí jen přihlášený.** Z `verejne_profily` zmizely; vydá je
+  `kontakt_firmy()`, a jen u zveřejněného profilu. Nepřihlášenému se místo nich ukáže
+  výzva k přihlášení — i na serverem vykresleném `/firma/<id>`.
+- **Počítadlo zobrazení** (`inzeraty.zobrazeni`, `zapocitat_zobrazeni()`): počítá
+  prohlížeč, jednou za návštěvu (`sessionStorage`), vlastní zobrazení se nepočítá.
+  Zadavatel číslo vidí v Mých inzerátech; veřejně se neukazuje. Roboti se nezapočítají,
+  protože nespouštějí JavaScript.
+- Kdo chce psát mimo web, najde u formuláře odpovědi větu k opsání
+  („Reaguji na inzerát na TradeLink.cz, č. …"), aby zadavatel poznal, odkud přišel.
+- Opraveno pravidlo v `robots.txt`: `Disallow: /firma` zakazovalo i `/firma/<id>`,
+  tedy serverem vykreslený profil, který je pro vyhledávače ten správný. Nově `/firma# Project Handoff
+
+## Current State
+
+TradeLink je statický web nasazený na Cloudflare Pages, napojený na Supabase (účty + databáze)
+a na registr ARES (ověřování firem). Homepage je jedna fullscreen scéna „atrium" se skutečným
+výtahem; průchod homepage/atrium → recepce → role → obor → podobor je funkční, účty a ověřování
+firem fungují a jsou otestované. Profily lidí i firem se dají
+vyplnit a zveřejnit, inzeráty a poptávky se dají zadávat, zveřejňovat a odpovídat na ně.
+Funguje hodnocení firem, nahlašování obsahu s frontou pro správce a sběr zpětné vazby.
+**Průchod je celý funkční včetně výpisu** — po výběru podoboru se načte, co k té volbě
+patří (nabídky práce, poptávky, lidé nebo firmy). **Zbývá ho ale vidět s reálnými daty:**
+databáze je prázdná, takže zatím vždycky vyjde prázdný stav.
+
+**Živě:** https://tradelink.cz — doména je připojená, certifikát vydaný.
+`www.tradelink.cz` i původní `tradelink-landing.pages.dev` se trvale (301) přesměrují
+na hlavní adresu (`functions/_middleware.js`), aby se tentýž obsah nepočítal vícekrát.
+**Repo:** https://github.com/uvaceka-cmyk/tradelink-landing (veřejné, větev `main`)
+**Nasazení:** Cloudflare Pages, automaticky z `main`, build output directory = `site`, bez build příkazu
+**Databáze:** Supabase projekt `tradelink`, ref `hgjajfkaotflkmyrryak`, region eu-central-1 (Frankfurt)
+
+Web je celý česky a běží na vlastní doméně.
+
+## Completed
+
+**Stránky** (vše v `site/`, mobile-first, dark luxury vzhled)
+- `index.html` — homepage jako jedna fullscreen scéna „atrium": nadpis, text, 2 CTA, skutečný
+  výtah (7 klikatelných pater, vedou na `recepce.html`), integrovaná smoked/blur nav. Na mobilu
+  tlačítko „Patra" otevře bottom sheet se stejnými patry. Cinematic přechod na recepci přes
+  `transition.js` (~650 ms, `prefers-reduced-motion` respektováno).
+- `lobby.html` — **nepoužívaná legacy stránka**, nikam z homepage/recepce neodkazuje. Zůstává
+  v repu záměrně nesmazaná (patra na ní jsou pořád klikatelná odkazují na `recepce.html`, ale
+  nic na ni už nevede).
+- `recepce.html` — fotka jako hlavní vizuál, 4 volby typu návštěvníka (2 vlevo, 2 vpravo),
+  vstupní fade animace při příchodu z atria
+- `obory.html` — výběr odvětví → podoboru, stav drží URL (`?role=&obor=&podobor=`)
+- `registrace.html`, `prihlaseni.html`, `obnova-hesla.html`, `nove-heslo.html`, `ucet.html`
+- `faq.html` — časté otázky (ceny, IČO, co znamená ověřená firma, kdo vidí profil,
+  hodnocení, nahlašování, zrušení účtu). Odkazovaná z patičky všech stránek včetně
+  serverem vykreslených, je v mapě webu.
+- `podminky.html`, `soukromi.html` — právní texty
+
+**Homepage / atrium** (`site/homepage.css`, `site/transition.js`, `site/homepage.js` — nové)
+- `site/homepage-master.webp` — schválená fotka atria, žádné vypálené UI, hero pozadí
+- výtah: `aside.elevator` na desktopu/tabletu (7 pater, kruhová čísla, modrobílý prstenec na
+  aktivním „L"), na mobilu tlačítko „Patra" + bottom sheet — obojí vede na `recepce.html`
+- `transition.js` — sdílený, bez závislostí: exit animace + navigace pro `[data-transition]`
+  odkazy (~650 ms, jen `opacity`/`transform`/`filter`), entrance reveal pro `[data-enter]` na
+  `recepce.html`. Respektuje `prefers-reduced-motion`; bez JS odkazy fungují okamžitě.
+- ověřeno živě v Claude in Chrome (desktop 1920×1080 i mobil 390×844 — přes lokální stránku se
+  stejně-původovými `<iframe>` v reálné šířce, protože `resize_window` v tomhle prostředí
+  nefunguje): hover/klik výtahu, přechod na recepci, pokračování do `obory.html`, mobilní sheet
+- `site/nav-hud.css` (nové, sdílené homepage + recepcí, pod `.nav--hud`) — horní navigace
+  přestavěná na „HUD control bar": smoked glass, tenčí výška, inline SVG ikony (dveře/lobby,
+  osoba+/registrace, účet/přihlášení, dům a šipky výtahu na recepci), skyline monogram u brandu,
+  metalická linka, výraznější glow na aktivní položce. Čistě vizuální — flow, hrefy ani logika
+  (`app.js`, `auth.js`) se nemění. Ikona je sourozenec `<a>`, ne potomek, protože `auth.js`
+  přepisuje `textContent` odkazu `#nav-account` podle stavu přihlášení a smazal by ji, kdyby
+  byla vevnitř. Ostatní stránky (`lobby.html`, `obory.html`...) mají pořád starou plain `.nav`,
+  nedotčenou.
+- **Přiblíženo master referenčnímu screenshotu** (density/layout, ne bitmapa — vše skutečné
+  HTML/CSS/SVG): nav dostala pravý utility cluster (hledání a jazyk jsou čistě dekorativní,
+  `aria-hidden`, na mobilu schované — web nemá vyhledávání ani jinou jazykovou verzi;
+  `Přihlásit se`/`Založit účet` jsou pořád stejné odkazy, jen `Založit účet` je teď plné
+  tlačítko). Pod CTA na homepage 4 malé info karty (Lidé/Firmy/Ověřeno/Nové nabídky) —
+  kvalitativní tvrzení, ne vymyšlená čísla (databázi teď nemáme čím podložit). Výtah je vyšší,
+  blíž okraji, patra rozprostřená přes celou výšku, dole podpis „Stejná budova. Společná
+  příležitost." Recepce má nad nadpisem drobný štítek „TradeLink · Patro L". Role cards
+  a fotka recepce nedotčené.
+
+**Účty (Supabase)**
+- registrace, přihlášení, obnova hesla, nastavení nového hesla, přehled účtu
+- typ účtu se odvozuje z volby na recepci: *hledám zaměstnance* a *hledám zakázky* = firma,
+  *hledám práci* a *chci zadat zakázku* = osoba
+- chybové hlášky přeložené do češtiny (`auth.js`, funkce `czechError`)
+- obnova hesla neprozradí, jestli e-mail existuje
+
+**Ověřování firem proti ARES**
+- `functions/api/ares.js` — Cloudflare Pages Function; ARES nejde volat z prohlížeče (CORS)
+- kontrolní číslice IČO (modulo 11) → dohledání v ARES → odmítnutí zaniklých subjektů
+- výsledek se podepisuje HMAC-SHA256 klíčem `ARES_SECRET`, podpis platí hodinu
+- trigger v databázi podpis přepočítá; bez platného podpisu firemní účet nevznikne
+- název a sídlo se do profilu zapisují jen z podepsaných dat, ne od zadávajícího
+- jedno IČO = jeden účet (unikátní index v databázi)
+
+**Ověřování lidí**
+- potvrzení e-mailu je vyžadované pro všechny účty (nastaveno v Supabase)
+- jednorázové schránky (mailinator, yopmail a spol.) se odmítají — seznam je
+  v `private.blokovane_domeny`, kontrola běží v triggeru, formulář ji jen předběhne
+
+**Profily** (`site/profil.html`, migrace `006`)
+- uživatel vyplňuje popis, odvětví a obor, lokalitu; firmy navíc web a telefon
+- údaje z ARES jsou u firem jen ke čtení, profil je nepřepíše
+- profil je ve výchozím stavu **skrytý**, zveřejní se zaškrtnutím; zveřejnit jde jen profil
+  s popisem a odvětvím (hlídá omezení v databázi, ne formulář)
+- ostatním se ukazuje přes pohled `public.verejne_profily` — bez e-mailu, telefon a sídlo
+  jen u firem
+
+**Inzeráty a poptávky** (`site/moje-inzeraty.html`, migrace `007`)
+- typ `prace` zadává firma, typ `zakazka` soukromá osoba; texty formuláře se mění podle účtu
+- zadat, upravit, smazat, skrýt / zveřejnit, nepovinná platnost do data
+- ochrany v databázi: nabídku práce zadá jen firma **ověřená v ARES**, neověřená firma
+  nezadá nic, jeden účet smí mít naráz nejvýš **20 zveřejněných** inzerátů
+- `public.verejne_inzeraty` je rozhraní pro výpis — vynechává skryté i prošlé inzeráty
+  a e-mail autora; nese jméno autora, typ účtu a příznak ověřené firmy
+
+**Výpis** (`site/obory.html` + `app.js`, funkce `vypis`)
+- poslední krok průchodu; co se ukáže, řídí volba z recepce:
+  *hledám práci* → inzeráty `typ=prace`, *hledám zakázky* → `typ=zakazka`,
+  *hledám zaměstnance* → profily lidí, *chci zadat zakázku* → profily firem
+- čte veřejné pohledy `verejne_inzeraty` a `verejne_profily` — skryté, prošlé
+  a nezveřejněné položky v nich nejsou a e-maily nenesou
+- karty odkazují na serverem vykreslené `/nabidka/<id>` a `/firma/<id>`
+- ošetřené stavy: načítání, prázdný výsledek, chyba spojení; odpověď, která doběhne
+  po prokliku jinam, se zahazuje
+- **stavěl to Claude, ne kamarád** — původně to byl jeho úkol, ale web byl mezitím
+  živý bez své hlavní funkce. Kdo na tom bude dělat dál, ať to nestaví podruhé.
+
+**Odpovědi na inzerát** (`site/inzerat.html`, migrace `010`)
+- veřejný detail inzerátu s formulářem „Ozvat se"
+- odpověď vidí jen zadavatel a její autor; na vlastní, skrytý ani prošlý inzerát
+  odpovědět nelze, jedna odpověď na inzerát od účtu, denní strop 30
+- zadavatel vidí u svých inzerátů počet odpovědí včetně nepřečtených
+- odesílatel má přehled svých odpovědí na `site/moje-odpovedi.html` včetně toho,
+  jestli si je zadavatel přečetl
+
+**Hodnocení firem a živnostníků** (`site/firma.html`, migrace `008`)
+- jeden účet hodnotí jednu firmu jednou, jen s potvrzeným e-mailem, vlastní firmu ne
+- průměr a počet se propisují do `verejne_profily`
+- jméno hodnotícího jen u zveřejněných profilů, jinak „ověřený uživatel"
+
+**Nahlašování obsahu** (migrace `011`)
+- nahlásit inzerát, hodnocení nebo profil může i nepřihlášený
+- při **třech** nezávislých hlášeních se obsah sám skryje (pojistka, ne rozsudek)
+- fronta a rozhodnutí správce na `site/sprava.html`
+
+**Zpětná vazba na platformu** (`site/zpetna-vazba.html`, migrace `009`)
+- hodnocení TradeLinku, návrhy a hlášení chyb; psát smí i nepřihlášený
+- čte jen správce (`profiles.spravce`) na `site/sprava.html`
+
+**Viditelnost ve vyhledávačích**
+- `/nabidka/<id>` — inzerát **vykreslený na serveru** (`functions/nabidka/[id].js`).
+  Nutné proto, že Seznam JavaScript nespouští vůbec a Google se zpožděním; stránka
+  `inzerat.html` je pro prohlížeč, `/nabidka/<id>` pro vyhledávače a sdílení.
+- nabídky práce nesou **JobPosting** (Google Jobs), poptávky obecný Offer
+- `/sitemap.xml` (`functions/sitemap.xml.js`) se generuje z databáze, nový inzerát je
+  v mapě hned
+- `site/robots.txt` drží mimo výsledky přihlašování, účty, správu i `inzerat.html`
+  (aby se tentýž obsah nepočítal dvakrát)
+- popisky pro sdílení na veřejných stránkách, `noindex` na soukromých
+- kanonická adresa se dopočítá v `app.js` podle toho, kde web běží
+- `/robots.txt` a `/llms.txt` generují funkce, aby adresy odpovídaly doméně, na které
+  web běží — statický robots.txt byl neplatný, mapa webu se musí uvádět celou adresou
+- Lighthouse na mobilu: přístupnost, osvědčené postupy, SEO i přístupnost pro AI
+  agenty **100/100**, 47 kontrol prošlo, žádná neselhala
+
+**Doména a infrastruktura**
+- `tradelink.cz` běží na Cloudflare (přepnuto z Wedosu 9. 9. 2026, zóna aktivní)
+- doména i `www` připojené k Pages projektu, certifikát vydaný
+- `www` a `pages.dev` se trvale přesměrují na hlavní adresu (`functions/_middleware.js`);
+  náhledová nasazení `<hash>.tradelink-landing.pages.dev` zůstávají přístupná
+- Supabase Site URL i redirect allow-list ukazují na `https://tradelink.cz`
+- `og:image` na všech stránkách ukazuje na `https://tradelink.cz/tradelink.jpeg`
+- **příjem**: `info@tradelink.cz` je **skutečná schránka v Seznam Email Profi**
+  (od 10. 9. 2026). MX ukazují na `*.emailprofi.seznam.cz` (priority 10 a 20), kořenový
+  SPF je `v=spf1 include:spf.seznam.cz ~all`. Čte se na `email.seznam.cz` pod účtem
+  `info@tradelink.cz` — **heslo má jen uživatel**. Dřívější přeposílání přes Cloudflare
+  Email Routing je vypnuté a jeho DNS záznamy (3 MX + DKIM + starý kořenový SPF) smazané;
+  soukromá schránka provozovatele už v cestě pošty nefiguruje.
+- **Seznam Webmaster** — doména `tradelink.cz` **ověřená** (10. 9. 2026) pod účtem
+  `info@tradelink.cz`, přes meta tag `seznam-wmt` v `site/index.html`. **Ten tag nemazat**,
+  jinak ověření spadne; nový vygenerovaný tag zneplatní předchozí.
+  Seznam **nenabízí ověření přes DNS**, jen soubor v kořeni webu nebo meta tag — a soubor
+  by narazil na to, že Pages přesměrovává `.html` adresy na bezpříponové.
+  **Mapa webu se Seznamu neodesílá** — jeho Webmaster na to nemá pole, bere si ji
+  z `robots.txt`, kde uvedená je.
+  **Pokusné stažení** (nástroj ve Webmasteru) potvrdilo, co robot na homepage vidí:
+  HTTP 200 za 335 ms, správný titulek i popis, celý text stránky včetně patičky.
+  U webu, kde Seznam nespouští JavaScript, je tohle jediná pořádná kontrola — projít
+  jím i `/nabidka/<id>`, až budou první inzeráty.
+- **Google Search Console** — doména ověřená záznamem TXT v Cloudflare, mapa webu
+  `https://tradelink.cz/sitemap.xml` odeslaná. Ověřovací TXT záznam nemazat, jinak
+  se ověření ztratí.
+- **odesílání přes Resend** (region Irsko, `eu-west-1` — data zůstávají v EU).
+  V Cloudflare přibyly tři záznamy: DKIM `resend._domainkey`, MX a SPF na `send`.
+  Doména je v Resendu ve stavu *Verified*. Supabase posílá přes `smtp.resend.com:465`,
+  uživatel `resend`, odesílatel `TradeLink <info@tradelink.cz>`.
+  **API klíč Resendu je jen v Supabase** — není v repozitáři ani nikde v kódu.
+  Ověřeno dvakrát: přímé odeslání přes Resend i potvrzovací e-mail z registrace
+  na Supabase, obojí *Delivered*.
+
+.
+
 **Poptávka bez účtu** (`site/poptavka.html`, migrace `018`)
 - Kdo shání řemeslníka, napíše poptávku rovnou — bez zakládání účtu. Účet mu vznikne
   potvrzením e-mailu.
@@ -398,6 +607,7 @@ práci, ať si to projde — jinak bude hledat v kódu něco, co v kódu není.
 | 10. 9. 2026 | Supabase → SQL Editor | vložená a **hned zase smazaná** testovací data (`%@tradelink.test`) |
 | 10. 9. 2026 | Google Search Console | ruční žádost o indexování: `/recepce`, `/faq`, `/podminky`, `/soukromi` |
 | 10. 9. 2026 | Supabase → SQL Editor | spuštěná migrace `018-poptavka-bez-uctu.sql` (**znovu nepouštět**) |
+| 10. 9. 2026 | Supabase → SQL Editor | spuštěná migrace `019-zobrazeni-a-kontakt.sql` (**znovu nepouštět**) |
 | 10. 9. 2026 | Seznam Webmaster | doména přidaná pod `info@tradelink.cz`, čeká na kliknutí „Ověřit doménu" po nasazení meta tagu |
 
 **Přístupy:** Supabase, Cloudflare i Seznam jedou pod účty uživatele. Hesla nikde

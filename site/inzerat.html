@@ -88,7 +88,8 @@
 
       if (!mojeId) {
         box.innerHTML = '<div class="card"><h3>Zaujalo vás to?</h3>' +
-          '<p>Odpovídat může jen přihlášený účet — díky tomu zadavatel ví, s kým mluví.</p>' +
+          '<p>Odpovídat může jen přihlášený účet — díky tomu zadavatel ví, s kým mluví, ' +
+          'a pozná, že jste přišli přes TradeLink.</p>' +
           '<div class="actions" style="margin-top:16px">' +
             '<a class="btn" href="prihlaseni.html">Přihlásit se</a>' +
             '<a class="btn btn--ghost" href="registrace.html">Založit účet</a>' +
@@ -124,7 +125,12 @@
           '<p class="field__hint">Zadavatel uvidí vaši zprávu a odkaz na váš profil.</p>' +
           '<p class="form__status" id="stav-o" hidden></p>' +
           '<button class="btn" type="submit">Odeslat</button>' +
-        '</form>';
+        '</form>' +
+        /* Kdo se ozve mimo web, ať má po ruce, čím se odvolat — jinak
+           zadavatel nepozná, odkud se o něm člověk dozvěděl. */
+        '<p class="field__hint" style="margin-top:14px">Píšete raději mimo TradeLink? ' +
+          'Uveďte ve zprávě: <strong>Reaguji na inzerát na TradeLink.cz, č. ' +
+          esc(String(id).slice(0, 8)) + '</strong></p>';
 
       document.getElementById('form-o').addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -193,6 +199,17 @@
       var res = await supabase.from('verejne_inzeraty').select('*').eq('id', id).maybeSingle();
       if (res.error) return status(gate, czechError(res.error), 'error');
       if (!res.data) return status(gate, 'Inzerát tu není — mohl být stažený nebo mu vypršela platnost.', 'error');
+
+      /* Zadavatel má vidět, že si jeho inzerát někdo otevřel. Počítá se
+         jednou za návštěvu — bez toho by stačilo mačkat F5. Vlastní
+         zobrazení se nezapočítává, to by číslo jen nafukovalo. */
+      try {
+        var klic = 'tl-videno-' + id;
+        if (!sessionStorage.getItem(klic) && mojeId !== res.data.autor_id) {
+          sessionStorage.setItem(klic, '1');
+          supabase.rpc('zapocitat_zobrazeni', { p_id: id });
+        }
+      } catch (e) { /* zakázané úložiště nesmí rozbít stránku */ }
 
       inzerat = res.data;
       document.title = inzerat.nazev + ' — TradeLink';

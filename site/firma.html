@@ -241,12 +241,23 @@
       /* Odkaz zadává majitel profilu. Adresa jiného schématu než http(s)
          — třeba javascript: — by po kliknutí spustila cizí kód. Taková
          se vypíše jen jako text. Hlídá to i databáze (migrace 016). */
-      if (p.web) {
-        radky.push(['Web', /^https?:\/\//i.test(p.web)
-          ? '<a href="' + esc(p.web) + '" target="_blank" rel="noopener nofollow">' + esc(p.web) + '</a>'
-          : esc(p.web)]);
+      /* Telefon a web vydá databáze jen přihlášenému (migrace 019).
+         Bez toho jde firmu oslovit mimo TradeLink a nikdo se nedozví,
+         odkud se o ní člověk dozvěděl — ani ona sama. */
+      var kontakt = await supabase.rpc('kontakt_firmy', { p_id: id });
+      var k = (kontakt.data && kontakt.data[0]) || null;
+
+      if (k && k.web) {
+        radky.push(['Web', /^https?:\/\//i.test(k.web)
+          ? '<a href="' + esc(k.web) + '" target="_blank" rel="noopener nofollow">' + esc(k.web) + '</a>'
+          : esc(k.web)]);
       }
-      if (p.telefon) radky.push(['Telefon', esc(p.telefon)]);
+      if (k && k.telefon) radky.push(['Telefon', esc(k.telefon)]);
+      if (!k) {
+        radky.push(['Kontakt',
+          '<a href="prihlaseni.html">Přihlaste se</a> a uvidíte telefon i web. ' +
+          'Firma tak pozná, že jste přišli přes TradeLink.']);
+      }
       document.getElementById('udaje').innerHTML = radky.map(function (r) {
         return '<div class="detail__row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
       }).join('');

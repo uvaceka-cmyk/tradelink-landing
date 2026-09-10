@@ -145,8 +145,8 @@ export async function onRequestGet({ params, request }) {
     identifier: p.ico || undefined,
     address: p.sidlo ? { '@type': 'PostalAddress', streetAddress: p.sidlo, addressCountry: 'CZ' } : undefined,
     areaServed: p.lokalita || undefined,
-    telephone: p.telefon || undefined,
-    sameAs: p.web || undefined,
+    /* Telefon ani web tu nejsou: veřejný pohled je od migrace 019 nevydává,
+       kontakt patří přihlášeným. */
     aggregateRating: p.hodnoceni_pocet ? {
       '@type': 'AggregateRating',
       ratingValue: p.hodnoceni_prumer,
@@ -184,8 +184,7 @@ export async function onRequestGet({ params, request }) {
   <dl class="detail">
     ${p.ico ? '<div class="detail__row"><dt>IČO</dt><dd>' + esc(p.ico) + '</dd></div>' : ''}
     ${p.sidlo ? '<div class="detail__row"><dt>Sídlo</dt><dd>' + esc(p.sidlo) + '</dd></div>' : ''}
-    ${p.web ? '<div class="detail__row"><dt>Web</dt><dd>' + odkazNaWeb(p.web) + '</dd></div>' : ''}
-    ${p.telefon ? '<div class="detail__row"><dt>Telefon</dt><dd>' + esc(p.telefon) + '</dd></div>' : ''}
+    <div class="detail__row"><dt>Kontakt</dt><dd><a href="/prihlaseni">Přihlaste se</a> a uvidíte telefon i web. Firma tak pozná, že jste přišli přes TradeLink.</dd></div>
   </dl>
 
   <h2 style="font-size:var(--step-2);margin:44px 0 18px">Hodnocení</h2>
