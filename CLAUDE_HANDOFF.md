@@ -213,9 +213,11 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
   takhle, ne smazat).
 - **Ceny jsou na webu jen ve `faq.html`** (změněno 10. 9. 2026; předtím byly odstraněné úplně).
   Obchodní model: lidé zdarma navždy, firmy **první dva měsíce zdarma, potom 199 Kč měsíčně**.
-  Uživatel to sám označil za neuzavřené („zatím je nevíme… asi"), takže FAQ o tom mluví
-  jako o záměru, ne o platném ceníku, a slibuje oznámení dopředu a nikdy ne zpětně.
-  **Než se cena zveřejní jako závazná, musí sedět s databází** — viz Known Issues.
+  **199 Kč je konečná částka, ne základ daně** — uživatel není a zatím nebude plátcem DPH,
+  takže se k ceně nic nepřičítá a FAQ to takhle říká. Kdyby se plátcem stal, je to rozhodnutí
+  navíc: buď 199 Kč zůstane koncová a ubere se z ní daň, nebo cena vzroste.
+  Ceník sám uživatel označil za neuzavřený, takže FAQ o něm mluví jako o záměru
+  a slibuje oznámení dopředu a nikdy ne zpětně.
   **Zpoplatnění se neřeší první měsíc až dva po spuštění** (rozhodnuto 9. 9.) — teprve pak
   přijdou na řadu placené věci: zvýhodněné umístění inzerátu, placené ověření identity
   jednatele a data o trhu. Délka zkušební doby zůstává tři měsíce, dokud uživatel neřekne jinak.
@@ -278,11 +280,6 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 - **Šablony e-mailů v Supabase jsou anglicky.** Web je celý česky, ale zpráva o obnově
   hesla dorazí jako „Reset your password". Přeložit v Supabase → Authentication →
   Email Templates (potvrzení registrace, obnova hesla, změna e-mailu).
-- **Zkušební doba na webu (2 měsíce) nesedí s databází (3 měsíce).** `faq.html` mluví
-  o dvou měsících zdarma, ale trigger `handle_new_user` plní `trial_ends_at`
-  hodnotou `now() + interval '3 months'` (naposledy v `012-budouci-spravci.sql`).
-  Dnes to nikoho nepoškozuje — firmy dostanou víc, než web slibuje — ale až se začne
-  účtovat, musí to sedět. Sjednotit novou migrací, nebo opravit číslo ve FAQ.
 - **Neexistující adresa vrací homepage se stavem 200.** V `site/` chybí `404.html`,
   takže Cloudflare Pages na cokoli nenalezeného servíruje homepage jako platnou stránku
   (ověřeno na `/seznam-verification.html`). Pro vyhledávače je to nekonečně mnoho
@@ -392,6 +389,8 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
 - `site/supabase-config.js` — adresa projektu a veřejný publishable klíč (patří do prohlížeče)
 - `site/style.css` — celý designový systém, mobile-first, breakpointy 600/900/1100/1500 px
 - `functions/api/ares.js` — ověření firmy v ARES a podpis výsledku
+- `supabase/017-zkusebni-doba-dva-mesice.sql` — zkušební doba firem zkrácená na dva měsíce,
+  aby seděla s `faq.html`; obsahuje nejnovější verzi triggeru `handle_new_user`
 - `supabase/schema.sql` → `002` → `003` → `004` → `005` — migrace v tomto pořadí; spouští se
   ručně v SQL editoru Supabase. Trigger `handle_new_user` je vždy v té nejnovější z nich.
 
