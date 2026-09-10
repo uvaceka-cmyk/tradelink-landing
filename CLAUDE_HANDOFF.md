@@ -277,13 +277,13 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
   `/sprava` bez přihlášení odmítá a přesměruje na `/prihlaseni`.
   **Heslo si volí uživatel sám a nikde se nesdílí** — nevymýšlet mu ho ani ho po něm chtít.
   Pozor na záměnu: heslo k účtu na webu a heslo do schránky na Seznamu jsou dvě různé věci.
-- **Šablony e-mailů v Supabase jsou anglicky.** Web je celý česky, ale zpráva o obnově
-  hesla dorazí jako „Reset your password". Přeložit v Supabase → Authentication →
-  Email Templates (potvrzení registrace, obnova hesla, změna e-mailu).
-- **Neexistující adresa vrací homepage se stavem 200.** V `site/` chybí `404.html`,
-  takže Cloudflare Pages na cokoli nenalezeného servíruje homepage jako platnou stránku
-  (ověřeno na `/seznam-verification.html`). Pro vyhledávače je to nekonečně mnoho
-  duplicit homepage. Oprava je jeden soubor, viz Next Steps.
+- **Šablony e-mailů v Supabase jsou česky** (od 10. 9. 2026): potvrzení registrace,
+  obnova hesla a změna e-mailové adresy — předmět i tělo. Ostatní šablony (pozvánka,
+  magic link, opětovné ověření, bezpečnostní upozornění) zůstávají anglicky, protože je
+  web nepoužívá. Kdyby se některá začala používat, přeložit ji taky.
+  **Pozor při úpravách přes prohlížeč:** tělo šablony je v Monaco editoru a uložení musí
+  přijít až v dalším kroku — když se klikne na Uložit hned po vložení textu, uloží se
+  jen předmět a tělo zůstane staré (potkalo mě to dvakrát).
 - **Živnostníkovi „Hledám zakázky" nabízí web zadání nabídky práce.** `moje-inzeraty.html`
   se rozhoduje jen podle `account_type`, takže účet typu firma dostane vždy typ `prace`
   (`site/moje-inzeraty.html:161`). Podle domluveného návrhu ale ten, kdo hledá zakázky,
@@ -335,9 +335,8 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
    na bezpříponové adresy, viz Known Issues) a odeslat `https://tradelink.cz/sitemap.xml`.
    **Zápis do Firmy.cz** počká, až bude firma — chce IČO a sídlo.
    Google Search Console je hotová.
-6. **Přeložit šablony e-mailů v Supabase do češtiny** (viz Known Issues).
-7. **Doplnit `site/404.html`** — neexistující adresa dnes vrací homepage se stavem 200,
-   takže vyhledávačům vzniká nekonečně mnoho duplicit homepage.
+6. **Zkontrolovat inzerát a profil firmy s reálnými daty** — serverem vykreslené
+   `/nabidka/<id>` a `/firma/<id>` nikdo neviděl s obsahem, jen v kódu.
 
 ## Pro druhou stranu (kamarád a jeho AI)
 
@@ -408,6 +407,36 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
   neoslabovat ve prospěch kontrol ve formuláři.
 
 ## Last Session
+
+**10. 9. 2026, večer — FAQ, ceny na webu, česká pošta a 404.**
+
+- **`site/faq.html`** — deset otázek (ceny, IČO, ověřená firma, kdo vidí profil, kdo zadává
+  inzerát, hodnocení, nahlašování, nedoručený e-mail, zrušení účtu, kdo za tím stojí).
+  Odkaz v patičce všech stránek i obou serverem vykreslených, adresa v mapě webu,
+  žádné nové CSS. Stránka zároveň nahlas říká to, co bylo dosud jen v podmínkách:
+  ARES potvrdí existenci firmy, ne oprávnění za ni jednat, a u hodnocení neověřujeme,
+  že spolupráce proběhla.
+- **Ceny jsou poprvé na webu** — a jen tam (viz Decisions Made a Do Not Change).
+  Lidé zdarma, firmy dva měsíce zdarma a potom 199 Kč měsíčně jako konečná částka
+  (uživatel není plátcem DPH). Ceník je podaný jako záměr, ne jako platný.
+- **Migrace `017-zkusebni-doba-dva-mesice.sql`** srovnala databázi s webem: trigger
+  `handle_new_user` plní `trial_ends_at` dvěma měsíci místo tří. **Spuštěná v produkci**
+  a ověřená dotazem (`pg_get_functiondef` obsahuje `2 months`, trigger žije, hlášky
+  mají diakritiku). Starých účtů se to nedotklo.
+- **Šablony e-mailů v Supabase jsou česky** — potvrzení registrace, obnova hesla, změna
+  e-mailu. Předmět i tělo, proměnné `{{ .ConfirmationURL }}` a `{{ .NewEmail }}` zachované.
+- **`site/404.html`** — neexistující adresa vracela homepage se stavem 200, což vyhledávačům
+  vyrábělo duplicity. Odkazy na téhle stránce jsou schválně absolutní (`/recepce`), protože
+  se servíruje i na adresách do hloubky, kde by relativní odkazy mířily vedle.
+- **Dvě drobné opravy** ze zkoušky správcovské stránky: dvojité „Můj účet" v navigaci
+  (čtyři stránky) a popisek na `/sprava`, který se neměnil s nadpisem.
+
+**Poznámky pro příště, obojí mě stálo čas:**
+- Vkládání textu do editorů v prohlížeči (Monaco v Supabase) **nepřepisuje, ale nalepuje** —
+  v SQL editoru po tom ležely dvě rozseknuté kopie migrace. Spolehlivé je nastavit obsah
+  přes model editoru a před spuštěním ověřit, že je tam jediná čistá kopie.
+- U šablon e-mailů musí **uložení přijít až v dalším kroku** po vložení těla, jinak se
+  uloží jen předmět.
 
 **10. 9. 2026, odpoledne — správcovský účet funguje a pošta se přestěhovala na Seznam.**
 Dvě věci, obě odbavené přes prohlížeč (Claude in Chrome) na účtech uživatele:

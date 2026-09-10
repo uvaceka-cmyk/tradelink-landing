@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="Taková stránka na TradeLinku není.">
+  <title>Stránka nenalezena — TradeLink</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="/">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="/">Hlavní stránka</a>
+      <a href="/recepce">Recepce</a>
+      <a href="/registrace">Založit účet</a>
+      <a class="is-cta" id="nav-account" href="/prihlaseni">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="prose shell">
+    <p class="prose__kicker">Chyba 404</p>
+    <h1>Tahle stránka tu není</h1>
+    <p class="prose__lead">
+      Adresa neexistuje, nebo už neplatí — inzerát mohl vypršet, být smazaný autorem
+      nebo skrytý po nahlášení.
+    </p>
+
+    <h2>Kam dál</h2>
+    <ul>
+      <li><a href="/">Hlavní stránka</a> — začátek celé cesty</li>
+      <li><a href="/recepce">Recepce</a> — vyberte, s čím přicházíte, a projděte obory</li>
+      <li><a href="/faq">Časté otázky</a> — jak to tu funguje</li>
+      <li><a href="/zpetna-vazba">Zpětná vazba</a> — když je rozbité něco, co rozbité být nemá</li>
+    </ul>
+
+    <p class="prose__note">
+      Přišli jste sem z odkazu na našem webu? Napište nám na
+      <a href="mailto:info@tradelink.cz">info@tradelink.cz</a>, ať to spravíme.
+    </p>
+
+    <div class="actions">
+      <a class="btn" href="/">Zpět na hlavní stránku</a>
+      <a class="btn btn--ghost" href="/recepce">Na recepci</a>
+    </div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="/">TradeLink</a>
+    <span class="foot__links">
+      <a href="/faq">Časté otázky</a>
+      <a href="/podminky">Podmínky užití</a>
+      <a href="/soukromi">Ochrana údajů</a>
+      <a href="/zpetna-vazba">Zpětná vazba</a>
+    </span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="app.js" defer></script>
+  <script type="module">import { paintNav } from './auth.js'; paintNav();</script>
+</body>
+</html>
