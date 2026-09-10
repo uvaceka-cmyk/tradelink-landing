@@ -23,9 +23,9 @@
     try { video.load(); } catch (e) { wantVideo = false; }
   }
 
-  var VIDEO_RATE = 2;      /* klip má 2,0 s reálného času; 2× rychlost = ~1 s dojezd
-                               beze změny samotného souboru (žádné nové vykreslení) */
-  var VIDEO_MAX_MS = 1400; /* pojistka, kdyby 'ended' nepřišlo (~1 s + rezerva) */
+  var VIDEO_RATE = 4;     /* klip má 2,0 s reálného času; 4× rychlost = ~0,5 s dojezd
+                              beze změny samotného souboru (žádné nové vykreslení) */
+  var VIDEO_MAX_MS = 750; /* pojistka, kdyby 'ended' nepřišlo (~0,5 s + rezerva) */
 
   function leaveWithVideo(href) {
     document.body.classList.add('is-video');
