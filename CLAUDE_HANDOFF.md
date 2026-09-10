@@ -731,6 +731,22 @@ klidně předělej. `hidden` tam patří schválně: **dokud není co ukázat, k
 
 ## Last Session
 
+**11. 9. 2026 — homepage na schválený snímek (přesná kompozice), bez kreditů.**
+- **Chybějící podklad:** čistá verze schváleného snímku (`Downloads/2eb0bb2c-….png`, 1672×941)
+  bez vypálené navigace, hero textu, výtahového panelu a čtyř panelů na stěně neexistuje.
+  Dřívější `homepage-master.webp` byl Higgsfield re-render — jiná kompozice (užší pult, jiné
+  rostliny, jiný pravý sloup). Nový `homepage-master.webp` je **odvozený přímo ze schváleného
+  snímku**: vypálená navigace, hero text s tlačítky a čtyři panely na stěně jsou vyretušované
+  (OpenCV inpaint), vnitřek výtahového panelu je vyplněný vlastní tmavou barvou a **perspektivní
+  zlatý rám panelu zůstal ve fotce**. Architektura je pixelově shodná s referencí. V levé
+  fasádě za hero textem jsou po retuši měkké šmouhy — schované pod textem a závojem.
+- Výtah i čtyři panely na stěně jsou v `.photo-box` (box fotky jako object-fit:cover), takže
+  sedí na fotku při každém poměru stran. Na homepage HTML panel nemá vlastní rám ani pozadí —
+  rám je ve fotce; na recepci má stejné souřadnice a svůj HTML rám (její fotka rám nemá).
+  Pod 900 px se na homepage box výtahu skrývá (mobil má tlačítko „Patra").
+- Fotka je 1672×941 (nativní rozlišení reference), atributy `width/height` opravené.
+- Higgsfield ani video přechodu se nepoužily.
+
 **11. 9. 2026 — shoda obou stránek s návrhy (statický vzhled), animace pozastavená.**
 - **Příčina posunu výtahu o 80 px na recepci:** homepage má nav `position:absolute` přes scénu,
   recepce ji měla v toku, takže scéna začínala o výšku lišty níž a přetékala. Teď má recepce

@@ -26,8 +26,8 @@
 .atrium::before{
   content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
   background:
-    linear-gradient(90deg,rgba(2,4,7,.84) 0%,rgba(2,4,7,.62) 24%,rgba(2,4,7,.22) 48%,rgba(2,4,7,.04) 66%,rgba(2,4,7,.26) 100%),
-    linear-gradient(180deg,rgba(2,4,7,.3) 0%,rgba(2,4,7,.04) 26%,rgba(2,4,7,.06) 62%,rgba(2,4,7,.78) 100%);
+    linear-gradient(90deg,rgba(2,4,7,.45) 0%,rgba(2,4,7,.28) 24%,rgba(2,4,7,.06) 48%,rgba(2,4,7,0) 66%,rgba(2,4,7,0) 100%),
+    linear-gradient(180deg,rgba(2,4,7,.12) 0%,rgba(2,4,7,0) 26%,rgba(2,4,7,0) 62%,rgba(2,4,7,.2) 100%);
 }
 .atrium::after{
   content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
@@ -75,17 +75,15 @@
 /* ---------- panely na stěně vzdálené recepce ----------
    .atrium__wall má přesně box fotky vykreslené jako object-fit:cover
    (56 % vodorovně, střed svisle) — proto sedí k logu a recepční. */
-.atrium__wall{
-  display:none;
-  position:absolute;z-index:1;
-  left:56%;top:50%;
-  width:max(100%,179.15svh);aspect-ratio:2200/1228;
-  transform:translate(-56%,-50%);
-  pointer-events:none;
+.atrium__wall{display:none}
+/* rám výtahu je součástí schválené fotky — HTML panel nesmí kreslit vlastní */
+.atrium .elevator .floors{
+  background:none;border:0;box-shadow:none;backdrop-filter:none;border-radius:0;
+  padding-top:clamp(34px,7svh,64px);
 }
 .wall-choice{
   position:absolute;left:var(--x);top:var(--y);
-  width:7.3%;height:3.7%;
+  width:7.6%;height:3.8%;
   display:flex;align-items:center;gap:.45em;padding:0 .7em;
   box-sizing:border-box;
   font-size:clamp(5px,.52vw,9px);font-weight:500;letter-spacing:.01em;line-height:1;
@@ -99,6 +97,7 @@
 .wall-choice svg{width:1.4em;height:1.4em;flex:none;color:var(--accent)}
 .wall-choice:hover{background:rgba(20,14,6,.7);box-shadow:0 0 12px rgba(230,201,143,.7)}
 @media (min-width:900px){ .atrium__wall{display:block} }
+@media (max-width:899.98px){ .photo-box--atrium:not(.atrium__wall){display:none} }
 
 /* ---------- přechod do recepce ----------
    Kamera „přijede" k pultu: fotka atria se přiblíží k recepci, kopie
