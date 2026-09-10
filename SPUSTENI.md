@@ -75,6 +75,26 @@ vlastní stránka 404.
 8. Projít `pravni/PRED-SPUSTENIM.md` — hlavně část „Placené účty přinesou další
    povinnosti".
 
+## 4b. Kontrola formulářů a databáze (10. 9. 2026)
+
+Prošlo se všech deset formulářů a všechna oprávnění v databázi. Nalezené a opravené:
+
+- **Profil si mohl sám nastavit práva.** Pravidlo povolovalo úpravu vlastního řádku bez
+  omezení sloupců → `spravce`, `predplatne_do`, ověření ARES. Opraveno migrací `023`.
+- **`revoke ... from anon` nestačí.** Postgres dává právo spustit funkci roli `public`,
+  kterou anon i authenticated dědí. `zapsat_platbu()` tak šla zavolat veřejným klíčem —
+  tedy předplatné zdarma jedním požadavkem. Opraveno migrací `024`
+  (`revoke ... from public`). **Tohle si pamatovat u každé další funkce.**
+- **Migrace `021` omylem shodila z profilů průměr hodnocení** (`hodnoceni_prumer`,
+  `hodnoceni_pocet`) — hvězdičky by zmizely z výpisu. Pohled obnoven i s nimi.
+- **Dvojí odeslání** u hodnocení a odpovědi: databáze ho zachytí unikátním indexem,
+  formulář teď navíc zamkne tlačítko, aby uživatel neviděl chybovou hlášku.
+
+Ověřeno, že drží: všech 7 tabulek má zapnuté RLS s pravidly; `zapsat_platbu`,
+`denni_udrzba` i `uklid_poptavek` zvenčí vracejí „permission denied"; `kontakt_firmy`
+a `prevzit_poptavky` jen pro přihlášené; `zapocitat_zobrazeni` a `jsem_spravce`
+schválně otevřené.
+
 ## 5. Vědomé slabiny, se kterými se spouští
 
 - **ARES potvrdí, že firma existuje — ne že IČO zadal její jednatel.** Napsané

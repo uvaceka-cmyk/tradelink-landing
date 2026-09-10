@@ -138,11 +138,19 @@
         var zprava = document.getElementById('zprava').value.trim();
         if (zprava.length < 20) return status(stav, 'Napište prosím aspoň pár vět.', 'error');
 
+        /* Dvojí odpověď zachytí i databáze (jedna na inzerát a účet),
+           ale ať uživatel místo chybové hlášky vidí, že se odesílá. */
+        var tlacitko = e.target.querySelector('button[type=submit]');
+        if (tlacitko) { if (tlacitko.disabled) return; tlacitko.disabled = true; }
+
         var res = await supabase.from('odpovedi').insert({
           inzerat: id, autor: mojeId, zprava: zprava,
           kontakt: document.getElementById('kontakt').value.trim() || null
         });
-        if (res.error) return status(stav, czechError(res.error), 'error');
+        if (res.error) {
+          if (tlacitko) tlacitko.disabled = false;
+          return status(stav, czechError(res.error), 'error');
+        }
         await vykresliOdpoved();
       });
     }

@@ -178,11 +178,17 @@
         return status(stav, 'Buď napište aspoň pár vět (20 znaků), nebo pole nechte prázdné.', 'error');
       }
 
+      /* Dvojímu hodnocení brání i databáze (jedno na firmu a účet), ale
+         ať uživatel místo chybové hlášky vidí, že se to odesílá. */
+      var tlacitko = e.target.querySelector('button[type=submit]');
+      if (tlacitko) { if (tlacitko.disabled) return; tlacitko.disabled = true; }
+
       var data = { firma: id, autor: mojeId, hvezdicky: Number(document.getElementById('hv').value), text: txt || null };
       var res = mojeHodnoceni
         ? await supabase.from('hodnoceni').update(data).eq('id', mojeHodnoceni.id)
         : await supabase.from('hodnoceni').insert(data);
 
+      if (tlacitko) tlacitko.disabled = false;
       if (res.error) return status(stav, czechError(res.error), 'error');
 
       await nactiMoje();
