@@ -385,6 +385,21 @@ a.floor:active{transform:translateX(4px) scale(.98)}
 }
 .karta__pata{display:block;margin-top:12px;color:var(--muted);font-size:.84rem}
 
+/* Prázdný výpis: místa, kam nabídky teprve přijdou.
+   Přerušovaný rámeček a žádná reakce na najetí — nesmí působit
+   jako obsah, na který se dá kliknout. */
+.karta--prazdna{border-style:dashed;background:none;cursor:default}
+.karta--prazdna:hover,.karta--prazdna:focus-visible{border-color:var(--line-2);transform:none}
+.karta__cekani{
+  display:block;color:var(--muted);font-size:.82rem;
+  letter-spacing:.12em;text-transform:uppercase;
+}
+.kostra{display:block;height:8px;border-radius:999px;background:#ffffff0d;margin-top:14px}
+.kostra--dlouha{width:72%}
+.kostra--kratka{width:38%}
+.vypis__prazdno{color:var(--fg-dim);line-height:1.7;font-size:.95rem;margin-top:20px;max-width:60ch}
+.vypis__prazdno--meta{color:var(--muted);font-size:.84rem;margin-top:8px}
+
 @media (min-width:760px){
   .vypis{grid-template-columns:repeat(2,1fr)}
 }

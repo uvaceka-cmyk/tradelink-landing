@@ -258,9 +258,14 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 
 ## Known Issues
 
-- **Výpis nikdo neviděl s reálnými řádky.** Dotazy odpovídají 200 a prázdný stav se
-  vykresluje správně, ale karty inzerátů a profilů se zatím testovaly jen čtením kódu.
-  Než se web pustí do světa, projít všechny čtyři role s testovacími daty.
+- **Výpis je ověřený s reálnými daty** (10. 9. 2026). Přes SQL vznikla firma s ověřením,
+  člověk, nabídka práce a poptávka (obor `stavebnictvi`, podobor `Elektroinstalace`);
+  všechny čtyři role vypsaly kartu, `/firma/<id>` i obě `/nabidka/<id>` se vykreslily
+  na serveru (JobPosting u práce, Demand u poptávky) a inzeráty se samy objevily v mapě webu.
+  **Data byla hned po kontrole smazána** — na webu nemá viset vymyšlená firma.
+  Kdo bude zkoušet znovu: účty s e-maily `%@tradelink.test`, úklid je jediný příkaz
+  `delete from auth.users where email like '%@tradelink.test';` (kaskády vezmou profily
+  i inzeráty). Pozor, Supabase se u mazacích dotazů ptá na potvrzení.
 - **Databáze je prázdná — žádná testovací data.** Testovací účty i s profily, inzeráty,
   odpověďmi, hodnoceními, hlášeními a zpětnou vazbou byly 9. 9. večer na přání uživatele
   smazány. **Kdo bude stavět výpis, musí si testovací data vytvořit sám** — buď registrací
@@ -323,20 +328,16 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 
 ## Next Steps
 
-1. **Ověřit výpis s reálnými daty** — vytvořit pár testovacích profilů a inzerátů
-   a projít všechny čtyři role. Karty se zatím viděly jen v prázdném stavu.
-2. **[Uživatel]** Přihlásit se na webu jako `info@tradelink.cz` a otevřít `/sprava` —
-   práva účet má, ale samotnou stránku ještě nikdo přihlášený neviděl.
-3. **[Claude]** Doladit podle zpětné vazby, až začnou chodit první uživatelé.
-4. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
-5. **Seznam Webmaster** — účet na Seznamu už existuje (schránka `info@tradelink.cz`
+1. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí
+   firmu) — bez toho nelze spustit naostro. Texty by měl vidět právník.
+2. **Seznam Webmaster** — účet na Seznamu už existuje (schránka `info@tradelink.cz`
    v Email Profi), takže zbývá přidat doménu na `reporter.seznam.cz/wm`, ověřit ji
    (doporučeně TXT záznamem v Cloudflare, ne souborem — Pages přesměrovává `.html`
-   na bezpříponové adresy, viz Known Issues) a odeslat `https://tradelink.cz/sitemap.xml`.
+   na bezpříponové adresy) a odeslat `https://tradelink.cz/sitemap.xml`.
    **Zápis do Firmy.cz** počká, až bude firma — chce IČO a sídlo.
    Google Search Console je hotová.
-6. **Zkontrolovat inzerát a profil firmy s reálnými daty** — serverem vykreslené
-   `/nabidka/<id>` a `/firma/<id>` nikdo neviděl s obsahem, jen v kódu.
+3. **Rozšířit odvětví na ~30** (`site/obory-data.js`) — na kamarádovi.
+4. **[Claude]** Doladit podle zpětné vazby, až začnou chodit první uživatelé.
 
 ## Pro druhou stranu (kamarád a jeho AI)
 
@@ -407,6 +408,20 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
   neoslabovat ve prospěch kontrol ve formuláři.
 
 ## Last Session
+
+**10. 9. 2026, noc — výpis ověřený s reálnými daty a prázdné karty.**
+Do databáze šly přes SQL čtyři testovací záznamy (ověřená firma, člověk, nabídka práce,
+poptávka; `stavebnictvi` / `Elektroinstalace`). **Všechny čtyři role vypsaly kartu**,
+serverem vykreslené `/firma/<id>` a obě `/nabidka/<id>` se zobrazily i s daty
+(JobPosting u práce, Demand u poptávky) a inzeráty se samy přidaly do mapy webu.
+**Data byla hned po kontrole smazána** na výslovné přání — na živém webu nemá viset
+vymyšlená firma, navíc už byla v mapě webu a hrozilo zaindexování.
+
+Na to navázala změna prázdného stavu: místo pouhé věty se teď ukážou **tři prázdné karty**
+s popiskem podle role („Místo pro nabídku práce", „Místo pro poptávku", „Místo pro profil
+uchazeče", „Místo pro profil firmy") a náznakem řádků. Jsou přerušované, neproklikávací
+a pro čtečky skryté, aby si je nikdo nespletl se skutečnou nabídkou; vysvětlující věta
+i tlačítko na registraci zůstávají pod nimi.
 
 **10. 9. 2026, večer — FAQ, ceny na webu, česká pošta a 404.**
 

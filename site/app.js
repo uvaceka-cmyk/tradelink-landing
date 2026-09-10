@@ -234,25 +234,25 @@
   var VYPIS = {
     'hledam-praci': {
       zdroj: 'verejne_inzeraty', filtr: 'typ=eq.prace',
-      nadpis: 'Nabídky práce',
+      nadpis: 'Nabídky práce', cekani: 'Místo pro nabídku práce',
       prazdno: 'V tomhle oboru zatím žádná nabídka práce není. Zkuste jiný obor, ' +
                'nebo si založte účet — dáme vědět, až se objeví.'
     },
     'hledam-zakazky': {
       zdroj: 'verejne_inzeraty', filtr: 'typ=eq.zakazka',
-      nadpis: 'Poptávky zakázek',
+      nadpis: 'Poptávky zakázek', cekani: 'Místo pro poptávku',
       prazdno: 'V tomhle oboru zatím nikdo zakázku nepoptává. Zkuste jiný obor, ' +
                'nebo si založte účet — dáme vědět, až se objeví.'
     },
     'hledam-zamestnance': {
       zdroj: 'verejne_profily', filtr: 'account_type=eq.osoba',
-      nadpis: 'Lidé, kteří hledají práci',
+      nadpis: 'Lidé, kteří hledají práci', cekani: 'Místo pro profil uchazeče',
       prazdno: 'V tomhle oboru se zatím nikdo nenabízí. Zkuste jiný obor, ' +
                'nebo si založte účet a zadejte nabídku práce.'
     },
     'chci-zadat-zakazku': {
       zdroj: 'verejne_profily', filtr: 'account_type=eq.firma',
-      nadpis: 'Firmy a živnostníci',
+      nadpis: 'Firmy a živnostníci', cekani: 'Místo pro profil firmy',
       prazdno: 'V tomhle oboru zatím žádná firma zveřejněný profil nemá. Zkuste jiný obor, ' +
                'nebo si založte účet a zadejte poptávku.'
     }
@@ -267,6 +267,20 @@
       '<button class="btn btn--ghost" type="button" data-back="sub">Zpět na podobory</button>' +
       '<a class="btn btn--ghost" href="recepce.html">Zpět na recepci</a>' +
       '</div>';
+  }
+
+  /* Prázdný výpis ukazuje místa, kam nabídky teprve přijdou — ať je poznat,
+     jak to bude vypadat, až tu něco bude. Karty jsou schválně neproklikávací,
+     přerušované a bez textu, aby si je nikdo nespletl se skutečnou nabídkou.
+     Pro čtečky jsou skryté; co se děje, říká věta pod nimi. */
+  function prazdneKarty(popisek) {
+    var jedna =
+      '<div class="karta karta--prazdna" aria-hidden="true">' +
+        '<span class="karta__cekani">' + esc(popisek) + '</span>' +
+        '<span class="kostra kostra--dlouha"></span>' +
+        '<span class="kostra kostra--kratka"></span>' +
+      '</div>';
+    return jedna + jedna + jedna;
   }
 
   function kartaInzeratu(i) {
@@ -327,11 +341,13 @@
 
         if (!data.length) {
           body.innerHTML =
-            '<div class="result">' +
-              '<h2>' + esc(nastaveni.nadpis) + '</h2>' +
-              '<p>' + esc(nastaveni.prazdno) + '</p>' +
-              '<p class="result__meta">' + esc(industry.name) + ' → ' + esc(sub) + '</p>' +
-            '</div>' + akce();
+            '<h2 class="vypis__nadpis">' + esc(nastaveni.nadpis) +
+              ' <span class="vypis__pocet">0</span></h2>' +
+            '<div class="vypis">' + prazdneKarty(nastaveni.cekani) + '</div>' +
+            '<p class="vypis__prazdno">' + esc(nastaveni.prazdno) + '</p>' +
+            '<p class="vypis__prazdno vypis__prazdno--meta">' +
+              esc(industry.name) + ' → ' + esc(sub) + '</p>' +
+            akce();
           return;
         }
 
