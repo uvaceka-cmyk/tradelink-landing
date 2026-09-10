@@ -146,8 +146,12 @@ Web je celý česky a běží na vlastní doméně.
   náhledová nasazení `<hash>.tradelink-landing.pages.dev` zůstávají přístupná
 - Supabase Site URL i redirect allow-list ukazují na `https://tradelink.cz`
 - `og:image` na všech stránkách ukazuje na `https://tradelink.cz/tradelink.jpeg`
-- `info@tradelink.cz` → `uvacek.a@gmail.com` (Cloudflare Email Routing, MX i SPF
-  nastavené, příjem ověřený)
+- **příjem**: `info@tradelink.cz` se přeposílá do soukromé schránky provozovatele
+  (Cloudflare Email Routing, MX i SPF nastavené, ověřeno). Adresa té schránky
+  do repozitáře nepatří — je vidět v Cloudflare → Email Routing.
+- **Google Search Console** — doména ověřená záznamem TXT v Cloudflare, mapa webu
+  `https://tradelink.cz/sitemap.xml` odeslaná. Ověřovací TXT záznam nemazat, jinak
+  se ověření ztratí.
 - **odesílání přes Resend** (region Irsko, `eu-west-1` — data zůstávají v EU).
   V Cloudflare přibyly tři záznamy: DKIM `resend._domainkey`, MX a SPF na `send`.
   Doména je v Resendu ve stavu *Verified*. Supabase posílá přes `smtp.resend.com:465`,
@@ -243,7 +247,7 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
   `auth.identities`, bez druhého se účet nepřihlásí — „Database error querying schema")
   už není potřeba, ale hodí se ho znát, kdyby bylo potřeba účet bez e-mailu.
 - **Nikdo teď není správce, na `/sprava` se nikdo nedostane.** V `private.budouci_spravci`
-  jsou `uvacek.a@gmail.com` i `info@tradelink.cz` — oba se stanou správcem sami, jakmile
+  je `info@tradelink.cz` — ta se stane správcem sama, jakmile
   se s tou adresou zaregistrují. **Ten mechanismus zatím nikdo nevyzkoušel**, po první
   registraci ověřit, že `spravce` je `true`.
   Uživatel chce svůj účet na `info@tradelink.cz` — schránka poštu přijímá, odesílání
@@ -266,6 +270,11 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 - **ARES neověří oprávnění.** Potvrdí, že firma existuje — ne že IČO zadal její jednatel.
   Řešení (ověřovací dopis, platba z firemního účtu, datová schránka, bankovní identita)
   zatím nikdo nedělá; je to popsané v podmínkách užití.
+- **Soukromá adresa provozovatele zůstává v historii gitu.** Byla natvrdo v
+  `supabase/012-budouci-spravci.sql`, odkud ji odstranila migrace `015`. Repozitář je
+  veřejný, takže v commitu, který ji přidal, je pořád k přečtení. Vyčištění historie by
+  rozbilo existující klony — rozhodnutí je na uživateli. **Do repozitáře patří jen
+  firemní adresy.**
 - **Starý uniklý klíč zůstává v historii gitu** (commit `5e0534f`). Je neplatný, takže
   nepředstavuje riziko; vyčištění historie by rozbilo existující klony.
 - **Seznam jednorázových domén zastarává.** Nové schránky vznikají průběžně; doplní se
@@ -284,9 +293,8 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 2. **[Uživatel]** Nastavit si účet jako správce, jinak je fronta nahlášení nepřístupná.
 3. **[Claude]** Doladit podle zpětné vazby, až začnou chodit první uživatelé.
 4. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí firmu).
-5. **Vyhledávače** — Google Search Console (ověření DNS záznamem v Cloudflare),
-   Seznam Webmaster a zápis do Firmy.cz (obojí potřebuje účet na Seznamu
-   pod `info@tradelink.cz`).
+5. **Seznam Webmaster a zápis do Firmy.cz** — obojí potřebuje účet na Seznamu
+   pod `info@tradelink.cz`. Google Search Console je hotová.
 
 ## Pro druhou stranu (kamarád a jeho AI)
 
@@ -354,6 +362,12 @@ obsluhují viditelnost ve vyhledávačích a ověřování firem.
 
 ## Last Session
 
+**10. 9. 2026, noc — web je přihlášený u Googlu a z repozitáře zmizela soukromá adresa.**
+Doména ověřená v Google Search Console (TXT záznam v Cloudflare), mapa webu odeslaná.
+Migrace `015-soukromi-spravcu.sql` vyhodila soukromou schránku provozovatele ze seznamu
+budoucích správců — zůstává jen `info@tradelink.cz`. Adresa byla i v `012`, ta je opravená;
+v historii gitu ale zůstává (viz Known Issues).
+
 **10. 9. 2026, později — přiblíženo master referenci, bez mezischvalování.** Uživatel dal
 výslovný pokyn nezastavovat se na drafty a udělat celý cyklus (implementace → test → commit →
 push → PR → merge → ověření produkce → handoff) rovnou. Homepage a recepce dál posunuté k
@@ -405,6 +419,14 @@ přes `!git push origin main`. Počítat s tím i příště.
 Poslední commit na `main`: viz git log (obě session dnešní noci pushovaly na `main` souběžně,
 poslední společný předek `1e1b2a2`). Větev `chatgpt/homepage-visual` zůstává v repu (nikdo
 o smazání nepožádal) — je teď součástí `main`, bezpečná smazat, až bude chtít uživatel.
+
+**Dřívější stav (stejný den, dopoledne/odpoledne):** `tradelink.cz` je živá — jmenné servery
+přepnuté na Cloudflare, doména i `www` připojené k Pages, certifikát vydaný, `www`/`pages.dev`
+trvale přesměrované (`functions/_middleware.js`), Supabase Site URL i redirect allow-list
+ukazují na novou adresu, `info@tradelink.cz` přijímá poštu (přeposílá se do soukromé
+schránky provozovatele). Testovací data
+(účty, profily, inzeráty, hodnocení) byla na přání uživatele smazána — kdo bude dál stavět
+výpis, musí si vytvořit vlastní (viz Known Issues). Poslední commit na `main`: `f8552e0`.
 
 Předchozí session (výměna ARES klíče, profily, inzeráty, hodnocení, nahlašování, zpětná
 vazba) skončila commitem `dbc4fc4`.

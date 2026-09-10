@@ -23,8 +23,10 @@ create table if not exists private.budouci_spravci (
 alter table private.budouci_spravci enable row level security;
 revoke all on table private.budouci_spravci from anon, authenticated, public;
 
+-- Jen firemní adresy — tenhle soubor je ve veřejném repozitáři.
+-- Soukromá adresa, která tu původně byla, se odebírá v 015-soukromi-spravcu.sql.
 insert into private.budouci_spravci (email) values
-  ('uvacek.a@gmail.com')
+  ('info@tradelink.cz')
 on conflict (email) do nothing;
 
 -- Kdyby se účet zaregistroval dřív, než tenhle soubor doběhl.
