@@ -269,10 +269,12 @@
           : esc(k.web)]);
       }
       if (k && k.telefon) radky.push(['Telefon', esc(k.telefon)]);
-      if (!k) {
+      /* Nepřihlášenému nabídneme přihlášení jen tehdy, když je co odemknout.
+         Jinak by mu to slibovalo kontakt, který stejně neexistuje. */
+      if (!k && p.ma_kontakt) {
         radky.push(['Kontakt',
-          '<a href="prihlaseni.html">Přihlaste se</a> a uvidíte telefon i web. ' +
-          'Firma tak pozná, že jste přišli přes TradeLink.']);
+          '<a href="prihlaseni.html">Přihlaste se</a> a uvidíte kontakt. ' +
+          'Protistrana tak pozná, že jste přišli přes TradeLink.']);
       }
       document.getElementById('udaje').innerHTML = radky.map(function (r) {
         return '<div class="detail__row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';

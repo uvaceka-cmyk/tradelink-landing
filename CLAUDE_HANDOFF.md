@@ -417,6 +417,16 @@ Web je celý česky a běží na vlastní doméně.
 
 .
 
+**Viditelnost telefonu si volí uživatel** (migrace `025`)
+- `profiles.telefon_verejny` — prázdné znamená „podle typu účtu": firma ano, člověk ne.
+  Existující účty si tím zachovaly dosavadní chování.
+- Volba je v profilu hned u telefonu. **Telefon i web teď může vyplnit každý**, ne jen
+  firma — dřív se ta pole lidem vůbec neukazovala.
+- Kontakt pořád vydává jen `kontakt_firmy()` a jen přihlášenému; nepřihlášený ho nevidí
+  nikdy, ani při vypnutém JavaScriptu.
+- `verejne_profily.ma_kontakt` říká jen to, **že nějaký kontakt existuje** — podle toho se
+  ukazuje výzva „přihlaste se a uvidíte kontakt". Číslo samotné v pohledu není.
+
 **Poptávka bez účtu** (`site/poptavka.html`, migrace `018`)
 - Kdo shání řemeslníka, napíše poptávku rovnou — bez zakládání účtu. Účet mu vznikne
   potvrzením e-mailu.

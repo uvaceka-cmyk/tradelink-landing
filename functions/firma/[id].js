@@ -185,8 +185,8 @@ export async function onRequestGet({ params, request }) {
   <dl class="detail">
     ${p.ico ? '<div class="detail__row"><dt>IČO</dt><dd>' + esc(p.ico) + '</dd></div>' : ''}
     ${p.sidlo ? '<div class="detail__row"><dt>Sídlo</dt><dd>' + esc(p.sidlo) + '</dd></div>' : ''}
-    ${p.account_type === 'firma'
-      ? '<div class="detail__row"><dt>Kontakt</dt><dd><a href="/prihlaseni">Přihlaste se</a> a uvidíte telefon i web. Firma tak pozná, že jste přišli přes TradeLink.</dd></div>'
+    ${p.ma_kontakt
+      ? '<div class="detail__row"><dt>Kontakt</dt><dd><a href="/prihlaseni">Přihlaste se</a> a uvidíte kontakt. Protistrana tak pozná, že jste přišli přes TradeLink.</dd></div>'
       : ''}
   </dl>
 

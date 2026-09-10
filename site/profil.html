@@ -66,14 +66,18 @@
           <input type="text" id="lokalita" maxlength="120" placeholder="Praha a Středočeský kraj">
         </div>
 
-        <div class="field" id="pole-web" hidden>
+        <div class="field" id="pole-web">
           <label for="web">Web <span class="field__hint">nepovinné</span></label>
           <input type="url" id="web" maxlength="200" placeholder="https://">
         </div>
 
-        <div class="field" id="pole-telefon" hidden>
-          <label for="telefon">Telefon <span class="field__hint">nepovinné, uvidí ho ostatní</span></label>
+        <div class="field" id="pole-telefon">
+          <label for="telefon">Telefon <span class="field__hint">nepovinné</span></label>
           <input type="tel" id="telefon" maxlength="30" autocomplete="tel">
+          <label class="check" style="margin-top:10px">
+            <input type="checkbox" id="telefon-verejny">
+            <span>Telefon smí vidět přihlášení návštěvníci. Nepřihlášeným se neukáže nikdy.</span>
+          </label>
         </div>
 
         <label class="check">
@@ -176,8 +180,6 @@
         if (firma) {
           document.getElementById('jmeno-label').textContent = 'Kontaktní osoba';
           document.getElementById('popis-label').textContent = 'Čím se firma zabývá';
-          document.getElementById('pole-web').hidden = false;
-          document.getElementById('pole-telefon').hidden = false;
 
           var radky = [['Firma', p.ares_nazev || p.company_name || '—'], ['IČO', p.ico || '—']];
           if (p.ares_sidlo) radky.push(['Sídlo', p.ares_sidlo]);
@@ -196,6 +198,10 @@
         document.getElementById('lokalita').value = p.lokalita || '';
         document.getElementById('web').value = p.web || '';
         document.getElementById('telefon').value = p.telefon || '';
+        /* Prázdná volba znamená „podle typu účtu" — u firmy zobrazit,
+           u člověka ne. Stejné pravidlo drží i databáze (migrace 025). */
+        document.getElementById('telefon-verejny').checked =
+          p.telefon_verejny === null || p.telefon_verejny === undefined ? firma : p.telefon_verejny;
         document.getElementById('zverejnen').checked = Boolean(p.zverejnen);
 
         form.hidden = false;
@@ -229,6 +235,7 @@
         lokalita:  document.getElementById('lokalita').value.trim() || null,
         web:       web || null,
         telefon:   document.getElementById('telefon').value.trim() || null,
+        telefon_verejny: document.getElementById('telefon-verejny').checked,
         zverejnen: zverejnit
       }).eq('id', session.user.id);
 
