@@ -40,8 +40,14 @@
 
       <p class="form__status" id="status" hidden></p>
 
+      <label class="check" id="prepinac-upozorneni" hidden>
+        <input type="checkbox" id="upozorneni">
+        <span>Posílat mi e-mail, když někdo odpoví na můj inzerát.</span>
+      </label>
+
       <div class="actions" id="actions" hidden>
         <a class="btn" href="profil.html">Upravit profil</a>
+        <button class="btn btn--ghost" type="button" id="predplatit" hidden>Prodloužit přístup</button>
         <a class="btn btn--ghost" href="moje-inzeraty.html">Moje inzeráty</a>
         <a class="btn btn--ghost" href="moje-odpovedi.html">Moje odpovědi</a>
         <button class="btn btn--ghost" type="button" id="stahnout-data">Stáhnout moje údaje</button>
@@ -75,7 +81,7 @@
   <script src="app.js" defer></script>
   <script src="forms.js" defer></script>
   <script type="module">
-    import { supabase, ROLES, status, configured, paintNav } from './auth.js';
+    import { supabase, ROLES, status, configured, czechError, paintNav } from './auth.js';
 
     var statusEl = document.getElementById('status');
 
@@ -122,6 +128,31 @@
         if (firma) rows.push(['Ověření v ARES', p.ares_overeno_at ? 'ověřeno' : 'chybí']);
         if (p.full_name) rows.push([firma ? 'Kontaktní osoba' : 'Jméno', p.full_name]);
         rows.push(['Profil', p.zverejnen ? 'zveřejněný' : 'skrytý']);
+
+        /* ---------- přístup k inzerátům ----------
+           Firma vidí, do kdy se její inzeráty zobrazují. Rozhoduje o tom
+           pozdější ze zkušební doby a předplatného, plus týden odkladu —
+           stejně jako ve veřejných pohledech (migrace 021). */
+        var konec = null;
+        if (p.trial_ends_at) konec = new Date(p.trial_ends_at);
+        if (p.predplatne_do && (!konec || new Date(p.predplatne_do) > konec)) {
+          konec = new Date(p.predplatne_do);
+        }
+        if (firma) {
+          if (!konec) {
+            rows.push(['Přístup k inzerátům', 'neomezený']);
+          } else {
+            var dnu = Math.ceil((konec - new Date()) / 86400000);
+            rows.push(['Přístup k inzerátům',
+              konec.toLocaleDateString('cs-CZ') +
+              (dnu > 0
+                ? ' (zbývá ' + dnu + ' ' + (dnu === 1 ? 'den' : dnu < 5 ? 'dny' : 'dní') + ')'
+                : ' — vypršel, inzeráty se nezobrazují')]);
+          }
+          if (p.predplatne_do) {
+            rows.push(['Předplatné', p.predplatne_stav === 'canceled' ? 'zrušené' : 'aktivní']);
+          }
+        }
 
 
         /* ---------- co dál ----------
@@ -203,6 +234,50 @@
         }).join('');
         detail.hidden = false;
         document.getElementById('actions').hidden = false;
+
+        /* ---------- upozornění na odpovědi ----------
+           Sloupec je v databázi od migrace 020. Bez přepínače by si ho
+           nikdo nevypnul a slib „vypnete si to v účtu" by byl prázdný. */
+        var prepinac = document.getElementById('prepinac-upozorneni');
+        var zaskrtnuti = document.getElementById('upozorneni');
+        zaskrtnuti.checked = p.upozorneni !== false;
+        prepinac.hidden = false;
+        zaskrtnuti.addEventListener('change', async function () {
+          var res = await supabase.from('profiles')
+            .update({ upozorneni: zaskrtnuti.checked }).eq('id', user.id);
+          if (res.error) {
+            zaskrtnuti.checked = !zaskrtnuti.checked;
+            return status(statusEl, czechError(res.error), 'error');
+          }
+          status(statusEl, zaskrtnuti.checked
+            ? 'Budeme vám psát, když někdo odpoví.'
+            : 'E-maily o odpovědích jsme vypnuli.', 'ok');
+        });
+
+        /* ---------- prodloužení přístupu ----------
+           Tlačítko se ukáže jen firmě. Když platby ještě neběží,
+           server vrátí 503 a my to řekneme narovinu místo mlčení. */
+        if (firma) {
+          var tlacitko = document.getElementById('predplatit');
+          tlacitko.hidden = false;
+          tlacitko.addEventListener('click', async function () {
+            tlacitko.disabled = true;
+            status(statusEl, 'Připravuji platbu…');
+            try {
+              var relace = (await supabase.auth.getSession()).data.session;
+              var odpoved = await fetch('/api/stripe/checkout', {
+                method: 'POST',
+                headers: { Authorization: 'Bearer ' + (relace ? relace.access_token : '') }
+              });
+              var data = await odpoved.json();
+              if (odpoved.ok && data.url) { window.location.href = data.url; return; }
+              status(statusEl, data.chyba || 'Platbu se nepodařilo založit.', 'error');
+            } catch (e) {
+              status(statusEl, 'Nepodařilo se spojit se serverem.', 'error');
+            }
+            tlacitko.disabled = false;
+          });
+        }
       })();
     }
 
