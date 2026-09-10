@@ -189,6 +189,22 @@ Web je celý česky a běží na vlastní doméně.
   Ověřeno dvakrát: přímé odeslání přes Resend i potvrzovací e-mail z registrace
   na Supabase, obojí *Delivered*.
 
+**Poptávka bez účtu** (`site/poptavka.html`, migrace `018`)
+- Kdo shání řemeslníka, napíše poptávku rovnou — bez zakládání účtu. Účet mu vznikne
+  potvrzením e-mailu.
+- Text počká v `public.poptavky_ceka`. **Ta tabulka nemá politiku pro čtení** — jsou v ní
+  e-maily a nepotvrzený obsah, takže ji zvenčí nikdo nepřečte. Ven se dostane až jako inzerát.
+- Po přihlášení ji `prevzit_poptavky()` překlopí do `inzeraty` jako typ `zakazka`
+  a zveřejní. Volá se z `paintNav()` v `auth.js`, tedy na každé stránce po přihlášení —
+  nevíme, kam člověk po potvrzení e-mailu dorazí. Když není co překlápět, vrátí nulu.
+- Ochrany drží databáze: jednorázové schránky, délky textů, nejvýš **tři** nepotvrzené
+  poptávky na jednu adresu. Nepotvrzené se po měsíci mažou (`uklid_poptavek()`).
+- V prázdném výpisu se roli „chci zadat zakázku" nabídne rovnou poptávka místo registrace,
+  obor a podobor se předvyplní z adresy.
+- **Pozor na Supabase a enumeraci účtů:** `signUp` na už existující e-mail nevrátí chybu
+  (ochrana proti zjišťování, kdo je registrovaný). Stránka proto vždycky říká „potvrďte
+  e-mail" — kdo účet má, poptávku dostane po přihlášení.
+
 **Právní povinnosti platformy** (migrace `013`, složka `pravni/`)
 - **hodnocení**: web i podmínky uvádějí, že neověřujeme, zda autor s firmou opravdu
   spolupracoval. Zákon o ochraně spotřebitele to vyžaduje; za nepravdivé tvrzení hrozí
@@ -381,6 +397,7 @@ práci, ať si to projde — jinak bude hledat v kódu něco, co v kódu není.
 | 10. 9. 2026 | Supabase → Auth → Email Templates | česky: potvrzení registrace, obnova hesla, změna e-mailu |
 | 10. 9. 2026 | Supabase → SQL Editor | vložená a **hned zase smazaná** testovací data (`%@tradelink.test`) |
 | 10. 9. 2026 | Google Search Console | ruční žádost o indexování: `/recepce`, `/faq`, `/podminky`, `/soukromi` |
+| 10. 9. 2026 | Supabase → SQL Editor | spuštěná migrace `018-poptavka-bez-uctu.sql` (**znovu nepouštět**) |
 | 10. 9. 2026 | Seznam Webmaster | doména přidaná pod `info@tradelink.cz`, čeká na kliknutí „Ověřit doménu" po nasazení meta tagu |
 
 **Přístupy:** Supabase, Cloudflare i Seznam jedou pod účty uživatele. Hesla nikde
