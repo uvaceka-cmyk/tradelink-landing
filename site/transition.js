@@ -8,7 +8,7 @@
   'use strict';
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var EXIT_MS = 650;
+  var EXIT_MS = 1150;
 
   /* ---------- příchod na scénu ---------- */
   var enter = document.querySelector('[data-enter]');
@@ -40,6 +40,8 @@
       }
 
       link.classList.add('is-pressed');
+      /* kamera přijede k pultu; fotka recepce se prolne přes atrium.
+         Nav a výtah stojí mimo animované vrstvy a dál reagují. */
       document.body.classList.add('is-leaving');
       window.setTimeout(function () { window.location.href = href; }, EXIT_MS);
     });

@@ -24,6 +24,7 @@
   <link rel="canonical" href="https://tradelink.cz/">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preload" as="image" href="homepage-master.webp" fetchpriority="high">
+  <link rel="prefetch" as="image" href="recepce-master.webp">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="nav-hud.css">
   <link rel="stylesheet" href="homepage.css">
@@ -83,8 +84,13 @@
     <section class="atrium" id="atrium" data-scene="atrium">
       <div class="atrium__media" data-depth="1">
         <img src="homepage-master.webp"
-             width="1672" height="941" fetchpriority="high"
+             width="2200" height="1228" fetchpriority="high"
              alt="Atrium TradeLinku — prosklená patra budovy nad recepcí, večerní panorama města.">
+      </div>
+
+      <!-- fotka recepce pro prolnutí při přechodu; nese ji transition.js -->
+      <div class="atrium__next" aria-hidden="true">
+        <img src="recepce-master.webp" width="2200" height="1228" alt="" loading="lazy" decoding="async">
       </div>
 
       <p class="atrium__vertical" aria-hidden="true">Lidé<br>Obory<br>Příležitosti<br>Společně výš</p>

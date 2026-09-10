@@ -704,6 +704,29 @@ nejsou a nikdo je po uživateli nechce.
 
 ## Last Session
 
+**10. 9. 2026, noc — zlatá homepage a recepce podle návrhů, přechod „příjezd k pultu".**
+- **Čisté podklady** obou scén vznikly v Higgsfieldu (Nano Banana 2, editace přiložených návrhů,
+  16:9, odstraněné vypálené UI): `site/homepage-master.webp` (atrium, teplá zlatá verze) a
+  `site/recepce-master.webp` (recepce). První čtvercové pokusy byly nepoužitelné (jiná
+  kompozice, dvě recepční) — používat vždy `--aspect_ratio 16:9`. `recepce.jpeg` už nic
+  nepoužívá, zůstává v repu.
+- **Paleta**: černá, teplá bílá (`--fg #f3eee4`), champagne zlatá (`--accent #e6c98f`) — tokeny
+  ve `style.css`, takže i formuláře mají zlatý focus.
+- **Výtah je sdílený** homepage + recepce: stejný markup `aside.elevator`, styl přesunutý
+  z `homepage.css` do `nav-hud.css` (zapuštěný černý panel, tenký zlatý obrys, aktivní patro
+  zlaté). Na recepci má „Recepce" `aria-current="page"` a patra nemají `data-transition`.
+- **Recepce**: čtyři volby jsou skutečná tlačítka `.choice` na stěně po stranách recepční
+  (grid `padding:31svh 27% 0 12%`), cíle beze změny. Neon ve fotce vede domů přes neviditelný
+  `a.reception__logo` (absolutně nad logem, jen ≥1100 px). Nadpis a úvod jsou na desktopu jen pro
+  čtečky, na mobilu se ukazují pod fotkou.
+- **Přechod** (`transition.js` + `homepage.css`): po kliknutí se fotka atria přiblíží
+  (`scale(2.4)`, ohnisko `68% 85%` — tak, aby neon a recepční dojely zhruba na místo, kde jsou
+  na fotce recepce), kopie zhasne a prolne se vrstva `.atrium__next` s fotkou recepce; po 1150 ms
+  navigace. Recepce přijede ze `scale(1.07)` do klidu. Nav a výtah jsou mimo animované vrstvy.
+  `prefers-reduced-motion` → okamžitá navigace, bez JS fungují odkazy hned.
+  **Geometrie návrhů není totožná**, takže během prolnutí se krátce potkají dvě loga — je to
+  přiblížení s prolnutím, ne bezešvý průlet. Seedance test (start/end frame) viz níže.
+
 **10. 9. 2026, pozdě večer — homepage česky a oprava překryvu.** Na pokyn uživatele je celý
 frontend zase česky: homepage (nav, hero „Místo, kde se propojuje byznys.", CTA „Prozkoumat
 TradeLink" / „Přidat příležitost", karty, výtah s patrem „Recepce", mobilní sheet, aria-labely),
