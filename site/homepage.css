@@ -255,3 +255,9 @@ body.is-leaving .atrium::after{opacity:0}
   }
   .atrium__next{display:none}
 }
+
+/* Karty se statistikou vedou na odpovídající výpis. Jsou to odkazy,
+   takže jim vrátíme barvu textu a přidáme jemnou odezvu na najetí —
+   ať je poznat, že se dá kliknout. */
+a.stat-card{color:inherit;text-decoration:none;transition:border-color .25s var(--ease),transform .25s var(--ease)}
+a.stat-card:hover,a.stat-card:focus-visible{border-color:rgba(230,201,143,.5);transform:translateY(-2px)}
