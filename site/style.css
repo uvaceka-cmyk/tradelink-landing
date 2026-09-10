@@ -335,18 +335,19 @@ a.floor:active{transform:translateX(4px) scale(.98)}
 .reception[data-enter].is-entered{opacity:1}
 .reception[data-enter].is-entered .reception__media img{transform:none}
 /* po videu z homepage: fotka se už nepřibližuje (video ji odvezlo), ale
-   prolnutí zůstává — poslední snímek videa a statická fotka recepce nejsou
-   nikdy úplně stejný odstín, prolnutí ten skok schová. Bloky (nadpis, karty,
-   výtah) naskakují se zpožděním po fotce, ne všechno najednou. */
+   pomalé, kinematografické prolnutí zůstává — poslední snímek videa a
+   statická fotka recepce nejsou nikdy úplně stejný odstín, pomalejší
+   prolnutí ten skok schová (rychlé působilo jako záblik/filtr). Bloky
+   (nadpis, karty, výtah) naskakují s citelným zpožděním po fotce. */
 html.arrive-video .reception[data-enter]{opacity:1;transition:none}
-html.arrive-video .reception[data-enter] .reception__media{opacity:0;transition:opacity .5s var(--ease)}
+html.arrive-video .reception[data-enter] .reception__media{opacity:0;transition:opacity 1.3s var(--ease)}
 html.arrive-video .reception[data-enter].is-entered .reception__media{opacity:1}
 html.arrive-video .reception[data-enter] .reception__media img{transform:none;transition:none}
 html.arrive-video .reception[data-enter] .reception__intro,
 html.arrive-video .reception[data-enter] .choices,
 html.arrive-video .reception[data-enter] .elevator{
-  opacity:0;transform:translateY(6px);
-  transition:opacity .45s var(--ease) .18s,transform .45s var(--ease) .18s;
+  opacity:0;transform:translateY(10px);
+  transition:opacity 1.1s var(--ease) .5s,transform 1.1s var(--ease) .5s;
 }
 html.arrive-video .reception[data-enter].is-entered .reception__intro,
 html.arrive-video .reception[data-enter].is-entered .choices,
