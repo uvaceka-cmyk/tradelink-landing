@@ -235,7 +235,14 @@
       var radky = [];
       if (p.ico) radky.push(['IČO', p.ico]);
       if (p.sidlo) radky.push(['Sídlo', p.sidlo]);
-      if (p.web) radky.push(['Web', '<a href="' + esc(p.web) + '" target="_blank" rel="noopener nofollow">' + esc(p.web) + '</a>']);
+      /* Odkaz zadává majitel profilu. Adresa jiného schématu než http(s)
+         — třeba javascript: — by po kliknutí spustila cizí kód. Taková
+         se vypíše jen jako text. Hlídá to i databáze (migrace 016). */
+      if (p.web) {
+        radky.push(['Web', /^https?:\/\//i.test(p.web)
+          ? '<a href="' + esc(p.web) + '" target="_blank" rel="noopener nofollow">' + esc(p.web) + '</a>'
+          : esc(p.web)]);
+      }
       if (p.telefon) radky.push(['Telefon', esc(p.telefon)]);
       document.getElementById('udaje').innerHTML = radky.map(function (r) {
         return '<div class="detail__row"><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';

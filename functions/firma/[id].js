@@ -28,6 +28,15 @@ function esc(t) {
     .replace(/"/g, '&quot;');
 }
 
+/* Odkaz zadává majitel profilu. Adresa jiného schématu než http(s)
+   — třeba javascript: — by po kliknutí spustila cizí kód. Taková
+   se vypíše jen jako text. Hlídá to i databáze (migrace 016). */
+function odkazNaWeb(web) {
+  return /^https?:\/\//i.test(web)
+    ? '<a href="' + esc(web) + '" rel="noopener nofollow">' + esc(web) + '</a>'
+    : esc(web);
+}
+
 function hvezdy(kolik) {
   const plne = Math.round(kolik || 0);
   let out = '';
@@ -173,7 +182,7 @@ export async function onRequestGet({ params, request }) {
   <dl class="detail">
     ${p.ico ? '<div class="detail__row"><dt>IČO</dt><dd>' + esc(p.ico) + '</dd></div>' : ''}
     ${p.sidlo ? '<div class="detail__row"><dt>Sídlo</dt><dd>' + esc(p.sidlo) + '</dd></div>' : ''}
-    ${p.web ? '<div class="detail__row"><dt>Web</dt><dd><a href="' + esc(p.web) + '" rel="noopener nofollow">' + esc(p.web) + '</a></dd></div>' : ''}
+    ${p.web ? '<div class="detail__row"><dt>Web</dt><dd>' + odkazNaWeb(p.web) + '</dd></div>' : ''}
     ${p.telefon ? '<div class="detail__row"><dt>Telefon</dt><dd>' + esc(p.telefon) + '</dd></div>' : ''}
   </dl>
 
