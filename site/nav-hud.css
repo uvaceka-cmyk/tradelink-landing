@@ -98,7 +98,7 @@
   .nav--hud{ min-height:80px; }
 
   .nav--hud .nav__menu{
-    flex:1; gap:32px; margin-left:48px;
+    flex:1; gap:clamp(18px,2vw,32px); margin-left:clamp(28px,3vw,48px);
   }
 
   /* plain ikona+odkaz položky (např. "Hlavní stránka" / "Lobby" na recepci) —

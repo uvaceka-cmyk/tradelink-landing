@@ -434,6 +434,15 @@ nejsou a nikdo je po uživateli nechce.
 
 ## Last Session
 
+**10. 9. 2026, pozdě večer — homepage česky a oprava překryvu.** Na pokyn uživatele je celý
+frontend zase česky: homepage (nav, hero „Místo, kde se propojuje byznys.", CTA „Prozkoumat
+TradeLink" / „Přidat příležitost", karty, výtah s patrem „Recepce", mobilní sheet, aria-labely),
+přepínač jazyka ukazuje CZ. Odkazy na legacy `lobby.html` se jmenují „Vstupní hala". Text
+„Firmy / Lidé / Obory…" pod kartami je teď v toku dokumentu (ne `position:absolute`), takže se
+při nízkém okně nemůže dostat pod karty; pod 760 px výšky se skryje. Claim je menší
+(`clamp(1.5rem,2.55vw,2.9rem)`), aby zůstal na jednom řádku. Ověřeno lokálně na 1900×910,
+1900×800, 1536×864, 1280×720 a 390×844. Čísla v kartách jsou pořád z reference (viz níž).
+
 **10. 9. 2026, večer — vizuální systém a formuláře (feat: elevate TradeLink visual system and form UI).**
 Na pokyn uživatele: homepage přiblížená referenčnímu screenshotu (Image 1) s čistou fotkou atria
 (Image 2 → `homepage-master.webp`), zbytek webu dostal jednotný prémiový tmavý design systém.
