@@ -111,6 +111,7 @@
   <script src="supabase-config.js"></script>
   <script src="obory-data.js"></script>
   <script src="app.js" defer></script>
+  <script src="forms.js" defer></script>
   <script type="module">
     import { supabase, status, busy, configured, czechError, paintNav } from './auth.js';
 
@@ -273,7 +274,7 @@
         return;
       }
 
-      if (!window.confirm('Opravdu inzerát smazat? Vrátit to nepůjde.')) return;
+      if (!(await TL.confirm({ title: 'Smazat inzerát?', text: 'Inzerát i odpovědi na něj zmizí. Vrátit to nepůjde.', ok: 'Smazat', danger: true }))) return;
       var d = await supabase.from('inzeraty').delete().eq('id', el.dataset.smazat);
       if (d.error) return status(statusEl, czechError(d.error), 'error');
       nacti();

@@ -67,6 +67,7 @@
   <script src="supabase-config.js"></script>
   <script src="obory-data.js"></script>
   <script src="app.js" defer></script>
+  <script src="forms.js" defer></script>
   <script type="module">
     import { supabase, status, configured, czechError, paintNav } from './auth.js';
 
@@ -190,7 +191,7 @@
     }
 
     async function smazHodnoceni() {
-      if (!window.confirm('Opravdu hodnocení smazat?')) return;
+      if (!(await TL.confirm({ title: 'Smazat hodnocení?', text: 'Vaše hodnocení firmy zmizí. Napsat ho můžete znovu.', ok: 'Smazat', danger: true }))) return;
       var res = await supabase.from('hodnoceni').delete().eq('id', mojeHodnoceni.id);
       if (res.error) return status(document.getElementById('stav-h'), czechError(res.error), 'error');
       mojeHodnoceni = null;

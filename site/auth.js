@@ -59,7 +59,8 @@ export function busy(form, isBusy, labelBusy) {
     button.textContent = button.dataset.label;
   }
   button.disabled = isBusy;
-  form.querySelectorAll('input,select').forEach(function (i) { i.disabled = isBusy; });
+  form.classList.toggle('is-busy', Boolean(isBusy));
+  form.querySelectorAll('input,select,textarea').forEach(function (i) { i.disabled = isBusy; });
 }
 
 export function requireConfig(statusEl) {
@@ -82,20 +83,23 @@ export function czechError(error) {
   if (/New password should be different/i.test(m)) return 'Nové heslo musí být jiné než to původní.';
   if (/Jednorázové e-mailové schránky/i.test(m)) return 'Jednorázové e-mailové schránky nepřijímáme. Použijte prosím svůj běžný e-mail.';
   if (/Database error saving new user|unexpected_failure/i.test(m)) return 'Registraci se nepodařilo dokončit. Ověřte prosím IČO znovu — platnost ověření je hodina.';
+  if (/invalid input syntax for type uuid/i.test(m)) return 'Tahle adresa není platná — odkaz je nejspíš neúplný.';
+  if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return 'Nepodařilo se spojit se serverem. Zkontrolujte připojení a zkuste to znovu.';
   return m || 'Něco se nepovedlo. Zkuste to prosím znovu.';
 }
 
 /* ---------- stav přihlášení v navigaci ---------- */
-export async function paintNav() {
+export async function paintNav(labels) {
   var slot = document.getElementById('nav-account');
   if (!slot || !configured) return null;
+  labels = labels || { account: 'Můj účet', signIn: 'Přihlásit se' };
 
   var session = (await supabase.auth.getSession()).data.session;
   if (session) {
-    slot.textContent = 'Můj účet';
+    slot.textContent = labels.account;
     slot.setAttribute('href', 'ucet.html');
   } else {
-    slot.textContent = 'Přihlásit se';
+    slot.textContent = labels.signIn;
     slot.setAttribute('href', 'prihlaseni.html');
   }
   return session;

@@ -434,6 +434,32 @@ nejsou a nikdo je po uživateli nechce.
 
 ## Last Session
 
+**10. 9. 2026, večer — vizuální systém a formuláře (feat: elevate TradeLink visual system and form UI).**
+Na pokyn uživatele: homepage přiblížená referenčnímu screenshotu (Image 1) s čistou fotkou atria
+(Image 2 → `homepage-master.webp`), zbytek webu dostal jednotný prémiový tmavý design systém.
+- **Homepage je teď anglicky** (nav, hero, CTA, karty, výtah) — tak to určuje reference, kterou
+  uživatel prohlásil za kanonickou; rozpracované anglické texty už byly ve working tree před
+  touhle session. Zbytek webu i `<title>`/meta zůstávají česky. **Čísla v kartách (124/38/21,
+  „posted 2 min ago") jsou z reference, ne z databáze** — před spuštěním naostro buď napojit na
+  `verejne_profily`/`verejne_inzeraty`, nebo vrátit kvalitativní texty (viz `git show 8801eb2`).
+- `site/style.css` přepsaný: tokeny (jeden systém radiusů 6/8/10/12/16/20), tlačítka jako zaoblený
+  obdélník místo pilulky, sklo s horní světelnou hranou u karet, formulářový systém (inputy
+  `rgba(10,14,18,.72)` + kovový rám + světelný focus, vlastní checkbox/radio, select s vlastní
+  šipkou, tmavý date picker, stavy error/ok/disabled/busy s ikonami), potvrzovací `<dialog>`,
+  vnitřní nav sladěná s HUD lištou (a opravená — na desktopu se lámala do dvou řádků).
+- **Inter je hostovaný ze `site/fonts/`** (latin + latin-ext, variabilní 300–700), žádné volání
+  na Google Fonts kvůli GDPR.
+- `site/forms.js` (nové): přepínač viditelnosti hesla u každého `input[type=password]` a
+  `TL.confirm()` místo `window.confirm` (mazání inzerátu, hodnocení, zrušení účtu). Bez JS vše
+  funguje dál. `auth.js`: `busy()` přidává třídu `is-busy` a vypíná i textarea; dvě nové překlady
+  chyb (neplatné uuid v adrese, výpadek spojení). `app.js`: štítek role se na prvním kroku oborů
+  schová, opakoval nadpis.
+- Ověřeno headless Chromem na 1536×864, 1920×1080, 1280×720, 1024×768 a 390×844. **Pozor:
+  headless Chrome na Windows nejde pod 500 px šířky** — mobil se měří přes same-origin `<iframe>`
+  o šířce 390 px a ořez screenshotu. Screenshoty jsou v `Desktop/TradeLink/screenshots/`.
+- Nedotčeno: ARES, Supabase, Cloudflare, flow, hrefy, databáze. `recepce.jpeg` má v sobě vypálený
+  výtahový panel vpravo, pravý sloupec voleb ho překrývá — starší věc, tahle session ji neřešila.
+
 **10. 9. 2026, noc — výpis ověřený s reálnými daty a prázdné karty.**
 Do databáze šly přes SQL čtyři testovací záznamy (ověřená firma, člověk, nabídka práce,
 poptávka; `stavebnictvi` / `Elektroinstalace`). **Všechny čtyři role vypsaly kartu**,

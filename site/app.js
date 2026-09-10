@@ -374,6 +374,8 @@
 
     document.title = role.title + ' — TradeLink';
     roleTag.textContent = role.title;
+    /* v prvním kroku by štítek jen opakoval nadpis — schová se */
+    roleTag.hidden = !industry;
     renderCrumbs(industry);
 
     /* krok 3 — výpis */

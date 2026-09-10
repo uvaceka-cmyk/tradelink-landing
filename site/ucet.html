@@ -72,6 +72,7 @@
 
   <script src="supabase-config.js"></script>
   <script src="app.js" defer></script>
+  <script src="forms.js" defer></script>
   <script type="module">
     import { supabase, ROLES, status, configured, paintNav } from './auth.js';
 
@@ -235,8 +236,8 @@
 
     document.getElementById('zrusit-ucet').addEventListener('click', async function () {
       var stav = document.getElementById('stav-zruseni');
-      if (!window.confirm('Opravdu zrušit účet? Smažou se všechna vaše data a vrátit to nepůjde.')) return;
-      if (!window.confirm('Poslední potvrzení — účet i s obsahem bude nenávratně smazán.')) return;
+      if (!(await TL.confirm({ title: 'Zrušit účet?', text: 'Smažou se všechna vaše data a vrátit to nepůjde.', ok: 'Pokračovat', danger: true }))) return;
+      if (!(await TL.confirm({ title: 'Poslední potvrzení', text: 'Účet i s obsahem bude nenávratně smazán.', ok: 'Smazat účet', danger: true }))) return;
 
       var res = await supabase.rpc('zrusit_muj_ucet');
       if (res.error) return status(stav, res.error.message, 'error');
