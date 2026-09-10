@@ -367,6 +367,25 @@ stavět. Před spuštěním se smažou, viz Known Issues.
 nové změny dělejte novým souborem, ne úpravou starého. Funkce v `functions/`
 obsluhují viditelnost ve vyhledávačích a ověřování firem.
 
+## Změny mimo repozitář
+
+Tohle se nedá vyčíst z gitu, protože to žije v cizích administracích. Kdo přebírá
+práci, ať si to projde — jinak bude hledat v kódu něco, co v kódu není.
+
+| kdy | kde | co |
+|---|---|---|
+| 10. 9. 2026 | Cloudflare → Email Routing | **vypnuté**; smazalo to 3 MX, DKIM `cf2024-1._domainkey` a kořenový SPF |
+| 10. 9. 2026 | Cloudflare → DNS | nové MX `5ba73c9128c9cb24.mx2/mx1.emailprofi.seznam.cz` (10 a 20), TXT `v=spf1 include:spf.seznam.cz ~all` |
+| 10. 9. 2026 | Seznam Email Profi | doména napojená, schránka `info@tradelink.cz` založená (heslo má jen uživatel) |
+| 10. 9. 2026 | Supabase → SQL Editor | spuštěná migrace `017-zkusebni-doba-dva-mesice.sql` |
+| 10. 9. 2026 | Supabase → Auth → Email Templates | česky: potvrzení registrace, obnova hesla, změna e-mailu |
+| 10. 9. 2026 | Supabase → SQL Editor | vložená a **hned zase smazaná** testovací data (`%@tradelink.test`) |
+| 10. 9. 2026 | Google Search Console | ruční žádost o indexování: `/recepce`, `/faq`, `/podminky`, `/soukromi` |
+| 10. 9. 2026 | Seznam Webmaster | doména přidaná pod `info@tradelink.cz`, čeká na kliknutí „Ověřit doménu" po nasazení meta tagu |
+
+**Přístupy:** Supabase, Cloudflare i Seznam jedou pod účty uživatele. Hesla nikde
+nejsou a nikdo je po uživateli nechce.
+
 ## Important Files
 
 - `site/index.html` — homepage/atrium, hero text, výtah; `site/homepage.css`/`.js`,
