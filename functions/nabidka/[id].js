@@ -66,9 +66,9 @@ ${jsonLd ? '<script type="application/ld+json">' + JSON.stringify(jsonLd) + '</s
   </div>
   <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
     <a href="/">Hlavní stránka</a>
-    <a href="/recepce.html">Recepce</a>
-    <a href="/registrace.html">Založit účet</a>
-    <a class="is-cta" id="nav-account" href="/prihlaseni.html">Přihlásit se</a>
+    <a href="/recepce">Recepce</a>
+    <a href="/registrace">Založit účet</a>
+    <a class="is-cta" id="nav-account" href="/prihlaseni">Přihlásit se</a>
   </nav>
 </header>
 <main class="journey shell">
@@ -77,9 +77,9 @@ ${telo}
 <footer class="foot shell">
   <a class="foot__brand" href="/">TradeLink</a>
   <span class="foot__links">
-    <a href="/podminky.html">Podmínky užití</a>
-    <a href="/soukromi.html">Ochrana údajů</a>
-    <a href="/zpetna-vazba.html">Zpětná vazba</a>
+    <a href="/podminky">Podmínky užití</a>
+    <a href="/soukromi">Ochrana údajů</a>
+    <a href="/zpetna-vazba">Zpětná vazba</a>
   </span>
   <small>© 2026 TradeLink</small>
 </footer>
@@ -100,7 +100,7 @@ export async function onRequestGet({ params, request }) {
       popisek: 'Takový inzerát na TradeLinku není.',
       url: puvod + '/nabidka/' + id,
       robots: 'noindex',
-      telo: '<h1>Inzerát nenalezen</h1><p class="journey__lead">Zkuste se podívat na <a href="/recepce.html">recepci</a>.</p>'
+      telo: '<h1>Inzerát nenalezen</h1><p class="journey__lead">Zkuste se podívat na <a href="/recepce">recepci</a>.</p>'
     }), { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
   }
 
@@ -119,7 +119,7 @@ export async function onRequestGet({ params, request }) {
       robots: 'noindex',
       telo: '<h1>Inzerát už není k dispozici</h1>' +
             '<p class="journey__lead">Zadavatel ho stáhl, nebo mu vypršela platnost. ' +
-            'Další najdete přes <a href="/recepce.html">recepci</a>.</p>'
+            'Další najdete přes <a href="/recepce">recepci</a>.</p>'
     }), { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
   }
 
@@ -188,8 +188,8 @@ export async function onRequestGet({ params, request }) {
   </dl>
 
   <div class="actions" style="margin-top:32px">
-    <a class="btn" href="/inzerat.html?id=${esc(i.id)}">Ozvat se</a>
-    <a class="btn btn--ghost" href="/recepce.html">Další nabídky</a>
+    <a class="btn" href="/inzerat?id=${esc(i.id)}">Ozvat se</a>
+    <a class="btn btn--ghost" href="/recepce">Další nabídky</a>
   </div>
 
   <div class="sdileni">

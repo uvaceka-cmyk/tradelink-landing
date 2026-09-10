@@ -69,9 +69,9 @@ ${jsonLd ? '<script type="application/ld+json">' + JSON.stringify(jsonLd) + '</s
   </div>
   <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
     <a href="/">Hlavní stránka</a>
-    <a href="/recepce.html">Recepce</a>
-    <a href="/registrace.html">Založit účet</a>
-    <a class="is-cta" id="nav-account" href="/prihlaseni.html">Přihlásit se</a>
+    <a href="/recepce">Recepce</a>
+    <a href="/registrace">Založit účet</a>
+    <a class="is-cta" id="nav-account" href="/prihlaseni">Přihlásit se</a>
   </nav>
 </header>
 <main class="journey shell">
@@ -80,9 +80,9 @@ ${telo}
 <footer class="foot shell">
   <a class="foot__brand" href="/">TradeLink</a>
   <span class="foot__links">
-    <a href="/podminky.html">Podmínky užití</a>
-    <a href="/soukromi.html">Ochrana údajů</a>
-    <a href="/zpetna-vazba.html">Zpětná vazba</a>
+    <a href="/podminky">Podmínky užití</a>
+    <a href="/soukromi">Ochrana údajů</a>
+    <a href="/zpetna-vazba">Zpětná vazba</a>
   </span>
   <small>© 2026 TradeLink</small>
 </footer>
@@ -103,7 +103,7 @@ export async function onRequestGet({ params, request }) {
     url: puvod + '/firma/' + id,
     robots: 'noindex',
     telo: '<h1>Profil nenalezen</h1><p class="journey__lead">' + esc(zprava) +
-          ' Zkuste se podívat na <a href="/recepce.html">recepci</a>.</p>'
+          ' Zkuste se podívat na <a href="/recepce">recepci</a>.</p>'
   }), { status: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 
   if (!/^[0-9a-f-]{36}$/i.test(id)) return nenalezeno('Taková adresa profilu neexistuje.');
@@ -194,8 +194,8 @@ export async function onRequestGet({ params, request }) {
     : '<p class="journey__lead">Tuhle firmu zatím nikdo nehodnotil.</p>'}
 
   <div class="actions" style="margin-top:32px">
-    <a class="btn" href="/firma.html?id=${esc(p.id)}">Ohodnotit firmu</a>
-    <a class="btn btn--ghost" href="/recepce.html">Zpět na recepci</a>
+    <a class="btn" href="/firma?id=${esc(p.id)}">Ohodnotit firmu</a>
+    <a class="btn btn--ghost" href="/recepce">Zpět na recepci</a>
   </div>`;
 
   return new Response(stranka({ titulek, popisek, url, telo, jsonLd }), {

@@ -29,10 +29,10 @@ administrativa a obchod, IT a technologie.
 ## Stránky
 
 - [Hlavní stránka](${puvod}/): co TradeLink je a jak funguje
-- [Recepce](${puvod}/recepce.html): volba, kdo jste a co hledáte
+- [Recepce](${puvod}/recepce): volba, kdo jste a co hledáte
 - [Mapa webu](${puvod}/sitemap.xml): všechny zveřejněné inzeráty
-- [Podmínky užití](${puvod}/podminky.html)
-- [Ochrana osobních údajů](${puvod}/soukromi.html)
+- [Podmínky užití](${puvod}/podminky)
+- [Ochrana osobních údajů](${puvod}/soukromi)
 
 ## Jak jsou vedené inzeráty
 
