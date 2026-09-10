@@ -88,6 +88,19 @@ export function czechError(error) {
   return m || 'Něco se nepovedlo. Zkuste to prosím znovu.';
 }
 
+/* ---------- poptávka zadaná bez účtu ----------
+   Kdo poptávku napsal dřív, než měl účet, čeká na ni v `poptavky_ceka`.
+   Po prvním přihlášení se překlopí mezi inzeráty — databáze si sama
+   pohlídá, že bere jen poptávky patřící k adrese přihlášeného účtu.
+
+   Volá se z paintNav, tedy na každé stránce po přihlášení: nevíme, kam
+   člověk po potvrzení e-mailu dorazí. Když není co překlápět, vrátí to
+   nulu a nic to nestojí. Chybu schválně nikde neukazujeme — je to práce
+   na pozadí, která nesmí rozbít stránku. */
+function prevzitPoptavky() {
+  supabase.rpc('prevzit_poptavky').catch(function () {});
+}
+
 /* ---------- stav přihlášení v navigaci ---------- */
 export async function paintNav(labels) {
   var slot = document.getElementById('nav-account');
@@ -96,6 +109,7 @@ export async function paintNav(labels) {
 
   var session = (await supabase.auth.getSession()).data.session;
   if (session) {
+    prevzitPoptavky();
     slot.textContent = labels.account;
     slot.setAttribute('href', 'ucet.html');
   } else {

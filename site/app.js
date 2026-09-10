@@ -261,7 +261,25 @@
   /* Doběhlá odpověď se zahodí, pokud návštěvník mezitím klikl jinam. */
   var vypisToken = 0;
 
+  /* Kdo shání řemeslníka, nemá důvod zakládat účet — má důvod napsat
+     poptávku. Účet mu vznikne až potvrzením e-mailu, takže mu ho tady
+     nenabízíme jako první krok. Obor a podobor si stránka převezme,
+     ať to nevybírá znovu. */
+  function poptavkaOdkaz() {
+    var q = new URLSearchParams();
+    if (state.industry) q.set('obor', state.industry);
+    if (state.sub) q.set('podobor', state.sub);
+    var s = q.toString();
+    return 'poptavka.html' + (s ? '?' + s : '');
+  }
+
   function akce() {
+    if (state.role === 'chci-zadat-zakazku') {
+      return '<div class="actions" style="margin-top:26px">' +
+        '<a class="btn" href="' + poptavkaOdkaz() + '">Zadat poptávku</a>' +
+        '<a class="btn btn--ghost" href="recepce.html">Zpět na recepci</a>' +
+        '</div>';
+    }
     return '<div class="actions" style="margin-top:26px">' +
       '<a class="btn" href="registrace.html?role=' + encodeURIComponent(state.role) + '">Založit účet</a>' +
       '<button class="btn btn--ghost" type="button" data-back="sub">Zpět na podobory</button>' +

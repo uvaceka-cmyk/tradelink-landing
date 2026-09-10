@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="Napište, co potřebujete udělat. Poptávku zadáte rovnou, bez zakládání účtu — stačí potvrdit e-mail.">
+  <title>Zadat poptávku — TradeLink</title>
+  <meta property="og:url" content="https://tradelink.cz/poptavka">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="TradeLink">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:title" content="Zadat poptávku — TradeLink">
+  <meta property="og:description" content="Napište, co potřebujete udělat. Bez zakládání účtu, stačí potvrdit e-mail.">
+  <meta property="og:image" content="https://tradelink.cz/tradelink.jpeg">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="900">
+  <meta name="twitter:image" content="https://tradelink.cz/tradelink.jpeg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://tradelink.cz/poptavka">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav__bar">
+      <a class="nav__brand" href="./">TradeLink</a>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Otevřít menu">
+        <span></span>
+      </button>
+    </div>
+    <nav class="nav__menu" id="nav-menu" aria-label="Hlavní navigace">
+      <a href="./">Hlavní stránka</a>
+      <a href="recepce.html">Recepce</a>
+      <a href="registrace.html">Založit účet</a>
+      <a class="is-cta" id="nav-account" href="prihlaseni.html">Přihlásit se</a>
+    </nav>
+  </header>
+
+  <main class="auth shell">
+    <div class="auth__card">
+      <p class="auth__kicker">Poptávka</p>
+      <h1>Co potřebujete udělat?</h1>
+      <p class="auth__lead">
+        Napište to vlastními slovy. Účet zakládat nemusíte — vznikne vám sám,
+        až potvrdíte e-mail. Do té doby poptávku nikdo nevidí.
+      </p>
+
+      <form class="form" id="form" novalidate>
+        <div class="field">
+          <label for="nazev">Co sháníte</label>
+          <input type="text" id="nazev" maxlength="120" required placeholder="např. Kompletní rozvody v bytě 3+1">
+        </div>
+
+        <div class="field">
+          <label for="popis">Popis</label>
+          <textarea id="popis" rows="5" maxlength="4000" required
+            placeholder="Co je potřeba udělat, kde a do kdy. Čím konkrétnější popis, tím lepší nabídky vám přijdou."></textarea>
+          <p class="field__hint">Alespoň 30 znaků.</p>
+        </div>
+
+        <div class="field">
+          <label for="obor">Odvětví</label>
+          <select id="obor" required>
+            <option value="">Vyberte odvětví</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="podobor">Obor</label>
+          <select id="podobor">
+            <option value="">Vyberte obor</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="lokalita">Kde</label>
+          <input type="text" id="lokalita" maxlength="120" placeholder="Praha 6, Brno, okolí Plzně…">
+        </div>
+
+        <div class="field">
+          <label for="odmena">Rozpočet</label>
+          <input type="text" id="odmena" maxlength="120" placeholder="např. do 50 000 Kč nebo dohodou">
+          <p class="field__hint">Nepovinné. Bez rozpočtu chodí méně konkrétní nabídky.</p>
+        </div>
+
+        <div class="field">
+          <label for="email">Váš e-mail</label>
+          <input type="email" id="email" autocomplete="email" required>
+          <p class="field__hint">Pošleme na něj potvrzení. Ve výpisu se nikdy nezobrazí.</p>
+        </div>
+
+        <div class="field">
+          <label for="password">Heslo k novému účtu</label>
+          <input type="password" id="password" autocomplete="new-password" minlength="8" required>
+          <p class="field__hint">Alespoň 8 znaků. Přes účet uvidíte odpovědi na poptávku.</p>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="vek" required>
+          <span>Je mi 18 let, nebo mám souhlas zákonného zástupce.</span>
+        </label>
+
+        <label class="check">
+          <input type="checkbox" id="consent" required>
+          <span>Souhlasím s <a href="podminky.html" target="_blank">podmínkami užití</a> a beru na vědomí <a href="soukromi.html" target="_blank">zpracování osobních údajů</a>.</span>
+        </label>
+
+        <p class="form__status" id="status" hidden></p>
+
+        <button class="btn" type="submit">Odeslat poptávku</button>
+      </form>
+
+      <p class="auth__alt">Už máte účet? <a href="prihlaseni.html">Přihlaste se</a> a zadejte poptávku odtamtud.</p>
+    </div>
+  </main>
+
+  <footer class="foot shell">
+    <a class="foot__brand" href="./">TradeLink</a>
+    <span class="foot__links">
+      <a href="faq.html">Časté otázky</a>
+      <a href="podminky.html">Podmínky užití</a>
+      <a href="soukromi.html">Ochrana údajů</a>
+      <a href="zpetna-vazba.html">Zpětná vazba</a>
+    </span>
+    <small>© 2026 TradeLink</small>
+  </footer>
+
+  <script src="supabase-config.js"></script>
+  <script src="obory-data.js"></script>
+  <script src="app.js" defer></script>
+  <script src="forms.js" defer></script>
+  <script type="module">
+    import { supabase, status, busy, requireConfig, czechError, paintNav } from './auth.js';
+
+    paintNav();
+
+    var statusEl = document.getElementById('status');
+    var form = document.getElementById('form');
+    var obory = window.TRADELINK_OBORY || [];
+
+    if (!requireConfig(statusEl)) form.hidden = true;
+
+    /* Text z číselníku se skládá do HTML. Bez tohohle by ampersand
+       nebo špičatá závorka v názvu rozbily nabídku. */
+    function esc(t) {
+      return String(t == null ? '' : t)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    var selObor = document.getElementById('obor');
+    var selPodobor = document.getElementById('podobor');
+
+    obory.forEach(function (o) {
+      selObor.insertAdjacentHTML('beforeend',
+        '<option value="' + esc(o.id) + '">' + esc(o.name) + '</option>');
+    });
+
+    function naplnPodobory(id) {
+      selPodobor.innerHTML = '<option value="">Vyberte obor</option>';
+      var o = null;
+      obory.forEach(function (x) { if (x.id === id) o = x; });
+      if (!o) return;
+      o.subs.forEach(function (s) {
+        selPodobor.insertAdjacentHTML('beforeend',
+          '<option value="' + esc(s) + '">' + esc(s) + '</option>');
+      });
+    }
+    selObor.addEventListener('change', function () { naplnPodobory(selObor.value); });
+
+    /* Předvyplnění z výpisu — kdo sem přijde z prázdného oboru,
+       ať ho nevybírá znovu. */
+    var q = new URLSearchParams(location.search);
+    if (q.get('obor')) {
+      selObor.value = q.get('obor');
+      naplnPodobory(selObor.value);
+      if (q.get('podobor')) selPodobor.value = q.get('podobor');
+    }
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      status(statusEl, '');
+
+      var nazev = document.getElementById('nazev').value.trim();
+      var popis = document.getElementById('popis').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var heslo = document.getElementById('password').value;
+
+      if (nazev.length < 5) {
+        return status(statusEl, 'Napište prosím aspoň pár slov o tom, co sháníte.', 'error');
+      }
+      if (popis.length < 30) {
+        return status(statusEl, 'Popis je moc krátký — aspoň 30 znaků, ať firmy vědí, o co jde.', 'error');
+      }
+      if (!selObor.value) {
+        return status(statusEl, 'Vyberte prosím odvětví.', 'error');
+      }
+      if (heslo.length < 8) {
+        return status(statusEl, 'Heslo musí mít alespoň 8 znaků.', 'error');
+      }
+      if (!document.getElementById('vek').checked) {
+        return status(statusEl, 'Poptávku smí zadat osoba starší 18 let, nebo mladší se souhlasem zákonného zástupce.', 'error');
+      }
+      if (!document.getElementById('consent').checked) {
+        return status(statusEl, 'Bez souhlasu se zpracováním údajů poptávku zadat nelze.', 'error');
+      }
+
+      busy(form, true, 'Odesílám…');
+
+      /* 1) Poptávka do čekárny. Musí projít dřív než registrace — kdyby ji
+         databáze odmítla (jednorázová schránka, moc čekajících poptávek),
+         nemá smysl zakládat účet. */
+      var vlozeni = await supabase.from('poptavky_ceka').insert({
+        email: email,
+        nazev: nazev,
+        popis: popis,
+        obor: selObor.value,
+        podobor: selPodobor.value || null,
+        lokalita: document.getElementById('lokalita').value.trim() || null,
+        odmena: document.getElementById('odmena').value.trim() || null
+      });
+
+      if (vlozeni.error) {
+        busy(form, false);
+        return status(statusEl, czechError(vlozeni.error), 'error');
+      }
+
+      /* 2) Účet. Když e-mail účet už má, poptávka se překlopí po přihlášení,
+         takže to není chyba — jen jiná instrukce. */
+      var reg = await supabase.auth.signUp({
+        email: email,
+        password: heslo,
+        options: {
+          emailRedirectTo: location.origin + '/',
+          data: { account_type: 'osoba', role: 'chci-zadat-zakazku' }
+        }
+      });
+
+      busy(form, false);
+      form.hidden = true;
+
+      if (reg.error && /already|registrov/i.test(reg.error.message || '')) {
+        return status(statusEl,
+          'Poptávku máme uloženou. Na tenhle e-mail už účet existuje — přihlaste se a poptávka se rovnou zveřejní.', 'ok');
+      }
+      if (reg.error) {
+        return status(statusEl,
+          'Poptávku máme uloženou, ale účet se založit nepodařilo: ' + czechError(reg.error) +
+          ' Zaregistrujte se prosím se stejným e-mailem, poptávka se pak připojí sama.', 'error');
+      }
+
+      status(statusEl,
+        'Hotovo. Poslali jsme vám e-mail — jakmile na odkaz kliknete, poptávka se zveřejní ' +
+        'a firmy na ni můžou odpovídat. Do té doby ji nikdo nevidí.', 'ok');
+    });
+  </script>
+</body>
+</html>
