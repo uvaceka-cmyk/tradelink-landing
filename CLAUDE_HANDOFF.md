@@ -167,6 +167,9 @@ Web je celý česky a běží na vlastní doméně.
   `info@tradelink.cz` — **heslo má jen uživatel**. Dřívější přeposílání přes Cloudflare
   Email Routing je vypnuté a jeho DNS záznamy (3 MX + DKIM + starý kořenový SPF) smazané;
   soukromá schránka provozovatele už v cestě pošty nefiguruje.
+- **Seznam Webmaster** — doména přidaná pod účtem `info@tradelink.cz`, ověření přes
+  meta tag `seznam-wmt` v `site/index.html` (**ten tag nemazat**). Seznam nenabízí
+  ověření přes DNS, jen soubor nebo meta tag.
 - **Google Search Console** — doména ověřená záznamem TXT v Cloudflare, mapa webu
   `https://tradelink.cz/sitemap.xml` odeslaná. Ověřovací TXT záznam nemazat, jinak
   se ověření ztratí.
@@ -330,10 +333,13 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
 
 1. Doplnit údaje o provozovateli do `podminky.html` a `soukromi.html` (až uživatel založí
    firmu) — bez toho nelze spustit naostro. Texty by měl vidět právník.
-2. **Seznam Webmaster** — účet na Seznamu už existuje (schránka `info@tradelink.cz`
-   v Email Profi), takže zbývá přidat doménu na `reporter.seznam.cz/wm`, ověřit ji
-   (doporučeně TXT záznamem v Cloudflare, ne souborem — Pages přesměrovává `.html`
-   na bezpříponové adresy) a odeslat `https://tradelink.cz/sitemap.xml`.
+2. **Seznam Webmaster — dokončit ověření.** Doména je v nástroji přidaná pod účtem
+   `info@tradelink.cz`, ověřovací meta tag `seznam-wmt` je v `site/index.html`.
+   Po nasazení stačí na `reporter.seznam.cz/wm` kliknout **Ověřit doménu** a pak
+   odeslat `https://tradelink.cz/sitemap.xml`.
+   **Pozor:** Seznam Webmaster nabízí jen dvě cesty ověření — soubor v kořeni webu,
+   nebo meta tag na homepage. **Ověření přes DNS neexistuje**, ať tvrdí nápověda cokoli.
+   Nový vygenerovaný tag zneplatní ten předchozí.
    **Zápis do Firmy.cz** počká, až bude firma — chce IČO a sídlo.
    Google Search Console je hotová.
 3. **Rozšířit odvětví na ~30** (`site/obory-data.js`) — na kamarádovi.
