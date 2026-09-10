@@ -39,7 +39,11 @@ export function onRequestGet({ request }) {
     '# aby se tentýž obsah nepočítal dvakrát.',
     'Disallow: /inzerat',
     'Disallow: /inzerat.html',
-    'Disallow: /firma',
+    /* Pozor na znak konce adresy: samotné 'Disallow: /firma' by zakázalo
+       i '/firma/<id>', tedy serverem vykreslený profil firmy, který je pro
+       vyhledávače naopak ten správný. Zakazuje se proto jen '/firma'
+       (verze pro prohlížeč), ne adresy pod ní. */
+    'Disallow: /firma' + '$',
     'Disallow: /firma.html',
     '',
     'Sitemap: ' + puvod + '/sitemap.xml',

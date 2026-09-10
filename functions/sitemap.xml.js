@@ -19,6 +19,7 @@ const SUPABASE_KEY = 'sb_publishable_uAKMzAdb_30eR7VJd39v5Q_bi8wwyY0';
 const STRANKY = [
   ['/', '1.0', 'weekly'],
   ['/recepce', '0.9', 'monthly'],
+  ['/nabidky', '0.9', 'daily'],
   ['/poptavka', '0.8', 'monthly'],
   ['/faq', '0.6', 'monthly'],
   ['/lobby', '0.5', 'monthly'],
