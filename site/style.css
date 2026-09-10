@@ -357,6 +357,38 @@ a.floor:active{transform:translateX(4px) scale(.98)}
 .result p{color:var(--fg-dim);max-width:52ch;margin-inline:auto}
 .result__meta{margin-top:22px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
 
+/* ---------- výpis (poslední krok průchodu) ---------- */
+.vypis__stav{color:var(--muted);padding-block:28px}
+.vypis__nadpis{
+  font-size:var(--step-2);margin-bottom:18px;
+  display:flex;align-items:baseline;gap:10px;
+}
+.vypis__pocet{
+  font-size:.72rem;letter-spacing:.14em;color:var(--muted);
+  border:1px solid var(--line-2);border-radius:999px;padding:3px 10px;
+}
+.vypis{display:grid;gap:12px}
+.karta{
+  display:block;text-decoration:none;color:inherit;
+  border:1px solid var(--line-2);border-radius:16px;padding:18px 20px;
+  background:linear-gradient(180deg,#ffffff0a,#ffffff03);
+  transition:border-color .25s var(--ease),transform .25s var(--ease);
+}
+.karta:hover,.karta:focus-visible{border-color:var(--metal);transform:translateY(-2px)}
+.karta__nadpis{display:block;font-weight:600;font-size:var(--step-1);letter-spacing:-.02em;margin-bottom:10px}
+.karta__meta{display:flex;flex-wrap:wrap;gap:8px}
+.karta__meta .tag{margin-bottom:0}
+.karta__meta:empty{display:none}
+.karta__popis{
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  color:var(--fg-dim);font-size:.92rem;line-height:1.6;margin-top:10px;
+}
+.karta__pata{display:block;margin-top:12px;color:var(--muted);font-size:.84rem}
+
+@media (min-width:760px){
+  .vypis{grid-template-columns:repeat(2,1fr)}
+}
+
 /* ---------- patička ---------- */
 .foot{
   border-top:1px solid var(--line);padding-block:28px;

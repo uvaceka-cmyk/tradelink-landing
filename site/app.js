@@ -2,7 +2,7 @@
    TradeLink — sdílený skript
    1) navigace (hamburger)
    2) hák pro pozdější animace kamery
-   3) průchod: typ návštěvníka → obor → podobor → výsledek
+   3) průchod: typ návštěvníka → obor → podobor → výpis
    ========================================================= */
 (function () {
   'use strict';
@@ -106,26 +106,22 @@
     'hledam-zamestnance': {
       title: 'Hledám zaměstnance',
       lead: 'Vyberte odvětví, ve kterém potřebujete nové lidi.',
-      subLead: 'Zvolte konkrétní obor, ať vidíte jen relevantní pracovníky.',
-      result: 'Tady se po spuštění zobrazí pracovníci, kteří v tomto oboru hledají práci.'
+      subLead: 'Zvolte konkrétní obor, ať vidíte jen relevantní pracovníky.'
     },
     'hledam-praci': {
       title: 'Hledám práci',
       lead: 'Vyberte odvětví, ve kterém chcete pracovat.',
-      subLead: 'Zvolte konkrétní obor, ať vidíte jen nabídky, které vám sedí.',
-      result: 'Tady se po spuštění zobrazí nabídky práce v tomto oboru.'
+      subLead: 'Zvolte konkrétní obor, ať vidíte jen nabídky, které vám sedí.'
     },
     'hledam-zakazky': {
       title: 'Hledám zakázky',
       lead: 'Vyberte odvětví, ve kterém sháníte zakázky.',
-      subLead: 'Zvolte konkrétní obor, ať vidíte jen poptávky, které umíte obsloužit.',
-      result: 'Tady se po spuštění zobrazí poptávky a zakázky v tomto oboru.'
+      subLead: 'Zvolte konkrétní obor, ať vidíte jen poptávky, které umíte obsloužit.'
     },
     'chci-zadat-zakazku': {
       title: 'Chci zadat zakázku',
       lead: 'Vyberte odvětví, ve kterém potřebujete práci provést.',
-      subLead: 'Zvolte konkrétní obor, ať vidíte jen firmy, které to dělají.',
-      result: 'Tady se po spuštění zobrazí firmy a živnostníci, kteří tuto práci provedou.'
+      subLead: 'Zvolte konkrétní obor, ať vidíte jen firmy, které to dělají.'
     }
   };
 
@@ -188,20 +184,29 @@
       (ICONS[id] || '') + '</svg>';
   }
 
+  /* Podobor i názvy z databáze se skládají do HTML. Podobor přitom
+     přichází z adresy, kterou může kdokoli přepsat — bez tohohle by
+     šlo odkazem podstrčit cizí kód. */
+  function esc(t) {
+    return String(t == null ? '' : t)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function renderCrumbs(industry) {
     var parts = ['<a href="recepce.html">Recepce</a>'];
     var role = ROLES[state.role];
 
     if (!industry) {
-      parts.push('<span class="crumbs__sep">/</span><span class="crumbs__now">' + role.title + '</span>');
+      parts.push('<span class="crumbs__sep">/</span><span class="crumbs__now">' + esc(role.title) + '</span>');
     } else {
-      parts.push('<span class="crumbs__sep">/</span><a href="obory.html?role=' + state.role + '">' + role.title + '</a>');
+      parts.push('<span class="crumbs__sep">/</span><a href="obory.html?role=' + encodeURIComponent(state.role) + '">' + esc(role.title) + '</a>');
       if (!state.sub) {
-        parts.push('<span class="crumbs__sep">/</span><span class="crumbs__now">' + industry.name + '</span>');
+        parts.push('<span class="crumbs__sep">/</span><span class="crumbs__now">' + esc(industry.name) + '</span>');
       } else {
-        parts.push('<span class="crumbs__sep">/</span><a href="obory.html?role=' + state.role +
-          '&obor=' + industry.id + '">' + industry.name + '</a>');
-        parts.push('<span class="crumbs__sep">/</span><span class="crumbs__now">' + state.sub + '</span>');
+        parts.push('<span class="crumbs__sep">/</span><a href="obory.html?role=' + encodeURIComponent(state.role) +
+          '&obor=' + encodeURIComponent(industry.id) + '">' + esc(industry.name) + '</a>');
+        parts.push('<span class="crumbs__sep">/</span><span class="crumbs__now">' + esc(state.sub) + '</span>');
       }
     }
     crumbs.innerHTML = parts.join('');
@@ -215,6 +220,137 @@
       '<span class="tile__arrow" aria-hidden="true">' + ARROW + '</span></button>';
   }
 
+  /* ---------- výpis ----------
+     Poslední krok průchodu. Co se v něm ukáže, se řídí tím, s čím
+     návštěvník přišel na recepci: kdo hledá práci, chce vidět nabídky
+     práce; kdo hledá lidi, chce vidět lidi. Proto se tu sahá jednou do
+     inzerátů a jednou do profilů.
+
+     Čte se z veřejných pohledů `verejne_inzeraty` a `verejne_profily` —
+     ty už mají odfiltrované skryté, prošlé i nezveřejněné položky
+     a nenesou e-maily. Klíč v `supabase-config.js` je veřejný, jiná
+     data než tahle přes něj nejdou přečíst. */
+
+  var VYPIS = {
+    'hledam-praci': {
+      zdroj: 'verejne_inzeraty', filtr: 'typ=eq.prace',
+      nadpis: 'Nabídky práce',
+      prazdno: 'V tomhle oboru zatím žádná nabídka práce není. Zkuste jiný obor, ' +
+               'nebo si založte účet — dáme vědět, až se objeví.'
+    },
+    'hledam-zakazky': {
+      zdroj: 'verejne_inzeraty', filtr: 'typ=eq.zakazka',
+      nadpis: 'Poptávky zakázek',
+      prazdno: 'V tomhle oboru zatím nikdo zakázku nepoptává. Zkuste jiný obor, ' +
+               'nebo si založte účet — dáme vědět, až se objeví.'
+    },
+    'hledam-zamestnance': {
+      zdroj: 'verejne_profily', filtr: 'account_type=eq.osoba',
+      nadpis: 'Lidé, kteří hledají práci',
+      prazdno: 'V tomhle oboru se zatím nikdo nenabízí. Zkuste jiný obor, ' +
+               'nebo si založte účet a zadejte nabídku práce.'
+    },
+    'chci-zadat-zakazku': {
+      zdroj: 'verejne_profily', filtr: 'account_type=eq.firma',
+      nadpis: 'Firmy a živnostníci',
+      prazdno: 'V tomhle oboru zatím žádná firma zveřejněný profil nemá. Zkuste jiný obor, ' +
+               'nebo si založte účet a zadejte poptávku.'
+    }
+  };
+
+  /* Doběhlá odpověď se zahodí, pokud návštěvník mezitím klikl jinam. */
+  var vypisToken = 0;
+
+  function akce() {
+    return '<div class="actions" style="margin-top:26px">' +
+      '<a class="btn" href="registrace.html?role=' + encodeURIComponent(state.role) + '">Založit účet</a>' +
+      '<button class="btn btn--ghost" type="button" data-back="sub">Zpět na podobory</button>' +
+      '<a class="btn btn--ghost" href="recepce.html">Zpět na recepci</a>' +
+      '</div>';
+  }
+
+  function kartaInzeratu(i) {
+    var meta = [];
+    if (i.autor_overena_firma) meta.push('<span class="tag tag--free">Ověřená firma</span>');
+    if (i.lokalita) meta.push('<span class="tag">' + esc(i.lokalita) + '</span>');
+    if (i.odmena) meta.push('<span class="tag">' + esc(i.odmena) + '</span>');
+
+    return '<a class="karta" href="/nabidka/' + encodeURIComponent(i.id) + '">' +
+      '<span class="karta__nadpis">' + esc(i.nazev) + '</span>' +
+      '<span class="karta__meta">' + meta.join('') + '</span>' +
+      '<span class="karta__popis">' + esc(i.popis) + '</span>' +
+      '<span class="karta__pata">' + esc(i.autor_jmeno) + '</span>' +
+      '</a>';
+  }
+
+  function kartaProfilu(p) {
+    var meta = [];
+    if (p.overena_firma) meta.push('<span class="tag tag--free">Ověřená firma</span>');
+    if (p.lokalita) meta.push('<span class="tag">' + esc(p.lokalita) + '</span>');
+    if (p.hodnoceni_pocet) {
+      meta.push('<span class="tag">★ ' + esc(p.hodnoceni_prumer) +
+        ' (' + esc(p.hodnoceni_pocet) + ')</span>');
+    }
+
+    return '<a class="karta" href="/firma/' + encodeURIComponent(p.id) + '">' +
+      '<span class="karta__nadpis">' + esc(p.jmeno) + '</span>' +
+      '<span class="karta__meta">' + meta.join('') + '</span>' +
+      '<span class="karta__popis">' + esc(p.popis) + '</span>' +
+      '</a>';
+  }
+
+  function vypis(industry, sub) {
+    var nastaveni = VYPIS[state.role];
+    var muj = ++vypisToken;
+
+    body.innerHTML = '<p class="vypis__stav" role="status">Načítám nabídky…</p>' + akce();
+
+    var sb = window.TRADELINK_SUPABASE;
+    if (!sb || !sb.url || !sb.anonKey) {
+      body.innerHTML = '<p class="vypis__stav">Výpis se teď nedá načíst.</p>' + akce();
+      return;
+    }
+
+    var adresa = sb.url + '/rest/v1/' + nastaveni.zdroj +
+      '?select=*&' + nastaveni.filtr +
+      '&obor=eq.' + encodeURIComponent(industry.id) +
+      '&podobor=eq.' + encodeURIComponent(sub) +
+      '&order=created_at.desc&limit=60';
+
+    fetch(adresa, { headers: { apikey: sb.anonKey, Authorization: 'Bearer ' + sb.anonKey } })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        if (muj !== vypisToken) return;
+
+        if (!data.length) {
+          body.innerHTML =
+            '<div class="result">' +
+              '<h2>' + esc(nastaveni.nadpis) + '</h2>' +
+              '<p>' + esc(nastaveni.prazdno) + '</p>' +
+              '<p class="result__meta">' + esc(industry.name) + ' → ' + esc(sub) + '</p>' +
+            '</div>' + akce();
+          return;
+        }
+
+        var karta = nastaveni.zdroj === 'verejne_inzeraty' ? kartaInzeratu : kartaProfilu;
+        body.innerHTML =
+          '<h2 class="vypis__nadpis">' + esc(nastaveni.nadpis) +
+            ' <span class="vypis__pocet">' + data.length + '</span></h2>' +
+          '<div class="vypis">' + data.map(karta).join('') + '</div>' + akce();
+      })
+      .catch(function () {
+        if (muj !== vypisToken) return;
+        body.innerHTML =
+          '<div class="result">' +
+            '<h2>Výpis se nepodařilo načíst</h2>' +
+            '<p>Zkuste to prosím za chvíli znovu.</p>' +
+          '</div>' + akce();
+      });
+  }
+
   function render() {
     var role = ROLES[state.role];
     var industry = state.industry ? findIndustry(state.industry) : null;
@@ -224,21 +360,11 @@
     roleTag.textContent = role.title;
     renderCrumbs(industry);
 
-    /* krok 3 — výsledek */
+    /* krok 3 — výpis */
     if (industry && state.sub) {
       heading.textContent = state.sub;
       lead.textContent = industry.name;
-      body.innerHTML =
-        '<div class="result">' +
-          '<h2>Zatím připravujeme</h2>' +
-          '<p>' + role.result + '</p>' +
-          '<p class="result__meta">' + industry.name + ' → ' + state.sub + '</p>' +
-        '</div>' +
-        '<div class="actions" style="margin-top:26px">' +
-          '<a class="btn" href="registrace.html?role=' + state.role + '">Založit účet</a>' +
-          '<button class="btn btn--ghost" type="button" data-back="sub">Zpět na podobory</button>' +
-          '<a class="btn btn--ghost" href="recepce.html">Zpět na recepci</a>' +
-        '</div>';
+      vypis(industry, state.sub);
       return;
     }
 
