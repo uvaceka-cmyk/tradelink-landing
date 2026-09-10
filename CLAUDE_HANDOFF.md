@@ -563,6 +563,8 @@ None — current work is in a stable state. Atriová homepage je smergovaná do 
   konkurenci, než se k tomu správce dostane. Zatím to beru jako přijatelnou cenu za to,
   že podvod neviselo ve výpisu; při větším provozu zvážit vyšší mez nebo váhu podle
   stáří účtu.
+- **Stav projektu se vede v `SPUSTENI.md`** — hotové, rozpracované, blokátory a pořadí
+  kroků pro ostrý start. Kdo něco dodělá nebo začne, patří to tam.
 - **Rozhraní Supabase i Cloudflare padá pod překladačem Chromu.** Supabase to hlásí přímo
   chybovou stránkou. Uživatel má překlad zapnutý — než se vypne, dělat zásahy raději přes
   SQL editor (ten přežívá) nebo přes API.
@@ -682,6 +684,16 @@ nejsou a nikdo je po uživateli nechce.
 - Pořadí flow: role/obor/podobor musí přijít až po recepci, ne na homepage. Aktuálně
   `homepage/atrium → recepce → volba → obor → podobor`. `lobby.html` v hlavním flow není
   mezikrok, zůstává v repu jen jako nepoužívaná legacy stránka — nemazat.
+- **U každé nové funkce v databázi odebírat práva i roli `public`.**
+  `revoke execute ... from anon, authenticated` **nestačí** — Postgres dává právo
+  spustit funkci roli `public`, kterou obě role dědí. Kvůli tomu šla veřejným klíčem
+  zavolat `zapsat_platbu()` a nastavit si předplatné zdarma (opraveno migrací `024`).
+  Správně: `revoke execute on function ... from public, anon, authenticated;`
+  Ověření: `has_function_privilege('anon', p.oid, 'execute')` musí být false.
+- **Při přepisu pohledu zkontrolovat, co v něm bylo předtím.** Migrace `021` takhle
+  omylem shodila z `verejne_profily` průměr hodnocení a hvězdičky by zmizely z výpisu.
+- **Pravidla RLS neomezují sloupce.** „Upravit smí jen svůj řádek" neznamená „jen svoje
+  sloupce" — chráněné sloupce hlídá spouštěč `profil_chranene_sloupce` (migrace `023`).
 - **Ceny patří jen na `faq.html`, nikam jinam.** Uživatel je 10. 9. 2026 povolil
   výhradně tam („ceny dáme pouze tam"). Na homepage, recepci, u voleb ani u inzerátů
   se cena neobjevuje — ta část původního zákazu platí dál.
