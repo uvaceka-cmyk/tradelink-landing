@@ -93,9 +93,6 @@
 .atrium__next video{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:56% 50%;
   opacity:0;
-  /* klip je oproti recepce-master.webp mírně přeexponovaný/teplejší —
-     jemná korekce, ať poslední snímek videa sedí se statickou fotkou */
-  filter:brightness(.93) saturate(1.05);
 }
 /* varianta s videem: fotka se nepřibližuje, video ji hned nahradí (první snímek = atrium) */
 body.is-leaving.is-video .atrium__media img{transform:none}
