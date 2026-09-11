@@ -86,6 +86,18 @@
   position:absolute;inset:0;z-index:0;pointer-events:none;
   opacity:0;transition:opacity .55s ease .55s;
 }
+/* stejný ztmavující gradient jako .reception__media::after — recepce ho má
+   natrvalo na fotce, takže bez něj by při dojezdu vypadalo, jako by se
+   najednou "zapnula" viněta. Tady jede od začátku, aby na konci nebyl skok. */
+.atrium__next::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,#05070a1a 0%,#05070a73 62%,var(--ink) 100%);
+}
+@media (min-width:1100px){
+  .atrium__next::after{
+    background:linear-gradient(180deg,rgba(5,7,10,.5) 0%,transparent 22%,transparent 80%,rgba(5,7,10,.45) 100%);
+  }
+}
 .atrium__next img{
   width:100%;height:100%;object-fit:cover;object-position:56% 50%;
   transform:scale(1.12);transition:transform 1.15s cubic-bezier(.4,0,.2,1);
