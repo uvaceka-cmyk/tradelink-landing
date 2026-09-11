@@ -37,7 +37,14 @@
       try { sessionStorage.setItem('tl-arrive-video', '1'); } catch (e) {}
       window.location.href = href;
     }
-    video.addEventListener('ended', go, { once: true });
+    function onEnded() {
+      /* snímek navíc, ať prohlížeč fakt stihne vykreslit poslední snímek
+         videa, než na něj naskočí statická fotka recepce (jinak zůstává
+         patrný drobný skok — naviguje se dřív, než se poslední snímek
+         doopravdy vykreslil) */
+      requestAnimationFrame(function () { requestAnimationFrame(go); });
+    }
+    video.addEventListener('ended', onEnded, { once: true });
     video.addEventListener('error', go, { once: true });
     window.setTimeout(go, VIDEO_MAX_MS);
     video.playbackRate = VIDEO_RATE;
