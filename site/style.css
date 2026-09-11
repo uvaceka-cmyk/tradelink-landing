@@ -562,7 +562,11 @@ html.arrive-video .reception[data-enter] .choices__col:nth-of-type(2) .choice{tr
     width:100%;padding:34svh 20% 0 20%;
     grid-template-columns:1fr 1fr 1fr;
     align-content:start;gap:0;
+    /* prázdný střední sloupec (nad ním recepční a neon nápis) nesmí
+       zabírat kliky — jinak leží přes .reception__logo a schová ho */
+    pointer-events:none;
   }
+  .choice{pointer-events:auto}
   .choices__head{display:none}
   .choices__col{gap:clamp(14px,3svh,28px)}
   .choices__col:nth-of-type(1){grid-column:1}
