@@ -553,8 +553,21 @@ html.arrive-video .reception[data-enter] .choices__col:nth-of-type(2) .choice{tr
   .reception__intro{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .reception__logo{
     display:block;position:absolute;z-index:2;
-    left:35%;top:17%;width:30%;height:15%;
-    border-radius:var(--r-md);
+    left:33%;top:14%;width:34%;height:19%;
+    border-radius:var(--r-sm);
+    /* stejná řeč jako .choice karty — rám, měkké sklo, záře — ať nápis
+       čte jako samostatný klikatelný blok, ne jen vypálený v obrázku */
+    border:1px solid rgba(230,201,143,.5);
+    background:linear-gradient(180deg,rgba(14,10,6,.16),rgba(6,4,2,.24));
+    backdrop-filter:blur(3px);
+    box-shadow:0 0 22px rgba(230,201,143,.14),0 18px 40px rgba(0,0,0,.3),inset 0 0 0 1px rgba(0,0,0,.2);
+    transition:border-color .25s var(--ease),transform .25s var(--ease),box-shadow .25s var(--ease),background-color .25s var(--ease);
+  }
+  .reception__logo:hover,.reception__logo:focus-visible{
+    border-color:#f1dcae;
+    transform:translateY(-2px);
+    background:linear-gradient(180deg,rgba(14,10,6,.28),rgba(6,4,2,.36));
+    box-shadow:0 0 34px rgba(230,201,143,.3),0 22px 50px rgba(0,0,0,.35),inset 0 0 0 1px rgba(0,0,0,.2);
   }
   .reception__logo:focus-visible{outline:2px solid var(--accent);outline-offset:6px}
   .choices{
