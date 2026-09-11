@@ -84,7 +84,13 @@
         <img src="recepce-master.webp" width="1672" height="941" fetchpriority="high"
              alt="Recepce TradeLinku — recepční za mramorovým pultem, svítící logo TradeLink na stěně z černého mramoru se zlatými žilkami.">
       </div>
-      <a class="reception__logo" href="./" aria-label="TradeLink — hlavní stránka"></a>
+      <!-- kotveno k ploše fotky (cover-fit geometrie), ne k viewportu —
+           nápis musí sedět přesně na vypálený neon při libovolném poměru stran -->
+      <div class="reception__signbox">
+        <a class="reception__logo" href="./" aria-label="TradeLink — hlavní stránka">
+          <img src="tradelink-sign.webp" alt="" width="655" height="132" loading="lazy">
+        </a>
+      </div>
       <aside class="elevator" aria-label="Výtah — patra budovy">
         <div class="floors">
           <p class="floors__head">Zvolte patro
