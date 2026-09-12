@@ -57,22 +57,6 @@
 .elevator-doors.is-instant,
 .elevator-doors.is-instant *{transition:none!important}
 
-.elevator-doors__indicator{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  z-index:1;text-align:center;color:#f7ecd8;
-  opacity:0;transition:opacity .35s ease;pointer-events:none;
-  text-shadow:0 2px 24px rgba(0,0,0,.6);
-}
-.elevator-doors.is-holding .elevator-doors__indicator{opacity:1}
-.elevator-doors__num{
-  display:block;font-size:clamp(2.4rem,6vw,4.2rem);font-weight:300;
-  letter-spacing:-.02em;line-height:1;
-}
-.elevator-doors__label{
-  display:block;margin-top:12px;font-size:.68rem;letter-spacing:.34em;
-  text-transform:uppercase;color:rgba(247,236,216,.8);
-}
-
 /* krok 1: aktuální UI se před zavřením dveří velmi jemně ztlumí */
 body.is-elevator-leaving > header,
 body.is-elevator-leaving > main,
@@ -83,7 +67,7 @@ body.is-elevator-leaving > footer{
 }
 
 @media (prefers-reduced-motion:reduce){
-  .elevator-doors__leaf,.elevator-doors__leaf::after,.elevator-doors__indicator{transition:none!important}
+  .elevator-doors__leaf,.elevator-doors__leaf::after{transition:none!important}
   body.is-elevator-leaving > header,
   body.is-elevator-leaving > main,
   body.is-elevator-leaving > footer{transition:none!important}

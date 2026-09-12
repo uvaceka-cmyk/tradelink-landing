@@ -8,7 +8,7 @@
    dveře jsou zavřené už při prvním vykreslení.
    Šablona pro další patra — stačí patru přidat vlastní
    data-elevator-floor na <body> a odkaz s
-   data-elevator-transition / data-floor-num / data-floor-label.
+   data-elevator-transition / data-floor-num.
    ========================================================= */
 (function () {
   'use strict';
@@ -58,7 +58,6 @@
       if (leaving || link.classList.contains('is-here')) return;
       var href = link.getAttribute('href');
       var num = link.getAttribute('data-floor-num');
-      var label = link.getAttribute('data-floor-label');
       if (!href || !num || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
       e.preventDefault();
@@ -66,11 +65,6 @@
 
       var sheet = document.getElementById('floors-sheet');
       if (sheet && !sheet.hidden) sheet.hidden = true;
-
-      var numEl = overlay.querySelector('.elevator-doors__num');
-      var labelEl = overlay.querySelector('.elevator-doors__label');
-      if (numEl) numEl.textContent = num;
-      if (labelEl) labelEl.textContent = label || '';
 
       if (reduced) {
         try { sessionStorage.setItem(STORAGE_KEY, num); } catch (err) {}
