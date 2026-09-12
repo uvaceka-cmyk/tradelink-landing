@@ -1,0 +1,90 @@
+/* =========================================================
+   TradeLink — kinematický přechod výtahem mezi scénami budovy.
+   Dvoje dveře jako dvě skutečné HTML poloviny, položené přes
+   celý viewport (nad nav i patrový panel). V klidu neviditelné
+   a bez pointer-events — aktuální scéna zůstává plně živá, dokud
+   návštěvník nezvolí patro. Řídí elevator.js; šablona pro další patra.
+   ========================================================= */
+
+.elevator-doors{
+  position:fixed;inset:0;z-index:2000;
+  visibility:hidden;pointer-events:none;
+}
+.elevator-doors.is-active{visibility:visible;pointer-events:auto}
+
+.elevator-doors__leaf{
+  position:absolute;top:0;bottom:0;width:50%;
+  will-change:transform;
+  backface-visibility:hidden;
+  transition:transform var(--door-dur,800ms) var(--ease);
+  background:
+    repeating-linear-gradient(90deg,
+      rgba(0,0,0,0) 0px, rgba(255,255,255,.025) 1px,
+      rgba(0,0,0,0) 2px, rgba(0,0,0,.05) 3px, rgba(0,0,0,0) 4px),
+    linear-gradient(180deg,
+      #241d15 0%, #171310 10%, #0b0906 26%, #100c09 42%,
+      #1a140e 50%, #100c09 58%, #0b0906 74%, #171310 90%, #241d15 100%),
+    linear-gradient(90deg, #050403 0%, #14100b 50%, #050403 100%);
+  box-shadow:inset 0 0 140px rgba(0,0,0,.72), inset 0 0 2px rgba(0,0,0,.9);
+}
+.elevator-doors__leaf--left{left:0;border-right:1px solid rgba(230,201,143,.5);transform:translateX(-100%)}
+.elevator-doors__leaf--right{right:0;border-left:1px solid rgba(230,201,143,.5);transform:translateX(100%)}
+
+/* jemné vodorovné odlesky — teplý bronz/zlato na kartáčovaném kovu */
+.elevator-doors__leaf::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(180deg,transparent 10%,rgba(241,220,174,.12) 16%,transparent 23%),
+    linear-gradient(180deg,transparent 45%,rgba(241,220,174,.16) 50%,transparent 56%),
+    linear-gradient(180deg,transparent 79%,rgba(241,220,174,.09) 84%,transparent 91%);
+  mix-blend-mode:screen;opacity:.85;
+}
+/* svislá záře na styku dveří — sílí, jen když jsou zavřené */
+.elevator-doors__leaf::after{
+  content:"";position:absolute;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,transparent,#f1dcae,transparent);
+  opacity:0;transition:opacity .3s ease;pointer-events:none;
+}
+.elevator-doors__leaf--left::after{right:-1px}
+.elevator-doors__leaf--right::after{left:-1px}
+.elevator-doors.is-closed .elevator-doors__leaf::after{opacity:.85}
+
+.elevator-doors.is-closed .elevator-doors__leaf{transform:translateX(0)}
+
+/* první vykreslení scény, na kterou se přijíždí: dveře už musí být
+   zavřené dřív, než prohlížeč cokoliv vykreslí — žádná animace,
+   žádný záblesk pozadí. Nastavuje synchronní skript hned za markupem. */
+.elevator-doors.is-instant,
+.elevator-doors.is-instant *{transition:none!important}
+
+.elevator-doors__indicator{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:1;text-align:center;color:#f7ecd8;
+  opacity:0;transition:opacity .35s ease;pointer-events:none;
+  text-shadow:0 2px 24px rgba(0,0,0,.6);
+}
+.elevator-doors.is-holding .elevator-doors__indicator{opacity:1}
+.elevator-doors__num{
+  display:block;font-size:clamp(2.4rem,6vw,4.2rem);font-weight:300;
+  letter-spacing:-.02em;line-height:1;
+}
+.elevator-doors__label{
+  display:block;margin-top:12px;font-size:.68rem;letter-spacing:.34em;
+  text-transform:uppercase;color:rgba(247,236,216,.8);
+}
+
+/* krok 1: aktuální UI se před zavřením dveří velmi jemně ztlumí */
+body.is-elevator-leaving > header,
+body.is-elevator-leaving > main,
+body.is-elevator-leaving > footer{
+  opacity:.94;filter:saturate(.92);
+  transition:opacity .25s var(--ease),filter .25s var(--ease);
+  pointer-events:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .elevator-doors__leaf,.elevator-doors__leaf::after,.elevator-doors__indicator{transition:none!important}
+  body.is-elevator-leaving > header,
+  body.is-elevator-leaving > main,
+  body.is-elevator-leaving > footer{transition:none!important}
+}

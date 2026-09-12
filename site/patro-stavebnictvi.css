@@ -1,0 +1,90 @@
+/* =========================================================
+   TradeLink — PATRO 04, STAVEBNICTVÍ A ŘEMESLA
+   Stejný jazyk jako recepce (fotka jako hlavní vizuál, cover-fit,
+   fullscreen na desktopu), ale nezávislé třídy — šablona pro
+   další patra později. Levý skleněný panel a výtah (nav-hud.css)
+   jsou skutečné HTML/CSS vrstvy nad fotkou.
+   ========================================================= */
+
+.floor-scene{position:relative;background:var(--ink)}
+
+.floor-scene__media{position:relative;isolation:isolate}
+.floor-scene__media img{
+  width:100%;height:clamp(260px,44svh,420px);object-fit:cover;object-position:64% 32%;
+}
+.floor-scene__media::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,#05070a1a 0%,#05070a73 62%,var(--ink) 100%);
+}
+
+.floor-scene__intro{position:relative;padding:26px var(--gutter) 0;text-align:center}
+.floor-scene__kicker{font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.floor-scene__intro h1{font-size:var(--step-3);margin-bottom:12px}
+.floor-scene__intro p{color:var(--fg-dim);max-width:46ch;margin-inline:auto;font-size:.98rem}
+
+/* ---------- levý interaktivní panel (sklo) ----------
+   Zatím jen struktura: krok 1 (obor) a krok 2 (nabídky) se doplní
+   později, proto placeholder text a nefunkční šipky/tečky. Na mobilu
+   normální karta v toku, na desktopu velký skleněný panel u levého okraje. */
+.floor-panel{
+  position:relative;margin:22px var(--gutter) 0;
+  border-radius:var(--r-xl);
+  border:1px solid rgba(230,201,143,.28);
+  background:linear-gradient(180deg,rgba(18,23,29,.74),rgba(9,12,16,.86));
+  backdrop-filter:blur(18px) saturate(1.1);
+  -webkit-backdrop-filter:blur(18px) saturate(1.1);
+  box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06),0 0 44px rgba(230,201,143,.08);
+  padding:22px;
+  min-height:200px;
+  display:flex;flex-direction:column;
+}
+.floor-panel__head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.floor-panel__kicker{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim)}
+.floor-panel__step{
+  font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
+  padding:4px 10px;border-radius:999px;border:1px solid rgba(230,201,143,.35);background:rgba(230,201,143,.08);
+}
+.floor-panel__body{
+  flex:1;display:grid;place-items:center;text-align:center;color:var(--fg-dim);
+  padding:24px 14px;border:1px dashed rgba(255,255,255,.14);border-radius:var(--r-lg);
+}
+.floor-panel__body p{max-width:32ch;font-size:.92rem;line-height:1.55}
+.floor-panel__nav{display:flex;align-items:center;justify-content:space-between;margin-top:18px}
+.floor-panel__arrow{
+  display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;padding:0;
+  border:1px solid rgba(230,201,143,.4);color:var(--fg-dim);background:rgba(0,0,0,.25);cursor:pointer;
+  transition:border-color .2s var(--ease),color .2s var(--ease),background-color .2s var(--ease);
+}
+.floor-panel__arrow svg{width:16px;height:16px}
+.floor-panel__arrow:hover,.floor-panel__arrow:focus-visible{border-color:var(--accent);color:var(--accent);background:rgba(230,201,143,.08)}
+.floor-panel__dots{display:flex;gap:6px}
+.floor-panel__dots span{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.22)}
+.floor-panel__dots span:first-child{background:var(--accent)}
+
+@media (max-width:1099.98px){ .floor-scene .elevator{display:none} }
+
+@media (min-width:1100px){
+  .floor-scene{height:100svh;min-height:640px;overflow:hidden}
+  .floor-scene__media{position:absolute;inset:0}
+  .floor-scene__media img{height:100%;object-position:68% 38%}
+  .floor-scene__media::after{
+    background:linear-gradient(180deg,rgba(5,7,10,.5) 0%,transparent 24%,transparent 74%,rgba(5,7,10,.52) 100%);
+  }
+  .floor-scene__intro{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;
+  }
+
+  .floor-panel{
+    position:absolute;z-index:2;
+    left:clamp(24px,4.6vw,68px);top:50%;translate:0 -50%;
+    width:clamp(340px,29vw,460px);
+    min-height:clamp(360px,52svh,520px);
+    padding:clamp(24px,2vw,34px);
+    margin:0;
+  }
+  .floor-panel__body p{font-size:1rem}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .floor-panel__arrow{transition:none}
+}

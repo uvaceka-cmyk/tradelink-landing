@@ -4,49 +4,49 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#05070a">
-  <meta name="description" content="Recepce TradeLinku — řekněte, kdo jste a co hledáte: zaměstnance, práci, zakázky, nebo firmu na zakázku.">
-  <title>Recepce — TradeLink</title>
-  <meta property="og:url" content="https://tradelink.cz/recepce">
+  <meta name="description" content="Patro Stavebnictví a řemesla — TradeLink. Vyberte obor a najděte poptávky, zakázky i lidi ze stavebnictví a řemesel.">
+  <title>Stavebnictví &amp; řemesla — TradeLink</title>
+  <meta property="og:url" content="https://tradelink.cz/patro-stavebnictvi">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="TradeLink">
   <meta property="og:locale" content="cs_CZ">
-  <meta property="og:title" content="Recepce — TradeLink">
-  <meta property="og:description" content="Řekněte, kdo jste a co hledáte. Podle toho se otevřou obory a nabídky.">
+  <meta property="og:title" content="Stavebnictví &amp; řemesla — TradeLink">
+  <meta property="og:description" content="Patro stavebnictví a řemesel — obor, poptávky a nabídky na jednom místě.">
   <meta property="og:image" content="https://tradelink.cz/tradelink.jpeg">
   <meta property="og:image:width" content="1600">
   <meta property="og:image:height" content="900">
   <meta property="og:image:alt" content="TradeLink — kde se propojuje byznys">
   <meta name="twitter:image" content="https://tradelink.cz/tradelink.jpeg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="canonical" href="https://tradelink.cz/recepce">
+  <link rel="canonical" href="https://tradelink.cz/patro-stavebnictvi">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="nav-hud.css">
   <link rel="stylesheet" href="homepage.css">
   <link rel="stylesheet" href="elevator.css">
-  <link rel="preload" as="image" href="recepce-master.webp" fetchpriority="high">
-  <noscript><style>.reception[data-enter]{opacity:1!important;transform:none!important}</style></noscript>
-  <script>
-    /* Příchod z videa na homepage: scéna se vykreslí rovnou v klidu (bez vjezdu),
-       protože poslední snímek klipu je tahle fotka. Musí běžet před vykreslením. */
-    try { if (sessionStorage.getItem('tl-arrive-video')) { sessionStorage.removeItem('tl-arrive-video'); document.documentElement.classList.add('arrive-video'); } } catch (e) {}
-  </script>
+  <link rel="stylesheet" href="patro-stavebnictvi.css">
+  <link rel="preload" as="image" href="patro-stavebnictvi-master.webp" fetchpriority="high">
+  <!-- stejné pozadí jako tělo (var(--ink) ze style.css) ještě předtím, než
+       se stihne vůbec vykreslit — mezi příjezdem výtahem nesmí být ani
+       na okamžik vidět nic jiného než zavřené dveře. -->
+  <style>html{background:#05070a}</style>
 </head>
-<body data-elevator-floor="L">
-  <!-- Dveře výtahu — skutečný fullscreen overlay nad vším ostatním, v klidu
-       neviditelný a bez pointer-events. Řídí elevator.js. -->
+<body data-elevator-floor="04">
+  <!-- Dveře výtahu — stejný sdílený overlay jako na recepci. Synchronní
+       skript hned pod ním je zajišťuje zavřené už při prvním vykreslení,
+       pokud se sem přišlo výtahem z recepce (viz elevator.js). -->
   <div class="elevator-doors" aria-hidden="true">
     <div class="elevator-doors__leaf elevator-doors__leaf--left"></div>
     <div class="elevator-doors__leaf elevator-doors__leaf--right"></div>
     <div class="elevator-doors__indicator">
-      <span class="elevator-doors__num">L</span>
-      <span class="elevator-doors__label">Recepce</span>
+      <span class="elevator-doors__num">04</span>
+      <span class="elevator-doors__label">Stavebnictví &amp; řemesla</span>
     </div>
   </div>
   <script>
     (function () {
       try {
-        if (sessionStorage.getItem('tl-elevator-arrive') === 'L') {
+        if (sessionStorage.getItem('tl-elevator-arrive') === '04') {
           sessionStorage.removeItem('tl-elevator-arrive');
           var doors = document.querySelector('.elevator-doors');
           doors.classList.add('is-active', 'is-instant', 'is-closed', 'is-holding');
@@ -79,10 +79,9 @@
       </span>
       <span class="nav__item">
         <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-          <rect x="5" y="3" width="14" height="18" rx="2"/>
-          <path d="M10 9l2-2 2 2M10 15l2 2 2-2"/>
+          <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 4v16M4 9h4"/>
         </svg>
-        <a href="lobby.html">Vstupní hala</a>
+        <a href="recepce.html">Recepce</a>
       </span>
       <span class="nav__item nav__item--decorative nav__item--util-first" aria-hidden="true">
         <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false">
@@ -100,22 +99,45 @@
 
   <main>
     <!--
-      SCÉNA RECEPCE
-      data-depth="0" architektura (fotka), "2" panely a text.
-      Panely jsou <a> odkazy — vedou na výběr odvětví podle role.
+      SCÉNA — PATRO 04, STAVEBNICTVÍ A ŘEMESLA
+      Fotka je hlavní vizuál (stejná geometrie/chování jako u recepce —
+      cover-fit, na desktopu fullscreen). Levý skleněný panel a pravý
+      výtah jsou skutečné HTML/CSS vrstvy nad fotkou, ne vypálené do ní.
     -->
-    <section class="reception" data-scene="reception" data-camera="reception" data-enter>
-      <div class="reception__media" data-depth="0">
-        <img src="recepce-master.webp" width="1672" height="941" fetchpriority="high"
-             alt="Recepce TradeLinku — recepční za mramorovým pultem, svítící logo TradeLink na stěně z černého mramoru se zlatými žilkami.">
+    <section class="floor-scene" data-scene="floor-04">
+      <div class="floor-scene__media">
+        <img src="patro-stavebnictvi-master.webp" width="1672" height="942" fetchpriority="high"
+             alt="Patro Stavebnictví a řemesla — mistr stavbyvedoucí v přilbě sedí za mramorovým stolem, za sklem rozestavěná stavba s jeřáby při západu slunce.">
       </div>
-      <!-- kotveno k ploše fotky (cover-fit geometrie), ne k viewportu —
-           nápis musí sedět přesně na vypálený neon při libovolném poměru stran -->
-      <div class="reception__signbox">
-        <a class="reception__logo" href="./" aria-label="TradeLink — hlavní stránka">
-          <img src="tradelink-sign.webp" alt="" width="655" height="132" loading="lazy">
-        </a>
+
+      <div class="floor-scene__intro">
+        <p class="floor-scene__kicker">TradeLink · Patro 04</p>
+        <h1>Stavebnictví &amp; řemesla</h1>
+        <p>Vyberte obor v panelu a uvidíte poptávky, zakázky i lidi, kteří k němu patří.</p>
       </div>
+
+      <!-- Levý interaktivní panel — zatím jen struktura a placeholder šipky.
+           Krok 1 (obor) a krok 2 (nabídky) se doplní později. -->
+      <div class="floor-panel" aria-label="Obor a nabídky — stavebnictví a řemesla">
+        <div class="floor-panel__head">
+          <span class="floor-panel__kicker">Stavebnictví &amp; řemesla</span>
+          <span class="floor-panel__step">Krok 1 · Obor</span>
+        </div>
+        <div class="floor-panel__body">
+          <p>Tady si brzy vyberete svůj obor a uvidíte poptávky a nabídky, které k němu patří.</p>
+        </div>
+        <div class="floor-panel__nav">
+          <button class="floor-panel__arrow" type="button" aria-label="Předchozí obor">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <span class="floor-panel__dots" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <button class="floor-panel__arrow" type="button" aria-label="Další obor">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Výtah — patrový panel, 04 aktivní -->
       <aside class="elevator" aria-label="Výtah — patra budovy">
         <div class="floors">
           <p class="floors__head">Zvolte patro
@@ -126,9 +148,9 @@
             <a class="floor" href="recepce.html" aria-label="Patro 10 — Administrativa"><span class="floor__num">10</span> Administrativa</a>
             <a class="floor" href="recepce.html" aria-label="Patro 08 — Gastro"><span class="floor__num">08</span> Gastro</a>
             <a class="floor" href="recepce.html" aria-label="Patro 06 — Logistika"><span class="floor__num">06</span> Logistika</a>
-            <a class="floor" href="patro-stavebnictvi.html" data-elevator-transition data-floor-num="04" data-floor-label="Stavebnictví &amp; řemesla" aria-label="Patro 04 — Stavebnictví a řemesla"><span class="floor__num">04</span> Stavebnictví</a>
+            <a class="floor is-here" href="patro-stavebnictvi.html" aria-label="Stavebnictví a řemesla — jste tady" aria-current="page"><span class="floor__num">04</span> Stavebnictví</a>
             <a class="floor" href="recepce.html" aria-label="Patro 02 — Výroba"><span class="floor__num">02</span> Výroba</a>
-            <a class="floor is-here" href="recepce.html" aria-label="Recepce — jste tady" aria-current="page"><span class="floor__num">L</span> Recepce</a>
+            <a class="floor" href="recepce.html" data-elevator-transition data-floor-num="L" data-floor-label="Recepce" aria-label="Recepce — sjet výtahem"><span class="floor__num">L</span> Recepce</a>
           </div>
         </div>
       </aside>
@@ -141,82 +163,6 @@
         </svg>
         Patra
       </button>
-
-      <div class="reception__intro" data-depth="2">
-        <p class="reception__kicker">TradeLink · Patro L</p>
-        <h1>Recepce</h1>
-        <p>Řekněte nám, kdo jste a co hledáte. Odvětví a obory se otevřou až podle vaší volby.</p>
-      </div>
-
-      <div class="choices" data-depth="2">
-        <div class="choices__col">
-          <p class="choices__head">Kdo jste a co hledáte?</p>
-
-          <a class="choice" href="obory.html?role=hledam-zamestnance">
-            <span class="choice__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="8" r="3.2"/><path d="M2.8 19.5c0-3.3 2.8-5.5 6.2-5.5s6.2 2.2 6.2 5.5"/>
-                <path d="M16.5 5.4a3 3 0 0 1 0 5.4"/><path d="M18 14.4c2 .8 3.2 2.5 3.2 5.1"/>
-              </svg>
-            </span>
-            <span class="choice__body">
-              <span class="choice__title">Hledám zaměstnance</span>
-            </span>
-            <span class="choice__arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
-            </span>
-          </a>
-
-          <a class="choice" href="obory.html?role=hledam-praci">
-            <span class="choice__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="8" r="3.4"/><path d="M5 19.6c0-3.5 3-5.8 7-5.8s7 2.3 7 5.8"/>
-              </svg>
-            </span>
-            <span class="choice__body">
-              <span class="choice__title">Hledám práci</span>
-            </span>
-            <span class="choice__arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
-            </span>
-          </a>
-        </div>
-
-        <div class="choices__col">
-          <p class="choices__head">Kdo jste a co hledáte?</p>
-
-          <a class="choice" href="obory.html?role=hledam-zakazky">
-            <span class="choice__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2.8" y="7.2" width="18.4" height="12.6" rx="2"/>
-                <path d="M9 7.2V5.6a1.8 1.8 0 0 1 1.8-1.8h2.4A1.8 1.8 0 0 1 15 5.6v1.6M2.8 12.4h18.4"/>
-              </svg>
-            </span>
-            <span class="choice__body">
-              <span class="choice__title">Hledám zakázky</span>
-            </span>
-            <span class="choice__arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
-            </span>
-          </a>
-
-          <a class="choice" href="obory.html?role=chci-zadat-zakazku">
-            <span class="choice__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5.6 3.8h9.2l4.6 4.6v11.8a1.8 1.8 0 0 1-1.8 1.8H5.6a1.8 1.8 0 0 1-1.8-1.8V5.6a1.8 1.8 0 0 1 1.8-1.8z"/>
-                <path d="M8 12h8M8 16h5"/>
-              </svg>
-            </span>
-            <span class="choice__body">
-              <span class="choice__title">Chci zadat zakázku</span>
-            </span>
-            <span class="choice__arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
-            </span>
-          </a>
-        </div>
-      </div>
-
     </section>
   </main>
 
@@ -235,9 +181,9 @@
         <a class="floor" href="recepce.html" aria-label="Patro 10 — Administrativa"><span class="floor__num">10</span> Administrativa</a>
         <a class="floor" href="recepce.html" aria-label="Patro 08 — Gastro"><span class="floor__num">08</span> Gastro</a>
         <a class="floor" href="recepce.html" aria-label="Patro 06 — Logistika"><span class="floor__num">06</span> Logistika</a>
-        <a class="floor" href="patro-stavebnictvi.html" data-elevator-transition data-floor-num="04" data-floor-label="Stavebnictví &amp; řemesla" aria-label="Patro 04 — Stavebnictví a řemesla"><span class="floor__num">04</span> Stavebnictví</a>
+        <a class="floor is-here" href="patro-stavebnictvi.html" aria-label="Stavebnictví a řemesla — jste tady" aria-current="page"><span class="floor__num">04</span> Stavebnictví — jste tady</a>
         <a class="floor" href="recepce.html" aria-label="Patro 02 — Výroba"><span class="floor__num">02</span> Výroba</a>
-        <a class="floor is-here" href="recepce.html" aria-label="Recepce — jste tady, pokračovat na recepci"><span class="floor__num">L</span> Recepce — jste tady</a>
+        <a class="floor" href="recepce.html" data-elevator-transition data-floor-num="L" data-floor-label="Recepce" aria-label="Recepce — sjet výtahem"><span class="floor__num">L</span> Recepce</a>
       </div>
     </div>
   </div>
@@ -256,7 +202,6 @@
 
   <script src="supabase-config.js"></script>
   <script src="app.js" defer></script>
-  <script src="transition.js" defer></script>
   <script src="homepage.js" defer></script>
   <script src="elevator.js" defer></script>
   <script type="module">import { paintNav } from './auth.js'; paintNav();</script>
